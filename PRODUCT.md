@@ -10,12 +10,12 @@ Kişisel portfolyo sitesi. Ziyaretçiye kim olduğumu, ne yaptığımı ve nası
 
 Dört sayfa. Route'lar İngilizce, arayüz metinleri Türkçe.
 
-| Route | Sayfa | İçerik |
-|---|---|---|
-| `/` | LandingPage | Hoşgeldin yazısı, fotoğraf, "Projeler + (sayısı)" bloğu, tech stack |
-| `/projects` | Projeler | Proje kartları: fotoğraf + açıklama, varsa GitHub linki |
-| `/about` | Hakkımda | Fotoğraf + metin çiftleri, öğrenim roadmap'i |
-| `/experience` | Tecrübe | İş hayatı roadmap'i, metin blokları |
+| Route         | Sayfa       | İçerik                                                              |
+| ------------- | ----------- | ------------------------------------------------------------------- |
+| `/`           | LandingPage | Hoşgeldin yazısı, fotoğraf, "Projeler + (sayısı)" bloğu, tech stack |
+| `/projects`   | Projeler    | Proje kartları: fotoğraf + açıklama, varsa GitHub linki             |
+| `/about`      | Hakkımda    | Fotoğraf + metin çiftleri, öğrenim roadmap'i                        |
+| `/experience` | Tecrübe     | İş hayatı roadmap'i, metin blokları                                 |
 
 Ek olarak `not-found`: geçersiz adres → sayfa bulunamadı mesajı + ana sayfaya dönüş. Navbar korunur.
 

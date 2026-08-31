@@ -19,14 +19,14 @@ PostgreSQL henüz kurulmadıysa `npm run dev` çalışır; veri çeken sayfalar 
 
 ## Komutlar
 
-| Komut | İş |
-|---|---|
-| `npm run dev` | Geliştirme sunucusu |
-| `npm run build` / `npm start` | Üretim derlemesi ve sunucu |
-| `npm run lint` | ESLint |
-| `npm run typecheck` | `tsc --noEmit` |
-| `npm run format` | Prettier (Tailwind sınıf sıralaması dahil) |
-| `npx prisma studio` | İçerik girişi |
+| Komut                         | İş                                         |
+| ----------------------------- | ------------------------------------------ |
+| `npm run dev`                 | Geliştirme sunucusu                        |
+| `npm run build` / `npm start` | Üretim derlemesi ve sunucu                 |
+| `npm run lint`                | ESLint                                     |
+| `npm run typecheck`           | `tsc --noEmit`                             |
+| `npm run format`              | Prettier (Tailwind sınıf sıralaması dahil) |
+| `npx prisma studio`           | İçerik girişi                              |
 
 ## Dosya düzeni
 

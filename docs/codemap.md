@@ -53,15 +53,15 @@ Tailwind v4: tema `@theme` bloğunda, `tailwind.config.ts` YOK.
 
 Model PascalCase, tablo snake_case (`@@map`).
 
-| Model | Tablo | Not |
-|---|---|---|
-| `Media` | media | Tüm fotoğraf blokları buradan beslenir |
-| `LandingPage` | landing_page | Tek satır; proje sayısı COUNT ile, kolon yok |
-| `AboutSection` | about_sections | Foto+metin çiftleri, `order` ile sıralı |
-| `ExperienceSection` | experience_sections | /experience metin blokları |
-| `RoadmapItem` | roadmap_items | `kind` (EDUCATION/WORK) ile öğrenim ve iş roadmap'i aynı tabloda |
-| `Project` | projects | `githubUrl` nullable, `isPublished`, `order` |
-| `TechStackItem` | tech_stack_items | LandingPage tech stack |
+| Model               | Tablo               | Not                                                              |
+| ------------------- | ------------------- | ---------------------------------------------------------------- |
+| `Media`             | media               | Tüm fotoğraf blokları buradan beslenir                           |
+| `LandingPage`       | landing_page        | Tek satır; proje sayısı COUNT ile, kolon yok                     |
+| `AboutSection`      | about_sections      | Foto+metin çiftleri, `order` ile sıralı                          |
+| `ExperienceSection` | experience_sections | /experience metin blokları                                       |
+| `RoadmapItem`       | roadmap_items       | `kind` (EDUCATION/WORK) ile öğrenim ve iş roadmap'i aynı tabloda |
+| `Project`           | projects            | `githubUrl` nullable, `isPublished`, `order`                     |
+| `TechStackItem`     | tech_stack_items    | LandingPage tech stack                                           |
 
 ## Sayfa → veri eşlemesi
 
