@@ -1,0 +1,3 @@
+- Door - FadeIn-Left&Right : İçerik Geçişlerinde
+- Door - FadeIn-Up&Down : NavBar Sayfa Geçişlerinde
+- Partial Fade-In-Left&Right&Up : LandingPage
