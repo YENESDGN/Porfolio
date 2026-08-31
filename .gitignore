@@ -41,8 +41,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-/prisma/generated
+# prisma — client build sırasında üretilir (npm run build)
+/generated
 
 # kişisel session kayıtları — takımda merge conflict yaratmasın diye takip edilmez
 /docs/sessions.md

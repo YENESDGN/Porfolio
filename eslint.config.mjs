@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Üretilen kod; elle düzenlenmez.
+    "generated/**",
+    "types/**",
+    // Obsidian kasasının kendi eklenti paketleri.
+    ".obsidian/**",
   ]),
 ]);
 
