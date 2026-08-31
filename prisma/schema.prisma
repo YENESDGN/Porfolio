@@ -1,0 +1,117 @@
+// Model adları PascalCase, tablo adları @@map ile snake_case.
+// Veri modelinin anlatımı: docs/codemap.md
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+// Prisma 7'de bağlantı adresi şemada durmaz: CLI için prisma.config.ts,
+// çalışma zamanı için PrismaClient'a verilen adapter taşır.
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------- Ortak ----------
+
+// Tüm fotoğraf blokları buradan beslenir. Diyagramda 1-1 çizilmişti;
+// aynı görselin birden çok blokta kullanılabilmesi için 1-N bırakıldı.
+model Media {
+  id        Int      @id @default(autoincrement())
+  url       String   @db.VarChar(500)
+  altText   String?  @map("alt_text") @db.VarChar(255)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  landingPages  LandingPage[]
+  aboutSections AboutSection[]
+  projects      Project[]
+
+  @@map("media")
+}
+
+// ---------- LandingPage ----------
+
+// "Projeler + (sayısı)" bloğu projects tablosundan COUNT ile hesaplanır, ayrı kolon yok.
+model LandingPage {
+  id          Int      @id @default(autoincrement())
+  welcomeText String   @map("welcome_text")
+  photoId     Int?     @map("photo_id")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  photo Media? @relation(fields: [photoId], references: [id], onDelete: SetNull)
+
+  @@map("landing_page")
+}
+
+model TechStackItem {
+  id    Int    @id @default(autoincrement())
+  name  String @db.VarChar(60)
+  icon  String @db.VarChar(60)
+  order Int    @default(0)
+
+  @@map("tech_stack_items")
+}
+
+// ---------- Hakkımda ----------
+
+model AboutSection {
+  id        Int      @id @default(autoincrement())
+  content   String
+  photoId   Int?     @map("photo_id")
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  photo Media? @relation(fields: [photoId], references: [id], onDelete: SetNull)
+
+  @@map("about_sections")
+}
+
+// ---------- Tecrübe ----------
+
+model ExperienceSection {
+  id        Int      @id @default(autoincrement())
+  content   String
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("experience_sections")
+}
+
+// Öğrenim ve iş hayatı roadmap'i aynı tabloda; ayıran alan `kind`.
+model RoadmapItem {
+  id          Int         @id @default(autoincrement())
+  kind        RoadmapKind
+  title       String      @db.VarChar(150)
+  description String?
+  startDate   DateTime    @map("start_date") @db.Date
+  endDate     DateTime?   @map("end_date") @db.Date
+  order       Int         @default(0)
+
+  @@index([kind, order])
+  @@map("roadmap_items")
+}
+
+enum RoadmapKind {
+  EDUCATION
+  WORK
+
+  @@map("roadmap_kind")
+}
+
+// ---------- Projeler ----------
+
+model Project {
+  id            Int      @id @default(autoincrement())
+  title         String   @db.VarChar(150)
+  description   String
+  coverPhotoId  Int?     @map("cover_photo_id")
+  githubUrl     String?  @map("github_url") @db.VarChar(300)
+  isPublished   Boolean  @default(true) @map("is_published")
+  order         Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  coverPhoto Media? @relation(fields: [coverPhotoId], references: [id], onDelete: SetNull)
+
+  @@index([isPublished, order])
+  @@map("projects")
+}
