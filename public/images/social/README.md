@@ -14,14 +14,17 @@ Exception kapsamındalar.
 
 ## Bilinmesi gerekenler
 
-- **Hover: ahududu dolgu + beyaz disk.** Dinlenirken şeffaf; üzerine
-  gelindiğinde ahududu daireyi alttan doldurur ve işaretin arkasında beyaz
-  bir disk belirir (`group-hover:bg-white`, görselin kutusu `size-7 p-1` =
-  28px disk, görselin kendisi 20px). İşaret kendi rengini korur.
-- **İşareti filtreyle beyazlatma.** `brightness-0 invert` denendi ve
-  bırakıldı: filtre diski de glifi de aynı beyaza çevirdiği için LinkedIn ve
-  Gmail işaretleri tek parça beyaz lekeye dönüşüyordu. Çok renkli bir
-  logoda iç kontrast filtreyle korunamaz.
+- **Hover: ahududu dolgu.** Dinlenirken şeffaf; üzerine gelindiğinde
+  ahududu daireyi alttan doldurur. İşaret hiç değişmez, kendi rengini
+  korur; dolgu onun arkasında kalır.
+- **İşarete dokunulmuyor, iki yol denenip bırakıldı.** `brightness-0 invert`
+  filtresi diski de glifi de aynı beyaza çevirdiği için LinkedIn ve Gmail
+  tek parça beyaz lekeye dönüşüyordu. İşaretin arkasına konan beyaz disk de
+  görsel olarak tutmadı.
+- **Ahududu üzerinde kontrast.** Beyaz parçalar 6.95:1, GitHub'ın siyah
+  glifi 3.02:1 (grafik eşiği 3:1, sınırda geçiyor). LinkedIn'in mavi diski
+  1.42:1 ve Gmail'in kırmızısı 1.77:1 — bunlar dekoratif dolgu, okunması
+  gereken bilgi taşımıyorlar; işaretin silueti beyaz parçalardan okunuyor.
 - **Gmail zemini daire yapıldı.** Resmi işaret yuvarlatılmış kare (squircle)
   zemin taşır; LinkedIn diskiyle aynı aileye girsin diye daireye çevrildi
   (`<circle cx="16" cy="16" r="14.93">`, LinkedIn ile aynı oran: yarıçap /

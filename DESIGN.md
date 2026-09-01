@@ -261,7 +261,7 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 
 - **Vurgu linki:** `text-raspberry-700`, `underline underline-offset-4`. Sitedeki tıklanabilir tek yüzey linktir; kart, fotoğraf ve metin bloğu asla anchor değildir.
 - **İkon linki:** 44×44 daire dokunma hedefi, `aria-label` zorunlu. GitHub/LinkedIn `target="_blank" rel="noopener noreferrer"`; `mailto:` hiçbiri — yeni sekme boş sekme bırakır.
-- **İkon linki — hover ve odak:** Dinlenirken şeffaf, marka işareti kendi renginde. Üzerine gelindiğinde ahududu dolgu alttan yükselip daireyi doldurur (500ms) ve işaretin **arkasında** beyaz bir disk belirir; işaretin kendisi rengini korur. Filtreyle beyazlatmak denendi ve bırakıldı: `brightness-0 invert` diski de glifi de aynı beyaza çevirdiği için LinkedIn ve Gmail işaretleri tek parça lekeye dönüşüyordu. Klavye odağı aynı durumu verir, üstüne odak halkası çizilir. `prefers-reduced-motion` açıkken durum yine değişir ama kaymaz.
+- **İkon linki — hover ve odak:** Dinlenirken şeffaf, marka işareti kendi renginde. Üzerine gelindiğinde ahududu dolgu alttan yükselip daireyi doldurur (500ms); işaret hiç değişmez, dolgu onun arkasında kalır. İki yol denenip bırakıldı: `brightness-0 invert` filtresi diski de glifi de aynı beyaza çevirip LinkedIn ve Gmail işaretlerini tek parça lekeye dönüştürüyordu, işaretin arkasına konan beyaz disk ise görsel olarak tutmadı. Klavye odağı aynı durumu verir, üstüne odak halkası çizilir. `prefers-reduced-motion` açıkken durum yine değişir ama kaymaz.
 
 ### Navigasyon
 
