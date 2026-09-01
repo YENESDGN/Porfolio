@@ -1,76 +1,61 @@
-# Codemap — veri katmanı
+# Codemap — data layer
 
-Genel bakış → `docs/codemap.md`. Kurallar → `.claude/rules/data.md`.
+Overview → `docs/codemap.md`. Rules → `.claude/rules/data.md`.
 
-## Prisma 7 kurulumu
+## Prisma 7 setup
 
-Prisma 7, 6.x'ten belirgin biçimde farklı. Üç nokta:
+Prisma 7 is significantly different from 6.x. Three points:
 
-1. **Bağlantı adresi şemada durmaz.** `datasource db` yalnızca `provider`
-   tutar. `url = env(...)` yazılırsa şema doğrulaması patlar (P1012).
-2. **CLI ayarı `prisma.config.ts`'te** — schema yolu, migrations yolu ve
-   `migrations.seed` komutu orada. `package.json` içindeki `prisma.seed`
-   alanı ARTIK KULLANILMAZ.
-3. **Çalışma zamanı adapter ister.** `lib/prisma.ts`, `PrismaClient`'a
-   `@prisma/adapter-pg`'den `PrismaPg` verir. Adapter olmadan client
-   çalışmaz — bu yüzden `@prisma/adapter-pg` onaylı listeye eklendi.
+1. **Connection URL does not reside in the schema.** `datasource db` only holds the `provider`. If `url = env(...)` is written, schema validation fails (P1012).
+2. **CLI configuration is in `prisma.config.ts**` — the schema path, migrations path, and the `migrations.seed` command are there. The `prisma.seed` field in `package.json` is NO LONGER USED.
+3. **Runtime requires an adapter.** `lib/prisma.ts` provides `PrismaPg` from `@prisma/adapter-pg` to `PrismaClient`. The client will not work without an adapter — which is why `@prisma/adapter-pg` was added to the approved list.
 
-`.env` okuması `dotenv` yerine Node'un yerleşik `process.loadEnvFile()`'ı
-ile; Prisma 7 `.env`'i kendiliğinden yüklemez.
+Reading `.env` is done via Node's built-in `process.loadEnvFile()` instead of `dotenv`; Prisma 7 does not load `.env` on its own.
 
-### Üretilen client
+### Generated client
 
-Generator `prisma-client` (eski `prisma-client-js` değil), çıktı
-`generated/prisma/` — `node_modules` içine değil. Import:
-`@/generated/prisma/client`.
+The generator is `prisma-client` (not the old `prisma-client-js`), the output is in `generated/prisma/` — not in `node_modules`. Import: `@/generated/prisma/client`.
 
-Klasör gitignore'da ve `npm run build` (`prisma generate && next build`)
-her seferinde yeniden üretir; temiz checkout'ta ayrı adım gerekmez.
-ESLint ve Prettier `generated/`'ı yok sayar.
+The folder is in gitignore and `npm run build` (`prisma generate && next build`) regenerates it every time; no separate step is needed on a clean checkout. ESLint and Prettier ignore `generated/`.
 
-### Sürüm tuzağı
+### Version pitfall
 
-npm'in `prisma` için `latest` etiketi **8.0.0-rc**'yi gösteriyor. RC,
-client 7 ile uyumsuz ve `hono`/`workerd` dahil ~386 paket getiriyor.
-`prisma` ve `@prisma/client` ikisi de **7.10.0**'a sabit.
+npm's `latest` tag for `prisma` points to **8.0.0-rc**. The RC is incompatible with client 7 and brings ~386 packages including `hono`/`workerd`. Both `prisma` and `@prisma/client` are pinned to **7.10.0**.
 
-Kalan 3 yüksek npm audit uyarısı prisma CLI'ın `deepmerge-ts`
-bağımlılığından; dev-only, üretime çıkmıyor, düzeltmesi 6.12'ye
-gerilemek olduğu için bırakıldı.
+The remaining 3 high npm audit warnings are from the prisma CLI's `deepmerge-ts` dependency; they are dev-only, do not go to production, and were left as is because the fix requires downgrading to 6.12.
 
-## Veri modeli — `prisma/schema.prisma`
+## Data model — `prisma/schema.prisma`
 
-Model PascalCase, tablo snake_case (`@@map`). Sıralama veriye yazılır
-(`order`); dizi kodda yeniden sıralanmaz.
+Models are PascalCase, tables are snake_case (`@@map`). Sorting is written to the data (`order`); arrays are not reordered in code.
 
-| Model               | Tablo               | Not                                                              |
-| ------------------- | ------------------- | ---------------------------------------------------------------- |
-| `Media`             | media               | Tüm fotoğraf blokları buradan beslenir                           |
-| `LandingPage`       | landing_page        | Tek satır; proje sayısı COUNT ile, kolon yok                     |
-| `TechStackItem`     | tech_stack_items    | LandingPage tech stack                                           |
-| `AboutSection`      | about_sections      | Foto+metin çiftleri, `order` ile sıralı                          |
-| `ExperienceSection` | experience_sections | /experience metin blokları                                       |
-| `RoadmapItem`       | roadmap_items       | `kind` (EDUCATION/WORK) ile öğrenim ve iş roadmap'i aynı tabloda |
-| `Project`           | projects            | `githubUrl` nullable, `isPublished`, `order`                     |
+| Model | Table | Note |
+| --- | --- | --- |
+| `Media` | media | Feeds all photo blocks |
+| `LandingPage` | landing_page | Single row; project count is via COUNT, no column for it |
+| `TechStackItem` | tech_stack_items | LandingPage tech stack |
+| `AboutSection` | about_sections | Photo+text pairs, ordered by `order` |
+| `ExperienceSection` | experience_sections | /experience text blocks |
+| `RoadmapItem` | roadmap_items | Education and work roadmaps are in the same table via `kind` (EDUCATION/WORK) |
+| `Project` | projects | `githubUrl` nullable, `isPublished`, `order` |
 
-Şema notundaki 4 tabloya, sayfa-veri eşlemesinin gerektirdiği üçü
-(`TechStackItem`, `ExperienceSection`, `RoadmapItem`) eklendi.
+The three tables required by the page-data mapping (`TechStackItem`, `ExperienceSection`, `RoadmapItem`) were added to the 4 tables from the schema notes.
 
-**Diyagramdan bilinçli sapma:** `media` ilişkileri dbdiagram'da bire-bir
-(`-`) çizilmişti, şemada bire-çok. Aynı görselin birden çok blokta
-kullanılabilmesi için; gereksiz unique kısıtı doğurmasın diye.
+**Deliberate deviation from the diagram:** `media` relations were drawn as one-to-one (`-`) in dbdiagram, but are one-to-many in the schema. This allows the same visual to be used in multiple blocks without causing an unnecessary unique constraint.
 
-## Sorgular
+## Queries
 
-Tüm Prisma çağrıları `lib/queries/` içinde isimlendirilmiş fonksiyonlar
-olarak, dışarıya `lib/queries/index.ts` ile açılır. Şu an iskelet;
-sorgular Faz 2'de sayfa başına eklenecek.
+All Prisma calls are written as named functions inside `lib/queries/` and exposed externally via `lib/queries/index.ts`. Currently a skeleton.
 
-## Durum
+### The fixture seam (Phase 2)
 
-**(Sonra bakılacak)** — PostgreSQL yok: `prisma migrate` ve seed
-çalıştırılmadı, `prisma/migrations/` boş. Şema `prisma validate`'ten
-geçiyor, client üretiliyor, seed hattı uçtan uca çalışıyor
-(`npm run db:seed` env'i okuyup tsx'i çalıştırıyor) — sadece DB'ye
-bağlanılmadı. DB ayağa kalkınca ilk migration üretilecek;
-`db push` kullanılmayacak.
+PostgreSQL arrives last in Phase 2, so `lib/queries/` is written **before** there is a database. Each of `landing.ts`, `projects.ts`, `about.ts`, `experience.ts` holds three things:
+
+1. a `select` object,
+2. a type derived from it — `Prisma.XGetPayload<{ select: typeof xSelect }>`; this works offline because the generated client already exports the `Prisma` namespace,
+3. a named async function whose body returns fixtures from `lib/queries/fixtures.ts`.
+
+Pages call these functions from their first commit. Phase 2.6 replaces the four function bodies with real Prisma calls against the same `select` objects and deletes `fixtures.ts`; no page or component changes. The fixtures are a temporary, single-file deviation from the "content is not hardcoded" rule — not content.
+
+## Status
+
+**(To be checked later)** — No PostgreSQL: `prisma migrate` and seed have not been run, `prisma/migrations/` is empty. The schema passes `prisma validate`, the client is generated, the seed pipeline works end-to-end (`npm run db:seed` reads the env and runs tsx) — we just haven't connected to a DB. The first migration will be generated once the DB is up; `db push` will not be used.

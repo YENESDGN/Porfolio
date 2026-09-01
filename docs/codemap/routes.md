@@ -1,43 +1,40 @@
-# Codemap — route katmanı
+# Codemap — route layer
 
-Genel bakış → `docs/codemap.md`.
+Overview → `docs/codemap.md`.
 
-## Dosyalar
+## Files
 
-- `app/layout.tsx` — Server. html/body, IBM Plex Serif (`latin`+`latin-ext`),
-  `metadataBase` ve başlık şablonu `config/site.ts`'ten. (Faz 2) Navbar.
-  Navigasyonda remount olmaz.
-- `app/template.tsx` — Client, **Faz 2**. Sayfa geçişi (Door FadeIn-Up&Down).
-  `layout` değil `template`, çünkü giriş animasyonunun her gezinmede
-  tetiklenmesi lazım.
-- `app/page.tsx` (LandingPage) · `app/projects/` · `app/about/` · `app/experience/`
-- `app/not-found.tsx` — sayfa yok + ana sayfaya dönüş, Navbar korunur.
-- Her route'ta `loading.tsx` ve `error.tsx`.
+* `app/layout.tsx` — Server. html/body, IBM Plex Serif (`latin`+`latin-ext`), `metadataBase` and title template from `config/site.ts`. (Phase 2) Navbar. No remount on navigation.
+* `app/template.tsx` — Client, **Phase 2**. Page transition (Door FadeIn-Up&Down). It is `template`, not `layout`, because the entrance animation needs to trigger on every navigation.
+* `app/page.tsx` (LandingPage) · `app/projects/` · `app/about/` · `app/experience/`
+* `app/not-found.tsx` — page not found + return to home, Navbar is preserved.
+* `loading.tsx` and `error.tsx` in every route.
 
-## loading / error deseni
+## loading / error pattern
 
-Sekiz kopya yerine tek implementasyon: route dosyaları ortak bileşeni
-yeniden dışa aktarır.
+Single implementation instead of eight copies: route files re-export the shared component.
 
 ```
 app/<route>/loading.tsx  →  export { default } from "@/components/RouteLoading";
 app/<route>/error.tsx    →  "use client"; export { default } from "@/components/RouteError";
+
 ```
 
-`RouteError` Client Component (error boundary zorunluluğu), `RouteLoading`
-Server.
+`RouteError` is a Client Component (error boundary requirement), `RouteLoading` is Server.
 
-## Render stratejisi
+## Render strategy
 
-Beş route da statik prerender ediliyor (`○`). İçerik ayda bir değiştiği için
-her istekte DB'ye gidilmez; Faz 2'de `revalidate` + elle güncelleme sonrası
-on-demand revalidate eklenecek.
+All five routes are statically prerendered (`○`). Since content changes once a month, the DB is not hit on every request.
 
-## Sayfa → veri eşlemesi
+**Refresh is on-demand only — no `export const revalidate`.** Pages are prerendered at build and stay frozen until `revalidatePath` is called. Phase 2.6 adds `app/api/revalidate/route.ts` (POST, guarded by a `REVALIDATE_SECRET` env var) as the one write-side endpoint; the "no API routes" rule covers reading only.
 
-Her sayfa kendi Server Component'inde `lib/queries/` üzerinden çeker.
+`export const revalidate` and `revalidatePath` remain valid in Next 16 because `cacheComponents` is not enabled in `next.config.ts`. Enabling it would remove the route-segment config options.
 
-- `/` — proje sayısı (COUNT), hoşgeldin metni + fotoğraf, tech stack
-- `/projects` — yayınlanmış proje listesi (`order`)
-- `/about` — about bölümleri (foto+metin) + `EDUCATION` roadmap
-- `/experience` — experience metin blokları + `WORK` roadmap
+## Page → data mapping
+
+Each page fetches its own data in its Server Component via `lib/queries/`.
+
+* `/` — project count (COUNT), welcome text + photo, tech stack
+* `/projects` — published project list (`order`)
+* `/about` — about sections (photo+text) + `EDUCATION` roadmap
+* `/experience` — experience text blocks + `WORK` roadmap

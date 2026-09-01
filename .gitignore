@@ -50,3 +50,7 @@ next-env.d.ts
 
 # obsidian vault ayarları (notların kendisi Obsidian/ altında takip edilir)
 .obsidian/
+
+#impeccable
+.impeccable
+impeccable

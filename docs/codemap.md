@@ -1,64 +1,56 @@
 # Codemap
 
-Mimari ve yığının tek doğru kaynağı. Bu dosya her oturumda otomatik
-yüklenir — ince tutulur. Kurallar burada değil → `CLAUDE.md` ve
-`.claude/rules/`.
+The single source of truth for architecture and stack. This file is automatically loaded in every session — it is kept lean. Rules are not here → `CLAUDE.md` and `.claude/rules/`.
 
-**Ayrıntı alt dosyalarda; otomatik yüklenmezler, gerekince okunur:**
+**Details are in sub-files; they are not auto-loaded, read when necessary:**
 
-| Dosya                    | İçerik                                                                      |
-| ------------------------ | --------------------------------------------------------------------------- |
-| `docs/codemap/routes.md` | Route katmanı, loading/error deseni, render stratejisi, sayfa→veri eşlemesi |
-| `docs/codemap/ui.md`     | Tema token'ları ve tuzakları, bileşen listesi, `config/`                    |
-| `docs/codemap/data.md`   | Prisma 7 kurulumu ve sürüm tuzağı, veri modeli, sorgular                    |
+| File | Content |
+| --- | --- |
+| `docs/codemap/routes.md` | Route layer, loading/error pattern, render strategy, page→data mapping |
+| `docs/codemap/ui.md` | Theme tokens and pitfalls, component list, `config/` |
+| `docs/codemap/data.md` | Prisma 7 setup and version pitfall, data model, queries |
 
-## Yığın
+## Stack
 
-Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 ·
-PostgreSQL + Prisma 7 (+ `@prisma/adapter-pg`) · Motion · Radix Dialog
-(yalnız mobil menü) · lucide-react · sharp.
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 · PostgreSQL + Prisma 7 (+ `@prisma/adapter-pg`) · Motion · Radix Dialog (mobile menu only) · lucide-react · sharp.
 
-Dağıtım: DigitalOcean, self-hosted, `output: "standalone"`, tek instance.
-ISR cache'i instance'a özel — ikinci instance eklenmeden yatay ölçekleme
-yapılmaz.
+Deployment: DigitalOcean, self-hosted, `output: "standalone"`, single instance. ISR cache is instance-specific — do not scale horizontally before adding a second instance.
 
-## Klasör düzeni
+## Folder layout
 
-`src/` yok, her şey kökte. `@/*` takma adı kökü gösterir.
+NO `src/`, everything is in the root. `@/*` alias points to the root.
 
 ```
-app/         route'lar, layout, globals.css (tema token'ları @theme içinde)
-components/  UI bileşenleri
-lib/         saf yardımcılar; cn.ts, prisma.ts, queries/
-config/      sabit ayarlar; site.ts, nav.ts, social.ts (+ index.ts)
+app/         routes, layout, globals.css (theme tokens inside @theme)
+components/  UI components
+lib/         pure helpers; cn.ts, prisma.ts, queries/
+config/      static config; site.ts, nav.ts, social.ts (+ index.ts)
 prisma/      schema.prisma, seed.ts, migrations/
-generated/   Prisma client — üretilir, gitignore'da
-public/      images/ altında görseller
+generated/   Prisma client — generated, in gitignore
+public/      images under images/
 docs/        codemap (+ codemap/), CHANGELOG, sessions
-Obsidian/    tasarımın kaynağı: canvas, diyagramlar, ham notlar
+Obsidian/    design source: canvas, diagrams, raw notes
+PLAN.md      active phase plan (Big Phase 2), at root
+
 ```
 
-Modül public API'si `index.ts` ile açılır. `lib/` bir modül değil, küçük
-yardımcıların klasörü — `index.ts`'i yok; `lib/queries/` ve `config/`
-kendi `index.ts`'lerini taşır.
+Module public API is exposed via `index.ts`. `lib/` is not a module, but a folder for small helpers — it has no `index.ts`; `lib/queries/` and `config/` carry their own `index.ts` files.
 
-## Durum
+## Status
 
-**Büyük Faz 1 tamamlandı.** Yönetim dosyaları, araç zinciri, tema
-token'ları, Prisma şeması, app kabuğu (yer tutucu sayfalar).
-`build` / `lint` / `typecheck` temiz, 5 route da statik.
+**Big Phase 1 completed.** Management files, toolchain, theme tokens, Prisma schema, app shell (placeholder pages). `build` / `lint` / `typecheck` are clean, all 5 routes are static.
 
-### Açık uçlar
+**Big Phase 2 planned, not started.** The plan lives at `PLAN.md` in the root; the decisions locked there are already reflected in the sub-files.
 
-- **(Sonra bakılacak)** PostgreSQL yok → migration ve seed çalıştırılmadı.
-  Ayrıntı: `docs/codemap/data.md`.
-- `config/site.ts` ve `config/social.ts` yer tutucu; favicon Next varsayılanı.
-- `next dev`, `CLAUDE.md` sonuna agent-rules bloğu ekler. Her çalışmada
-  yeniden yazıldığı için silinmez, commit'lenir.
+### Loose ends
 
-### Sıradaki — Büyük Faz 2
+* **(To be checked later)** No PostgreSQL → migration and seed have not been run. Details: `docs/codemap/data.md`.
+* `config/site.ts` and `config/social.ts` are placeholders; favicon is the Next.js default.
+* `next dev` appends the agent-rules block to the end of `CLAUDE.md`. Since it is rewritten on every run, it is not deleted, it is committed.
+* **`impeccable` ^3.6.0 sits in `dependencies`.** It is design tooling (`.claude/rules/skills/impeccable/`), it is not on the approved list in `CLAUDE.md`, and a production dependency ships into the standalone Docker image. Move it to `devDependencies` or drop it.
 
-Ortak UI (`Card`, `OverlapPair`, `Reveal`, `PageTransition` +
-`template.tsx`) → Navbar dörtlüsü → içerik bileşenleri → PostgreSQL, ilk
-migration, seed içeriği, `lib/queries/` sorguları → sayfaların canvas
-yerleşimlerine göre örülmesi → dört animasyon kalıbı.
+### Next up — Big Phase 2
+
+2.0 clean tree → 2.1 common UI (`Card`, `OverlapPair`, `Reveal`, `PageTransition` + `template.tsx`, the missing `<noscript>` rule) → 2.2 Navbar quartet → 2.3 `lib/queries/` with the fixture seam → 2.4 content components → 2.5 pages assembled from the canvas → 2.6 PostgreSQL, first migration, seed, real query bodies, revalidate endpoint.
+
+The order is UI-first / data-last because PostgreSQL is not available yet; pages are built against fixtures behind `lib/queries/` so the database step swaps four function bodies instead of rewriting pages. Details in `PLAN.md`.

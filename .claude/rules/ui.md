@@ -1,96 +1,96 @@
 ---
-description: Arayüz kuralları — stil, renk, tipografi, layout, animasyon, görsel, erişilebilirlik
+description: UI rules — style, color, typography, layout, animation, imagery, accessibility
 globs: ["components/**", "app/**", "config/**"]
 ---
 
-# Arayüz kuralları
+# UI rules
 
-## Stil
+## Style
 
-- Tailwind v4. Ayrı CSS dosyası ve inline `style` yok; tek istisna `app/globals.css`.
-- **Token'lar `app/globals.css` içindeki `@theme` bloğunda.** `tailwind.config.ts` YOK — v4'te tema CSS'te tanımlanır. Bileşende `#1e293b` gibi çıplak değer yazma.
-- Arbitrary değer (`w-[437px]`) yalnızca overlap hesapları için ve yalnızca `OverlapPair` içinde. Başka yerde görürsen token eksik demektir.
-- Koşullu sınıflar `lib/cn.ts` içindeki `cn()` ile birleşir (`clsx` + `tailwind-merge`); şablon string'i ile sınıf üretme. `tailwind-merge` çakışan sınıfları temizler: `px-2 px-4` → `px-4`.
-- Sınıf sırasını `prettier-plugin-tailwindcss` düzenler. Elle sıraya dizme.
-- Mobile-first: temel sınıf mobil, `md:` ve üstü masaüstü.
+- Tailwind v4. No separate CSS files or inline `style`; the only exception is `app/globals.css`.
+- **Tokens are in the `@theme` block inside `app/globals.css`.** NO `tailwind.config.ts` — in v4, the theme is defined in CSS. Do not write bare values like `#1e293b` in the component.
+- Arbitrary values (`w-[437px]`) are only for overlap calculations and only inside `OverlapPair`. If you see one elsewhere, a token is missing.
+- Conditional classes are merged with `cn()` in `lib/cn.ts` (`clsx` + `tailwind-merge`); do not construct classes with template strings. `tailwind-merge` cleans up conflicting classes: `px-2 px-4` → `px-4`.
+- Class order is maintained by `prettier-plugin-tailwindcss`. Do not order them manually.
+- Mobile-first: base class is mobile, `md:` and above is desktop.
 
-## Renkler
+## Colors
 
-Palet `@theme` içinde token olarak tanımlı. Çıplak hex yazma.
+The palette is defined as tokens inside `@theme`. Do not write bare hex values.
 
-- Zemin `bg-page`, kart `bg-surface`, görsel bloğu `bg-surface-media`. Overlap bu üç tonun farkıyla okunur; ayrıca kenarlık koyma.
-- Metin hiyerarşisi renkle kurulur: başlık `text-ink`, gövde `text-ink-secondary`, tarih ve not `text-ink-muted`.
-- `text-ink-muted` yalnızca 300 ve 400 ağırlıkla kullanılır. 100 ile birleşince kontrast AA altına düşer.
-- **Ahududu ikiye ayrılır.** `raspberry-500` dekoratif dolgu; üstünde metin taşımaz (beyaz metinle 4.3:1, AA altı). Metin, link ve rozet zemini için `raspberry-700` kullanılır.
-- Sayfada tek vurgu rengi vardır. İkinci bir canlı renk eklemeden önce sor.
+- Background `bg-page`, card `bg-surface`, image block `bg-surface-media`. Overlap is perceived through the difference of these three tones; do not add borders.
+- Text hierarchy is established with color: heading `text-ink`, body `text-ink-secondary`, date and note `text-ink-muted`.
+- `text-ink-muted` is used only with 300 and 400 weights. Combined with 100, the contrast falls below AA.
+- **Raspberry is split in two.** `raspberry-500` is for decorative fill; it does not carry text on top (4.3:1 with white text, below AA). `raspberry-700` is used for text, links, and badge backgrounds.
+- There is only one accent color on the site. Ask before adding a second vibrant color.
 
-## Tipografi
+## Typography
 
-- Tek font: IBM Plex Serif, `next/font` ile yüklenir, `--font-plex-serif` değişkeniyle bağlanır.
-- **Yalnızca üç ağırlık var: 100, 300, 400.** `font-medium`, `font-semibold`, `font-bold` KULLANMA — yüklü değiller, tarayıcı sahte kalın üretir ve serif'te bu bariz durur. `@theme` içindeki `--font-weight-*: initial` reset'i bu sınıfları tamamen kaldırır; yazarsan hiç çalışmaz.
-- Hiyerarşi ağırlıkla değil; boyut, boşluk ve renk ile kurulur.
-- Boyut token'ları: `text-display`, `text-h1`, `text-h2`, `text-h3`, `text-lead`, `text-body`, `text-small`, `text-caption`. Çıplak `text-[28px]` yazma.
-- `display`, `h1` ve `h2` clamp ile tanımlı; mobilde kendiliğinden daralır. Bu üçü için ayrıca `md:text-*` yazma.
-- Uzun metin blokları `max-w-prose` (62ch) ile sınırlanır. Serif satır uzunluğu bundan fazla olunca okunmuyor.
-- Yeni ağırlık gerekiyorsa sor. Her ağırlık ek font dosyası ve ek yükleme demek.
+- Single font: IBM Plex Serif, loaded with `next/font`, bound via the `--font-plex-serif` variable.
+- **There are only three weights: 100, 300, 400.** DO NOT USE `font-medium`, `font-semibold`, `font-bold` — they are not loaded, the browser will synthesize faux-bold and it looks obvious on a serif. The `--font-weight-*: initial` reset in `@theme` completely removes these classes; they will not work if you write them.
+- Hierarchy is established with size, spacing, and color, not weight.
+- Size tokens: `text-display`, `text-h1`, `text-h2`, `text-h3`, `text-lead`, `text-body`, `text-small`, `text-caption`. Do not write bare `text-[28px]`.
+- `display`, `h1`, and `h2` are defined with clamp; they shrink automatically on mobile. Do not write `md:text-*` additionally for these three.
+- Long text blocks are constrained with `max-w-prose` (62ch). Serif line length becomes unreadable beyond this.
+- If a new weight is needed, ask. Every weight means an additional font file and payload.
 
-## Boşluk
+## Spacing
 
-- Bölümler arası `py-section` (clamp, mobilde daralır).
-- Overlap kayması `overlap` ve `overlap-lg` token'larıyla verilir (`-mt-overlap` gibi); negatif margin değeri elle yazılmaz.
-- Geri kalan boşluklar Tailwind'in varsayılan 4px skalası.
+- Between sections `py-section` (clamp, shrinks on mobile).
+- Overlap shift is given with the `overlap` and `overlap-lg` tokens (e.g., `-mt-overlap`); do not write negative margin values manually.
+- The rest of the spacing is Tailwind's default 4px scale.
 
-## Layout ve responsive
+## Layout and responsive
 
-- Overlap efekti sitenin görsel kimliği ve dar ekranda ilk kırılan şey. Overlap yalnızca `md` ve üstünde; altında bloklar alt alta düşer.
-- **DOM sırası sabittir: önce görsel, sonra metin.** `reverse` prop'u yalnızca masaüstünde yerleşimi çevirir (CSS `order`/grid), DOM'a dokunmaz. Böylece mobil yığılma ve ekran okuyucu sırası her yerde aynı kalır.
-- Mobilde overlap kapanır ama boşluk kalmaz; blok arası ritmi `gap` taşır.
-- Yeni bölüm masaüstü + mobil birlikte verilir. Tek breakpoint'lik iş tamamlanmış sayılmaz.
+- The overlap effect is the visual identity of the site and the first thing to break on a narrow screen. Overlap is only on `md` and above; below that, blocks stack vertically.
+- **DOM order is fixed: image first, then text.** The `reverse` prop only changes the placement on desktop (CSS `order`/grid), it does not touch the DOM. Thus, mobile stacking and screen reader order remain the same everywhere.
+- On mobile, the overlap is removed but the spacing remains; the rhythm between blocks is carried by `gap`.
+- A new section is delivered with both desktop and mobile. Single-breakpoint work is not considered complete.
 
-## Navbar ve dış linkler
+## Navbar and external links
 
-- Navbar iki parçadan oluşur: solda sayfa linkleri, sağ üstte ikon grubu (`SocialLinks`) — GitHub, LinkedIn, Mail. İkisi de `config/` içinde, DB'de değil.
-- GitHub ve LinkedIn dışa gider: `target="_blank"` + `rel="noopener noreferrer"`.
-- **Mail farklı davranır.** `mailto:` linkine `target="_blank"` verme; boş bir sekme açıp arkada bırakır. Aynı sekmede kalır, istemciyi işletim sistemi açar.
-- **Yalnız ikon = görünür metin yok.** Her ikon linkinde `aria-label` zorunlu. Tooltip erişilebilirlik yerine geçmez.
-- Dokunma hedefi mobilde en az 44×44px; ikon küçülürken tıklama alanı küçülmez.
-- İkonlar `lucide-react`'ten tek tek import edilir (`import { Github } from "lucide-react"`). İkinci bir ikon paketi ekleme.
-- Mobilde sığmıyorsa ikonlar kalır, sayfa linkleri menüye taşınır — iletişim her ekranda tek dokunuş uzaklıkta.
-- Mobil menü `@radix-ui/react-dialog` üzerine kurulur. Focus trap, Escape, scroll kilidi ve aria bağlantılarını elle yazma; bu iş göründüğünden zor.
+- The navbar consists of two parts: page links on the left, icon group on the top right (`SocialLinks`) — GitHub, LinkedIn, Email. Both are in `config/`, not in the DB.
+- GitHub and LinkedIn go external: `target="_blank"` + `rel="noopener noreferrer"`.
+- **Email behaves differently.** Do not give `target="_blank"` to a `mailto:` link; it opens an empty tab and leaves it behind. It stays in the same tab, the OS opens the client.
+- **Icon only = no visible text.** `aria-label` is mandatory on every icon link. Tooltips are not a substitute for accessibility.
+- Touch target on mobile is at least 44×44px; the click area does not shrink while the icon shrinks.
+- Icons are imported individually from `lucide-react` (`import { Github } from "lucide-react"`). Do not add a second icon package.
+- If they don't fit on mobile, icons stay, page links move to the menu — communication is one touch away on every screen.
+- Mobile menu is built on `@radix-ui/react-dialog`. Do not write focus trap, Escape, scroll lock, and aria bindings manually; it is harder than it looks.
 
-## Animasyonlar
+## Animations
 
-Motion (eski adı Framer Motion) + IntersectionObserver. Paket adı `motion`, import `motion/react` üzerinden. `framer-motion` paketini kurma — hâlâ çalışıyor ama aktif geliştirilmiyor.
+Motion (formerly Framer Motion) + IntersectionObserver. Package name is `motion`, import via `motion/react`. Do not install the `framer-motion` package — it still works but is not actively developed.
 
-Tanımlı dört kalıp dışına çıkma; yeni animasyon gerekiyorsa sor. Door FadeIn-Left&Right → içerik geçişleri. Door FadeIn-Up&Down → navbar sayfa geçişleri. Partial FadeIn-Left&Right&Up → LandingPage. Scroll reveal → içerik bölümleri görünür alana girince belirir.
+Do not deviate from the four defined patterns; if a new animation is needed, ask. Door FadeIn-Left&Right → content transitions. Door FadeIn-Up&Down → navbar page transitions. Partial FadeIn-Left&Right&Up → LandingPage. Scroll reveal → content sections appear as they enter the viewport.
 
-### Görev dağılımı
+### Delegation
 
-- **Animasyonlu her şey Motion.** Scroll reveal için `whileInView` + `viewport={{ once: true }}` yeterli; bunun için kendi observer'ını yazma. Motion'ın `whileInView`'i zaten IntersectionObserver kullanıyor.
-- **Kendi `useInView` hook'un yalnızca animasyon olmayan takip için.** (Bir bölüm göründüğünde animasyon dışında bir şey tetiklemek gibi.) Şu an böyle bir ihtiyaç yok; doğarsa `lib/hooks/` içine gelir.
-- İkisini aynı iş için üst üste bindirme; iki observer aynı elemanı izliyorsa biri gereksizdir.
+- **Everything animated is Motion.** `whileInView` + `viewport={{ once: true }}` is sufficient for scroll reveal; do not write your own observer for it. Motion's `whileInView` already uses IntersectionObserver.
+- **Your own `useInView` hook is only for non-animation tracking.** (Like triggering something other than an animation when a section becomes visible.) There is no such need currently; if it arises, it goes into `lib/hooks/`.
+- Do not overlap the two for the same job; if two observers are watching the same element, one is redundant.
 
-### Zorunlu kurallar
+### Mandatory rules
 
-- **İçerik varsayılan olarak görünür.** Motion `initial={{ opacity: 0 }}` değerini SSR HTML'ine yazar; JS gelmezse içerik görünmez kalır. Bunu `globals.css` içindeki `<noscript>` kuralı telafi eder: JS yokken animasyonlu elemanlar tam görünür hale gelir. Bu fallback olmadan reveal eklenmez.
-- Reveal bir kez tetiklenir (`viewport={{ once: true }}`). Yukarı kaydırıp inince tekrar oynamaz.
-- **Sayfa geçişleri `app/template.tsx` ile.** `layout.tsx` navigasyonda remount olmaz, giriş animasyonu tetiklenmez.
-- `useReducedMotion` ile `prefers-reduced-motion` her animasyonlu bileşende kontrol edilir; azaltılmışsa bileşen sade haline döner.
-- Yalnızca `transform` ve `opacity` animasyonu. Layout kaydıran özellik (width, height, top, left) animasyonu YOK.
-- `LazyMotion` + `m` bileşeni kullanılır; tam `motion` importu bundle'a gereksiz yük bindirir.
-- Motion, Client Component gerektirir. Animasyon yaprakta kalır, sayfayı client'a çevirmez.
+- **Content is visible by default.** Motion writes the `initial={{ opacity: 0 }}` value to the SSR HTML; if JS doesn't arrive, the content remains invisible. The `<noscript>` rule in `globals.css` compensates for this: when JS is absent, animated elements become fully visible. No reveal is added without this fallback.
+- Reveal triggers once (`viewport={{ once: true }}`). It does not replay when scrolling up and down.
+- **Page transitions via `app/template.tsx`.** `layout.tsx` does not remount on navigation, the entrance animation is not triggered.
+- `prefers-reduced-motion` is checked in every animated component with `useReducedMotion`; if reduced, the component reverts to its plain state.
+- Only `transform` and `opacity` animation. NO animation of layout-shifting properties (width, height, top, left).
+- `LazyMotion` + `m` component is used; a full `motion` import adds unnecessary load to the bundle.
+- Motion requires a Client Component. The animation stays on the leaf, it does not turn the page into a client component.
 
-## Görseller
+## Imagery
 
-- Görseller repo'da `public/images/` altında. DB yalnızca yolu tutar (`/images/projects/x.webp`).
-- Repo'ya optimize edilmiş dosya girer; telefondan çıkmış ham JPEG değil. Görsel repo'ya girmeden önce boyutlandırılır ve sıkıştırılır.
-- Tüm görseller `next/image`. Ham `<img>` yok.
-- `alt` zorunlu; dekoratif görselde `alt=""`.
-- İlk ekrandaki görsellerde `priority`, diğerlerinde varsayılan lazy davranış.
-- `sizes` gerçek gösterim genişliğini yansıtır; masaüstü genişliğini mobile indirtme.
+- Images are in the repo under `public/images/`. DB only holds the path (`/images/projects/x.webp`).
+- Optimized files go into the repo; not raw JPEGs straight from a phone. Images are resized and compressed before entering the repo.
+- All images are `next/image`. No raw `<img>`.
+- `alt` is mandatory; `alt=""` for decorative images.
+- `preload` on above-the-fold images, default lazy behavior on the rest. Next 16 deprecated `priority` in favor of `preload`; do not write `priority` in new code.
+- `sizes` reflects the actual display width; do not make mobile download the desktop width.
 
-## Erişilebilirlik
+## Accessibility
 
-- Navbar klavyeyle gezilebilir; aktif sayfada `aria-current`.
-- Overlap'te görsel sıra ile DOM sırası çakışırsa DOM sırası okuma mantığını korur.
-- Kontrast AA. IBM Plex Serif ince ağırlıklarda (100, 300) kontrast düşer; küçük punto + Thin kombinasyonundan kaçın.
+- Navbar is keyboard navigable; `aria-current` on the active page.
+- If visual order and DOM order conflict in the overlap, the DOM order preserves the reading logic.
+- Contrast AA. IBM Plex Serif contrast drops in thin weights (100, 300); avoid the small font + Thin combination.

@@ -38,3 +38,34 @@ komutlarıyla sona eklenir.
   import EDİLMEZ — her oturumun context'i küçülsün diye.
 - `PRODUCT.md` içindeki sequence diyagramı atfı düzeltildi; işaret ettiği
   PNG repodan kaldırılmıştı.
+- Yönetim dosyaları İngilizceye çevrildi: `CLAUDE.md`, `.claude/rules/{ui,data}.md`,
+  `docs/codemap*`. Kural içerikleri aynı, dil değişti.
+- **Büyük Faz 2 planlandı** → kökte `PLAN.md`. Sıra UI-önce / veri-sonra:
+  PostgreSQL henüz yok, bu yüzden sayfalar `lib/queries/` arkasındaki
+  fixture'lara karşı yazılacak. DB geldiğinde dört fonksiyon gövdesi
+  değişecek, sayfalar ve bileşenler değişmeyecek.
+- Faz 2 kararları codemap'e işlendi: `ProjectCard` overlap değil, 2 sütun /
+  1 satır grid. Tıklanabilir tek yüzey linkler (GitHub, LinkedIn, Mail);
+  kart, fotoğraf ve metin bloğu asla anchor değil. Yenileme yalnızca
+  on-demand — `export const revalidate` yok, `REVALIDATE_SECRET` ile
+  korunan `app/api/revalidate/route.ts` var.
+
+### Düzeltilen
+
+- **`.claude/rules/{ui,data}.md` frontmatter'ı bozuktu.** Çeviri sırasında
+  `description:` satırı `## description:` başlığına dönmüş, kapanış `---`
+  kaybolmuştu; bu haliyle YAML parse edilmiyor, kurallar `globs` ile hiç
+  yüklenmiyordu. Frontmatter yeniden kuruldu, `config/` → `config/**`
+  düzeltildi.
+- **`next/image` `priority` Next 16'da kullanımdan kalktı**, yerini `preload`
+  aldı. `.claude/rules/ui.md` eski kuralı yazıyordu, düzeltildi.
+- `.claude/rules/data.md` seed komutunu hâlâ `package.json#prisma.seed`
+  olarak gösteriyordu; Prisma 7 bu alanı okumuyor, doğrusu
+  `prisma.config.ts` → `migrations.seed`.
+
+### Dikkat
+
+- **`impeccable` ^3.6.0 `dependencies` altına kurulmuş.** Tasarım aracı;
+  onaylı paket listesinde değil ve production bağımlılığı olduğu için
+  standalone Docker imajına giriyor. `devDependencies`'e taşınmalı ya da
+  kaldırılmalı — karar senin.

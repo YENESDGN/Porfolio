@@ -1,31 +1,31 @@
 ---
-description: Veri katmanı kuralları — Prisma kullanımı, şema, içerik girişi
+description: Data layer rules — Prisma usage, schema, content entry
 globs: ["prisma/**", "lib/prisma.ts", "lib/queries/**"]
 ---
 
-# Veri katmanı kuralları
+# Data layer rules
 
-## Prisma kullanımı
+## Prisma usage
 
-- **Yalnızca sunucuda.** Client Component'te `@prisma/client` importu YOK. Kaçak import build'i patlatmadan bundle'a sızabilir.
-- **Tek client örneği.** `lib/prisma.ts` içinde `globalThis` singleton'ı; dev'de hot reload her yenilemede yeni bağlantı açar, havuz tükenir.
-- **API route yazma.** Server Component sorguyu doğrudan atar. Okuma için `app/api` klasörü açma — araya gereksiz bir HTTP atlaması koyar.
-- **Sorgular tek yerde.** Tüm Prisma çağrıları `lib/queries/` içinde, isimlendirilmiş fonksiyonlar olarak; dışarıya `lib/queries/index.ts` üzerinden açılır. Bileşen içinde çıplak `prisma.x.findMany` yok. Bileşen ne sorduğunu bilir, nasıl sorulduğunu bilmez.
-- **Tip kaynağı Prisma.** Üretilen tipleri kullan; aynı şekli elle tekrar tanımlama.
-- **Sadece gerekeni seç.** `select` ile alan seç; tüm satırı çekip yarısını atma.
-- `DATABASE_URL` yalnızca env'de. `.env` commit edilmez, `.env.example` edilir.
+- **Only on the server.** NO `@prisma/client` import in Client Components. A stray import can leak into the bundle without breaking the build.
+- **Single client instance.** `globalThis` singleton in `lib/prisma.ts`; in dev, hot reload opens a new connection on every refresh, exhausting the pool.
+- **Do not write API routes.** The Server Component issues the query directly. Do not create an `app/api` folder for reading — it adds an unnecessary HTTP hop in between.
+- **Queries in one place.** All Prisma calls are inside `lib/queries/`, as named functions; exposed externally via `lib/queries/index.ts`. No bare `prisma.x.findMany` inside the component. The component knows what it asks for, not how it is asked.
+- **Prisma is the source of types.** Use generated types; do not redefine the same shape manually.
+- **Select only what is needed.** Select fields with `select`; do not fetch the whole row and discard half of it.
+- `DATABASE_URL` is only in the env. `.env` is not committed, `.env.example` is.
 
-## Şema
+## Schema
 
-- Model adları PascalCase, tablo adları snake_case (`@@map`) — şema notundaki tablo adları korunur.
-- Şema değişikliği migration ile. Commit'lenen hiçbir değişiklik `db push` ile geçmez.
-- Opsiyonel alanlar (`githubUrl` gibi) şemada gerçekten `nullable`; yoksa ilgili parça render edilmez, boş kutu bırakılmaz.
-- Sıralama veriye yazılır (`order` alanı). Diziyi kodda yeniden sıralama.
-- Görsel alanları `public/` altındaki yolu tutar (`/images/projects/x.webp`), dosyanın kendisini değil. Binary DB'ye girmez.
-- Metin alanlarının uzunluk sınırı layout'a göre belirlenir; roadmap açıklaması ile proje açıklaması aynı kutuya sığmaz.
+- Model names are PascalCase, table names are snake_case (`@@map`) — table names in the schema notes are preserved.
+- Schema changes via migration. No committed change is applied with `db push`.
+- Optional fields (like `githubUrl`) are truly `nullable` in the schema; if missing, the relevant part is not rendered, an empty box is not left.
+- Sorting is written to the data (`order` field). Do not reorder the array in code.
+- Image fields hold the path under `public/` (`/images/projects/x.webp`), not the file itself. Binaries do not go into the DB.
+- The length limit of text fields is determined by the layout; a roadmap description and a project description do not fit in the same box.
 
-## İçerik girişi
+## Content entry
 
-- İçerik Prisma Studio veya `prisma/seed.ts` üzerinden girilir. Elle SQL dosyaya dağıtılmaz. Seed `tsx` ile çalışır; `package.json` içindeki `prisma.seed` alanında tanımlıdır.
-- Seed idempotent olur (`upsert`); iki kez çalıştırınca içerik ikizlenmez.
-- İçerik güncellendikten sonra ilgili route revalidate edilir, yoksa statik sayfa eski halini göstermeye devam eder.
+- Content is entered via Prisma Studio or `prisma/seed.ts`. It is not scattered manually into SQL files. The seed runs with `tsx`; in Prisma 7 the command is defined in `prisma.config.ts` under `migrations.seed` — the `prisma.seed` field in `package.json` is no longer read.
+- The seed must be idempotent (`upsert`); running it twice does not duplicate the content.
+- After content is updated, the relevant route is revalidated, otherwise the static page continues to show the old state.

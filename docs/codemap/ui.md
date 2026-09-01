@@ -1,71 +1,53 @@
-# Codemap — arayüz
+# Codemap — UI
 
-Genel bakış → `docs/codemap.md`. Kurallar → `.claude/rules/ui.md`.
+Overview → `docs/codemap.md`. Rules → `.claude/rules/ui.md`.
 
-## Tema token'ları — `app/globals.css`
+## Theme tokens — `app/globals.css`
 
-Tailwind v4: tema `@theme` bloğunda, `tailwind.config.ts` YOK.
+Tailwind v4: theme is in the `@theme` block, NO `tailwind.config.ts`.
 
-- **Renk:** `page`, `surface` / `surface-media`, `ink` / `-secondary` /
-  `-muted` / `-inverse`, `line` / `-strong`, `raspberry-50/500/600/700`
-- **Font:** `--font-serif` → `--font-plex-serif` (next/font, IBM Plex Serif).
-  `latin-ext` alt kümesi zorunlu; yoksa ş/ğ/ı/İ yedek fonta düşer.
-- **Ağırlık:** yalnız `thin 100`, `light 300`, `normal 400`.
-  `--font-weight-*: initial` namespace sıfırlaması `font-bold` /
-  `font-semibold` sınıflarını üretimden tamamen kaldırır.
-- **Boyut:** `caption · small · body · lead · h3 · h2 · h1 · display`
-  (son üçü clamp, mobilde kendiliğinden daralır).
-- **Boşluk:** `overlap`, `overlap-lg`, `section` (clamp).
+* **Color:** `page`, `surface` / `surface-media`, `ink` / `-secondary` / `-muted` / `-inverse`, `line` / `-strong`, `raspberry-50/500/600/700`
+* **Font:** `--font-serif` → `--font-plex-serif` (next/font, IBM Plex Serif). `latin-ext` subset is mandatory; otherwise ş/ğ/ı/İ fall back to a fallback font.
+* **Weight:** only `thin 100`, `light 300`, `normal 400`. `--font-weight-*: initial` namespace reset completely removes `font-bold` / `font-semibold` classes from production.
+* **Size:** `caption · small · body · lead · h3 · h2 · h1 · display` (the last three are clamp, they shrink automatically on mobile).
+* **Spacing:** `overlap`, `overlap-lg`, `section` (clamp).
 
-### Tuzak: `max-w-prose`
+### Pitfall: `max-w-prose`
 
-62ch değeri `--max-width-prose` ile veriliyor, `--container-prose` ile
-değil. Tailwind v4 bu sınıfı `--max-width-*` namespace'inden okur;
-`--container-prose` yazılırsa sessizce yerleşik 65ch'de kalır.
+The 62ch value is provided via `--max-width-prose`, not `--container-prose`. Tailwind v4 reads this class from the `--max-width-*` namespace; if `--container-prose` is written, it silently stays at the built-in 65ch.
 
-Not: `@theme` içinde tanımlı ama hiçbir sınıfta kullanılmayan token CSS'e
-yazılmaz (`overlap-lg` şu an böyle). Eksik sanma, Faz 2'de gelecek.
+Note: A token defined in `@theme` but not used in any class is not written to CSS (this is currently the case for `overlap-lg`). Do not think it is missing, it will come in Phase 2.
 
-## Bileşenler
+## Components
 
-### Mevcut
+### Existing
 
-- `RouteLoading` (Server) · `RouteError` (Client) — route plumbing,
-  bkz. `docs/codemap/routes.md`.
+* `RouteLoading` (Server) · `RouteError` (Client) — route plumbing, see `docs/codemap/routes.md`.
 
-### Faz 2'de yazılacak
+### To be written in Phase 2
 
-**Navbar:** `Navbar` (Server) · `NavLink` (Client; `usePathname`,
-`aria-current` — navbar'ın client olması gereken tek parçası) ·
-`SocialLinks` (Server, `config/social.ts`) · `MobileMenu` (Client,
-Radix Dialog).
+**Navbar:** `Navbar` (Server) · `NavLink` (Client; `usePathname`, `aria-current` — the only part of the navbar that needs to be client) · `SocialLinks` (Server, `config/social.ts`) · `MobileMenu` (Client, Radix Dialog).
 
-**Ortak UI:** `Card` (kart kabuğu, `title` opsiyonel) · `OverlapPair`
-(`media`, `content`, `reverse`; **tek** overlap implementasyonu) ·
-`Reveal` (Client; `whileInView` + `once`, `children` aldığı için
-içindeki Server Component'ler sunucuda kalır) · `PageTransition`
-(Client, `template.tsx` içinde).
+**Common UI:** `Card` (card shell, `title` is optional) · `OverlapPair` (`media`, `content`, `reverse`; **single** overlap implementation) · `Reveal` (Client; `whileInView` + `once`, because it takes `children`, the Server Components inside it stay on the server) · `PageTransition` (Client, inside `template.tsx`).
 
-**İçerik (hepsi Server):** `RoadMap` · `TextCard` · `ProjectCard`
-(OverlapPair + opsiyonel `GitHubLink`) · `GitHubLink` (url yoksa hiç
-render edilmez) · `TechStack` · `StatCard` · `WelcomeSection` ·
-`ProfileImage`.
+**Content (all Server):** `RoadMap` · `TextCard` · `ProjectCard` (2-col / 1-row grid + optional `GitHubLink`) · `GitHubLink` (not rendered at all if no url) · `TechStack` · `StatCard` · `WelcomeSection` · `ProfileImage`.
 
-### Listeden düşenler
+### Dropped from the list
 
-`App`/`Outlet` (React Router kavramı; karşılığı `layout.tsx` + dosya
-sistemi) · `Layout` (→ `app/layout.tsx`) · `OverlapText` (→
-`OverlapPair`'e gömüldü, DRY) · `TechIcons` (→ `TechStack` ile birleşti)
-· `Image` (`next/image` doğrudan kullanılır).
+`App`/`Outlet` (React Router concept; equivalent is `layout.tsx` + file system) · `Layout` (→ `app/layout.tsx`) · `OverlapText` (→ embedded into `OverlapPair`, DRY) · `TechIcons` (→ merged with `TechStack`) · `Image` (`next/image` is used directly).
 
-## Sabit ayarlar — `config/`
+### Decisions locked in `PLAN.md`
 
-`site.ts` (ad, başlık, açıklama, url) · `nav.ts` (4 route, TR etiket /
-EN href) · `social.ts` (GitHub, LinkedIn, Mail; `external` bayrağı
-mailto'nun aynı sekmede açılmasını sağlar). Public API `config/index.ts`.
+* **`ProjectCard` is not an overlap.** 2-column / 1-row grid, `gap-4`: thumbnail left, brief description + `GitHubLink` right; single column below `md`. `OverlapPair` stays reserved for `/about`.
+* **Links are the only clickable surfaces on the site** — GitHub, LinkedIn, Mail. Cards, photos and text blocks are never anchors.
+* **`next/image`: `preload`, not `priority`.** Next 16 deprecated `priority`; `.claude/rules/ui.md` was corrected accordingly.
+* **The `<noscript>` rule is still missing from `globals.css`.** The UI rules require it before any reveal ships — it lands in Phase 2.1 together with `Reveal`.
+* **`LazyMotion features={domAnimation}` is enough for `whileInView`.** The `inView` feature ships inside the `domAnimation` bundle; `domMax` is not needed.
 
-İkon bileşeni config'de tutulmaz — `SocialLinks` `key` üzerinden eşler,
-böylece config React'tan bağımsız kalır.
+## Static config — `config/`
 
-**(Sonra bakılacak)** `site.ts` ve `social.ts` içindeki ad, alan adı ve
-profil adresleri yer tutucu. Favicon hâlâ Next varsayılanı.
+`site.ts` (name, title, description, url) · `nav.ts` (4 routes, TR label / EN href) · `social.ts` (GitHub, LinkedIn, Email; the `external` flag ensures mailto opens in the same tab). Public API `config/index.ts`.
+
+The icon component is not kept in the config — `SocialLinks` matches via the `key`, so the config remains independent of React.
+
+**(To be checked later)** The name, domain, and profile URLs in `site.ts` and `social.ts` are placeholders. Favicon is still the Next.js default.
