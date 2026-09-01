@@ -8,30 +8,49 @@ type TechStackProps = {
 };
 
 // İşaretler yalnızca görsel; ad sr-only olarak taşınır, logoyu tanımayan
-// ziyaretçi de title ile karşılığını görür.
+// ziyaretçi de title ile karşılığını görür. Başlık görünmüyor, bu yüzden
+// listenin kimliği aria-label ile duruyor.
 export function TechStack({ items, className }: TechStackProps) {
   if (items.length === 0) return null;
 
   return (
-    <div className={cn(className)}>
-      <h2 className="text-caption text-ink-muted">Tech Stack</h2>
-      <ul className="mt-6 flex flex-wrap items-center gap-6 md:gap-8">
-        {items.map((item) => (
-          <li key={item.id} title={item.name} className="flex items-center">
-            {/* SVG optimize edilmez: vektörde kazanç yok ve unoptimized
-                Next'in SVG kısıtını da atlar. */}
-            <Image
-              src={item.icon}
-              alt=""
-              width={40}
-              height={40}
-              unoptimized
-              className="size-8 md:size-10"
-            />
-            <span className="sr-only">{item.name}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul
+      aria-label="Tech Stack"
+      className={cn("grid grid-cols-3 gap-2 md:gap-4", className)}
+    >
+      {items.map((item) => (
+        <li
+          key={item.id}
+          title={item.name}
+          className={cn(
+            "group relative isolate flex items-center justify-center px-4 pt-4 pb-5",
+            "before:absolute before:inset-0 before:-z-10 before:bg-surface before:opacity-0",
+            "before:transition before:duration-300 before:ease-out",
+            "hover:before:opacity-100 hover:before:shadow-contact",
+            "motion-reduce:before:transition-none",
+            "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-line",
+            "after:transition-colors after:duration-300",
+            "hover:after:bg-raspberry-700",
+            "motion-reduce:after:transition-none",
+          )}
+        >
+          {/* SVG optimize edilmez: vektörde kazanç yok ve unoptimized
+              Next'in SVG kısıtını da atlar. */}
+          <Image
+            src={item.icon}
+            alt=""
+            width={80}
+            height={80}
+            unoptimized
+            className={cn(
+              "size-16 transition-transform duration-300 ease-out md:size-20",
+              "group-hover:-translate-y-0.5",
+              "motion-reduce:transform-none motion-reduce:transition-none",
+            )}
+          />
+          <span className="sr-only">{item.name}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
