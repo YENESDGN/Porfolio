@@ -6,11 +6,11 @@ export const landingSelect = {
   photo: { select: { url: true, altText: true } },
 } satisfies Prisma.LandingPageSelect;
 
-// icon kolonu henüz hiçbir yerde çizilmiyor; logo varlıkları 2.6'da gelene
-// kadar seçilmiyor — yalnızca ihtiyaç duyulan alan çekilir.
+// icon, public/images/tech/ altındaki işaretin yolunu tutar.
 export const techStackSelect = {
   id: true,
   name: true,
+  icon: true,
 } satisfies Prisma.TechStackItemSelect;
 
 export type LandingContent = Prisma.LandingPageGetPayload<{
