@@ -1,6 +1,11 @@
+export { GithubIcon, LinkedinIcon } from "./BrandIcons";
 export { Card } from "./Card";
+export { MobileMenu } from "./MobileMenu";
+export { Navbar } from "./Navbar";
+export { NavLink } from "./NavLink";
 export { OverlapPair } from "./OverlapPair";
 export { PageTransition } from "./PageTransition";
 export { Reveal } from "./Reveal";
+export { SocialLinks } from "./SocialLinks";
 export { default as RouteError } from "./RouteError";
 export { default as RouteLoading } from "./RouteLoading";
