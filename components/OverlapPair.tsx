@@ -33,7 +33,7 @@ export function OverlapPair({
       {/* Negatif kenar boşluğu bitişik sütuna taşar; overlap payı budur. */}
       <div
         className={cn(
-          "relative md:row-start-1",
+          "relative md:row-start-1 md:shadow-contact",
           reverse
             ? "md:col-start-1 md:-mr-overlap lg:-mr-overlap-lg"
             : "md:col-start-2 md:-ml-overlap lg:-ml-overlap-lg",

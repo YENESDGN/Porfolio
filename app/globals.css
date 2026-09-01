@@ -56,6 +56,10 @@
   --text-display--line-height: 1.1;
   --text-display--letter-spacing: -0.02em;
 
+  /* Sistemdeki tek gölge: üstteki kâğıdın cam levhayı kestiği temas noktası.
+     Yalnızca OverlapPair içerik bloğunda, yalnızca md ve üstünde kullanılır. */
+  --shadow-contact: 0 4px 16px rgba(53, 53, 53, 0.08);
+
   --spacing-overlap: 3rem;
   --spacing-overlap-lg: 4.5rem;
   --spacing-section: clamp(4rem, 2rem + 7vw, 7rem);

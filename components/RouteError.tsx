@@ -11,7 +11,7 @@ export default function RouteError({ reset }: { reset: () => void }) {
       <button
         type="button"
         onClick={reset}
-        className="mt-8 rounded bg-raspberry-700 px-5 py-3 text-body text-ink-inverse"
+        className="mt-8 bg-raspberry-700 px-5 py-3 text-body text-ink-inverse transition-colors hover:bg-raspberry-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
       >
         Yeniden dene
       </button>
