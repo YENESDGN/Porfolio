@@ -54,3 +54,5 @@ next-env.d.ts
 #impeccable
 .impeccable
 impeccable
+# vendored impeccable skill dosyaları — repoya girmez, karar ertelendi
+/.claude/rules/skills/
