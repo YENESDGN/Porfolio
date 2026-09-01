@@ -4,12 +4,13 @@ import { MobileMenu } from "./MobileMenu";
 import { NavLink } from "./NavLink";
 import { SocialLinks } from "./SocialLinks";
 
-// header tam genişlikte; ölçüyü içerideki Container taşır.
+// Kâğıt bant tam genişlikte; ölçüyü içerideki Container taşır. Sayfa
+// zemininden ayrımı ton farkı kurar — kenarlık ya da gölge yok.
 // İkonlar mobilde de görünür kalır, yalnızca sayfa linkleri menüye taşınır:
 // iletişim her ekranda tek dokunuş uzakta.
 export function Navbar() {
   return (
-    <header className="pt-6">
+    <header className="bg-surface py-2">
       <Container>
         <nav
           aria-label="Ana gezinme"

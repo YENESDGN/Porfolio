@@ -251,7 +251,7 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 
 ### Navigasyon
 
-- **Navbar:** Solda sayfa linkleri, sağ üstte ikon grubu. Aktif linkte `aria-current="page"` ve `text-ink`; pasif link `text-ink-secondary`.
+- **Navbar:** Tam genişlikte kâğıt bant (`bg-surface`), içeriği `Container` ile hizalı. Sayfa zemininden ayrımı ton farkı kurar; kenarlık ve gölge yok. Solda sayfa linkleri, sağ üstte ikon grubu. Aktif linkte `aria-current="page"` ve `text-ink`; pasif link `text-ink-secondary`.
 - **Mobil menü:** Radix Dialog. İkonlar mobilde de görünür kalır, yalnızca sayfa linkleri menüye taşınır — iletişim her ekranda tek dokunuş uzakta.
 
 ### Buton
