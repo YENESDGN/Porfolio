@@ -15,8 +15,8 @@ export function SocialLinks({ className }: { className?: string }) {
             rel={link.external ? "noopener noreferrer" : undefined}
             className={cn(
               "flex size-11 items-center justify-center opacity-80 transition-opacity",
-              // Marka renkleri <img> içinde; hover artık renkle değil
-              // opaklıkla veriliyor, CSS rengi görsele geçmiyor.
+              // Marka renkleri görselin içinde: CSS rengi görsele geçmediği için
+              // vurgu renkle değil opaklıkla veriliyor.
               "hover:opacity-100",
               "focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700",
             )}
