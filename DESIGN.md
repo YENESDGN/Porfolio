@@ -166,7 +166,7 @@ Palet dar ve bilinçli bir sıcak–soğuk karşıtlığı üzerine kurulu: sıc
 
 **The No Weight Rule.** `--font-weight-*: initial` sıfırlaması `font-bold` ve `font-semibold` sınıflarını üretimden tamamen siler. Kalın yazılamaz; yazılırsa tarayıcı sahte kalın üretir ve serif'te bu apaçık görünür. Vurgu boyut, boşluk ve renkle kurulur.
 
-**The Thin Contrast Rule.** 100 ve 300 ağırlıklar küçük puntoyla birleşmez. `ink-muted` yalnızca 300 ve 400 ile kullanılır; 100 ile kontrast AA altına düşer.
+**The Thin Contrast Rule.** 100 ve 300 ağırlıklar küçük puntoyla birleşmez. `ink-muted` yalnızca 300 ve 400 ile kullanılır; 100 ile kontrast AA altına düşer. `ink-muted` ayrıca yalnızca sayfa zemininde durur: `page` üzerinde 4.55:1 ile AA sınırını ancak geçer, `surface` üzerinde 4.29:1 ile altına düşer. Kâğıdın üstündeki ikincil metin `ink-secondary` olur.
 
 **The 62ch Rule.** Uzun metin `max-w-prose` ile sınırlanır. Serif satır uzunluğu bunun ötesinde okunmaz hale gelir. Değer `--max-width-prose` üzerinden verilir — `--container-prose` yazılırsa Tailwind sessizce yerleşik 65ch'te kalır.
 

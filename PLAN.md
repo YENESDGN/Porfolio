@@ -95,6 +95,8 @@ Sections wrap in `Reveal`. Every page ships desktop **and** mobile; single-break
 - `app/api/revalidate/route.ts` — POST, compares a `REVALIDATE_SECRET` env var, calls `revalidatePath`. Add the key to `.env.example`, never to code. This is the one write-side endpoint; the "no API routes" rule covers reading.
 - Correct `.claude/rules/ui.md` (`priority` → `preload`) and `docs/codemap/ui.md` (`ProjectCard` is a grid, not `OverlapPair`).
 
+**(Sonra bakılacak) — 2.6 bloke.** Docker daemon çalışmıyor ve `psql` yok; PostgreSQL erişilebilir değil. Faz 2.5 sonunda durduruldu: sayfalar fixture üzerinde, build yeşil, beş route statik. Docker Desktop açıldığında 2.6 olduğu gibi çalıştırılabilir — sayfa kodu değişmeyecek, yalnızca dört sorgu gövdesi Prisma çağrısına dönecek.
+
 **If Postgres still is not available:** stop after 2.5, mark 2.6 `(Sonra bakılacak)` per the stuck rule. Pages stay on fixtures and the build stays green.
 
 ---
