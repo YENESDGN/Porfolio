@@ -30,7 +30,7 @@ export default async function AboutPage() {
       {/* Her overlap çifti kendi ekranını doldurur; kayma payı token'dan gelir. */}
       {pairs.map((section, index) => (
         <Section key={section.id}>
-          <Container width="wide">
+          <Container>
             <Reveal direction={index % 2 === 1 ? "right" : "left"}>
               <OverlapPair
                 reverse={index % 2 === 1}
@@ -51,7 +51,7 @@ export default async function AboutPage() {
       ))}
 
       <Section>
-        <Container width="wide">
+        <Container>
           <Reveal>
             <div className="grid gap-10 md:grid-cols-5 md:gap-12">
               <RoadMap

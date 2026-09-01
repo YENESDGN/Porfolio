@@ -15,7 +15,7 @@ export default async function ProjectsPage() {
       {/* Her proje bir ekran: liste değil, sırayla gelen bloklar. */}
       {projects.map((project) => (
         <Section key={project.id}>
-          <Container width="wide">
+          <Container>
             <Reveal>
               <ProjectCard project={project} />
             </Reveal>

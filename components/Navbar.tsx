@@ -13,7 +13,7 @@ import { SocialLinks } from "./SocialLinks";
 export function Navbar() {
   return (
     <header className="sticky top-0 z-40 h-nav bg-surface py-3.75">
-      <Container width="wide">
+      <Container>
         <nav
           aria-label="Ana gezinme"
           className="flex items-center justify-between gap-5.25"

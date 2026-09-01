@@ -16,7 +16,7 @@ export default async function ExperiencePage() {
     <main>
       {/* Ray ve metinler tek bölümde kalır: ikisi birbirini okutuyor. */}
       <Section>
-        <Container width="wide">
+        <Container>
           <div className="grid gap-12 md:grid-cols-5 md:gap-16">
             <Reveal direction="left" className="md:col-span-2">
               <RoadMap items={data.roadmap} title="İş hayatı" />
