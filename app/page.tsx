@@ -55,15 +55,23 @@ export default async function LandingPage() {
         </div>
       </Section>
 
-      <Section>
-        <Container width="wide">
-          <div className="grid gap-10 md:grid-cols-2 md:items-center md:gap-16">
-            <Reveal direction="left">
-              <TextCard title="Merhaba" content={data.content.welcomeText} />
+      <Section className="bg-page-deep">
+        <Container className="flex flex-1 flex-col py-12 md:py-16">
+          <div className="grid flex-1 gap-10 md:grid-cols-2 md:gap-16">
+            <Reveal direction="left" className="flex flex-col justify-center">
+              <TextCard
+                title="Merhaba"
+                content={data.content.welcomeText}
+                variant="bare"
+              />
             </Reveal>
 
-            <Reveal direction="right" delay={0.06}>
-              <TechStack items={data.techStack} />
+            <Reveal
+              direction="right"
+              delay={0.06}
+              className="flex min-h-0 flex-col"
+            >
+              <TechStack items={data.techStack} className="flex-1" />
             </Reveal>
           </div>
         </Container>
