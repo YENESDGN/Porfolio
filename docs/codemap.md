@@ -24,7 +24,7 @@ NO `src/`, everything is in the root. `@/*` alias points to the root.
 
 ```
 app/         routes, layout, template.tsx, globals.css (theme tokens inside @theme)
-components/  UI components (19 + index.ts)
+components/  UI components (20 + index.ts)
 lib/         pure helpers; cn.ts, formatDate.ts, prisma.ts, queries/
 config/      static config; site.ts, nav.ts, social.ts (+ index.ts)
 prisma/      schema.prisma, seed.ts, migrations/
@@ -46,6 +46,12 @@ Module public API is exposed via `index.ts`. `lib/` is not a module, but a folde
 
 **Big Phase 2 completed through 2.5.** Every component exists, all four pages render real content from `lib/queries/`, the four animation patterns are wired. `build` / `lint` / `typecheck` are clean and all 5 routes are still static (`○`).
 
+**Big Phase 3 — scroll rework, done.** The page composition is now a stack of full-viewport `Section`s. The type scale, overlap offsets and `Container` widths all grew; the navbar became `sticky` with a fixed `h-nav` that `--spacing-viewport` subtracts. Identity was deliberately **not** touched: IBM Plex Serif, the cream/raspberry palette, `OverlapPair` and the four animation patterns all stand. `MediaPlane` now draws a labelled placeholder while photo fields are still null. `build` / `lint` / `typecheck` clean, all 5 routes still static (`○`).
+
+**Navbar pass, after Phase 3.** The band was scaled up in steps (`--spacing-nav` 3.75rem → 5rem), nav links moved from `text-body` to `text-lead`, and `NavLink` gained a CSS hover underline. Details and the two pitfalls it surfaced — token-driven bar height, and Tailwind's silent drop of invalid spacing multipliers — are in `docs/codemap/ui.md`. A scroll-snap plus section-crossing curtain transition was built on `/` during this pass and then **reverted in full** at the user's request; no trace remains in the tree.
+
+**Section transition, attempted a second time and reverted again.** A later session rebuilt it from the reference image the user supplied — a full-screen curtain crossing the two `/` sections, no text, raspberry ground. Four architectures were tried in sequence (scrubbed + mandatory snap → spring-smoothed scrub → timed tween fired on crossing → scrub with a JS settle and no snap) before the user rewound the whole thing. The tree is back to 22 components and `app/page.tsx`, `app/globals.css`, `components/index.ts` and `.claude/rules/ui.md` are byte-identical to their pre-request state. **Why each attempt failed is now recorded in `docs/codemap/ui.md`** — that section, not this line, is what a third attempt should read first.
+
 **Phase 2.6 is blocked, not skipped.** The Docker daemon is not running and there is no `psql`, so PostgreSQL is unreachable. Marked `(Sonra bakılacak)` in `PLAN.md` per the stuck rule. Pages currently read fixtures; 2.6 swaps four function bodies and touches no page code.
 
 ### Loose ends
@@ -54,7 +60,7 @@ Module public API is exposed via `index.ts`. `lib/` is not a module, but a folde
 - **Nothing has been verified visually.** No browser tooling was available, so the checks in `PLAN.md` — overlap at both breakpoints, reveal timing, reduced-motion, JS disabled, 375px, tab focus — are outstanding. Contrast figures throughout the docs are computed, not observed.
 - `config/site.ts` and `config/social.ts` are placeholders; favicon is the Next.js default.
 - `next dev` appends the agent-rules block to the end of `CLAUDE.md`. Since it is rewritten on every run, it is not deleted, it is committed.
-- `.claude/rules/skills/` (vendored impeccable, 123 files / 2.9 MB) is untracked and undecided. It is excluded from eslint; Tailwind still scans it and emits a few unused utilities into the bundle. A `@source not` line in `globals.css` would stop that.
+- `.claude/rules/skills/` (vendored impeccable, 123 files / 2.9 MB) is untracked and undecided. It is excluded from eslint, and no longer reaches Tailwind: `globals.css` now uses `source(none)` plus four explicit `@source` roots, which cut the stylesheet 27,116 → 23,630 bytes (−12.9%).
 - `PRODUCT.md` and `DESIGN.md` are written in Turkish while the rest of the docs are English.
 
 ### Next up — Phase 2.6

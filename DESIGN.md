@@ -18,31 +18,31 @@ colors:
 typography:
   display:
     fontFamily: "IBM Plex Serif, Georgia, serif"
-    fontSize: "clamp(2.5rem, 1.6rem + 4.2vw, 3.5rem)"
+    fontSize: "clamp(3rem, 1.2rem + 8vw, 9rem)"
     fontWeight: 100
-    lineHeight: 1.1
-    letterSpacing: "-0.02em"
+    lineHeight: 1
+    letterSpacing: "-0.03em"
   h1:
     fontFamily: "IBM Plex Serif, Georgia, serif"
-    fontSize: "clamp(2rem, 1.4rem + 2.8vw, 2.5rem)"
+    fontSize: "clamp(2.25rem, 1.5rem + 3.6vw, 4.5rem)"
     fontWeight: 300
-    lineHeight: 1.2
-    letterSpacing: "-0.01em"
+    lineHeight: 1.15
+    letterSpacing: "-0.015em"
   h2:
     fontFamily: "IBM Plex Serif, Georgia, serif"
-    fontSize: "clamp(1.5rem, 1.2rem + 1.4vw, 1.875rem)"
+    fontSize: "clamp(1.625rem, 1.3rem + 1.8vw, 2.5rem)"
     fontWeight: 300
     lineHeight: 1.3
   h3:
     fontFamily: "IBM Plex Serif, Georgia, serif"
-    fontSize: "1.375rem"
+    fontSize: "1.5rem"
     fontWeight: 400
     lineHeight: 1.4
   lead:
     fontFamily: "IBM Plex Serif, Georgia, serif"
-    fontSize: "1.125rem"
+    fontSize: "clamp(1.125rem, 1.05rem + 0.35vw, 1.25rem)"
     fontWeight: 300
-    lineHeight: 1.75
+    lineHeight: 1.7
   body:
     fontFamily: "IBM Plex Serif, Georgia, serif"
     fontSize: "1rem"
@@ -61,9 +61,11 @@ typography:
 rounded:
   none: "0"
 spacing:
-  overlap: "3rem"
-  overlap-lg: "4.5rem"
+  overlap: "5rem"
+  overlap-lg: "8rem"
   section: "clamp(4rem, 2rem + 7vw, 7rem)"
+  nav: "3.75rem"
+  viewport: "calc(100svh - 3.75rem)"
 components:
   container:
     width: "64rem"
@@ -158,11 +160,11 @@ Palet dar ve bilinçli bir sıcak–soğuk karşıtlığı üzerine kurulu: sıc
 
 ### Hierarchy
 
-- **Display** (100, `clamp(2.5rem → 3.5rem)`, 1.1, `-0.02em`): Sayfa başına bir kez. Ana sayfanın açılış sesi.
-- **H1** (300, `clamp(2rem → 2.5rem)`, 1.2, `-0.01em`): Sayfa başlığı.
-- **H2** (300, `clamp(1.5rem → 1.875rem)`, 1.3): Bölüm ve kart başlığı.
-- **H3** (400, `1.375rem`, 1.4): Roadmap girdisi, proje adı.
-- **Lead** (300, `1.125rem`, 1.75): Hoşgeldin yazısı ve bölüm girişi.
+- **Display** (100, `clamp(3rem → 9rem)`, 1, `-0.03em`): Yalnızca ana sayfanın ilk ekranında, yalnızca isim. Sayfanın açılış sesi.
+- **H1** (300, `clamp(2.25rem → 4.5rem)`, 1.15, `-0.015em`): Sayfa başlığı ve proje adı.
+- **H2** (300, `clamp(1.625rem → 2.5rem)`, 1.3): Bölüm ve kart başlığı.
+- **H3** (400, `1.5rem`, 1.4): Roadmap girdisi.
+- **Lead** (300, `clamp(1.125rem → 1.25rem)`, 1.7): Hoşgeldin yazısı ve bölüm girişi.
 - **Body** (400, `1rem`, 1.7): Gövde metni; `max-w-prose` ile 62ch.
 - **Small** (400, `0.875rem`, 1.6): Yardımcı metin, tech stack etiketi.
 - **Caption** (400, `0.8125rem`, 1.5): Tarih ve üst veri.
@@ -179,9 +181,9 @@ Palet dar ve bilinçli bir sıcak–soğuk karşıtlığı üzerine kurulu: sıc
 
 Mobil önce: temel sınıf mobil, `md:` ve üstü masaüstü.
 
-Sayfa ölçüsünün tek tanımı `Container`: `max-w-5xl` (64rem) ve `px-6`. `header` ile `main` tam genişlikte durur, ölçüyü içerideki `Container` taşır. Navbar ve içerik bu sayede aynı kenardan hizalanır, tam genişlikte bir zemin gerektiğinde de yerleşim bozulmaz.
+Sayfa bir kaydırma kompozisyonudur: her blok bir `Section`, en az bir ekran boyunda. `Section` yüksekliği ve dikey hizayı taşır (`min-h-viewport` = `100svh` eksi navbar), ölçüyü içerideki `Container` taşır — ikisi birleştirilmez. `Container`ın üç ölçüsü var: `default` (`max-w-5xl`, 64rem), `wide` (`max-w-7xl`, 80rem — tam ekran bölümlerin kullandığı), `full` (yalnızca kenar boşluğu). Sayfanın kenarına taşması gereken blok hiç `Container` almaz; ana sayfanın portresi böyle çalışır.
 
-Bölümler arası ritim `py-section` (`clamp(4rem → 7rem)`) ile kurulur. Overlap kayması `overlap` (3rem) ve geniş ekranda `overlap-lg` (4.5rem) token'larıyla verilir; elle negatif değer yazılmaz. Kalan boşluk Tailwind'in 4px ölçeğinden gelir.
+Bölüm yüksekliği `viewport` token'ından gelir; `py-section` (`clamp(4rem → 7rem)`) tam ekran olmayan bloklar için durur. Overlap kayması `overlap` (5rem) ve geniş ekranda `overlap-lg` (8rem) token'larıyla verilir; elle negatif değer yazılmaz. Kalan boşluk Tailwind'in 4px ölçeğinden gelir.
 
 Overlap yalnızca `md` ve üstünde vardır. Altında bloklar dikey yığılır ve ritmi `gap` taşır — kayma kaybolur, nefes kaybolmaz. DOM sırası her koşulda görsel → metin; `reverse` yalnızca masaüstü sütununu değiştirir, böylece mobil yığın ve ekran okuyucu sırası her yerde aynı kalır.
 
@@ -229,8 +231,8 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 
 ### Ölçü (`Container`)
 
-- **Genişlik:** `max-w-5xl` (64rem), `mx-auto`, `px-6`.
-- **Kullanım:** `header` ve `main` içinde birer kez. Tek başına görünmez; yalnızca hizayı taşır.
+- **Genişlik:** `default` `max-w-5xl` (64rem) · `wide` `max-w-7xl` (80rem) · `full` (sınırsız). Hepsinde `mx-auto` ve `px-6`.
+- **Kullanım:** `header`da bir kez, `main` içinde her `Section` için bir kez. Tek başına görünmez; yalnızca hizayı taşır.
 
 ### Kart (`Card`)
 

@@ -10,9 +10,16 @@ Tailwind v4: theme is in the `@theme` block, NO `tailwind.config.ts`.
 - **Font:** `--font-serif` → `--font-plex-serif` (next/font, IBM Plex Serif). `latin-ext` subset is mandatory; otherwise ş/ğ/ı/İ fall back to a fallback font.
 - **Weight:** only `thin 100`, `light 300`, `normal 400`. `--font-weight-*: initial` namespace reset completely removes `font-bold` / `font-semibold` classes from production.
 - **Size:** `caption · small · body · lead · h3 · h2 · h1 · display` (the last three are clamp, they shrink automatically on mobile).
-- **Spacing:** `overlap`, `overlap-lg`, `section` (clamp).
+- **Spacing:** `overlap`, `overlap-lg`, `section` (clamp), `nav` (fixed navbar height), `viewport` (`calc(100svh - nav)` — the height every `Section` claims).
 - **Shadow:** `contact` — the only shadow in the system. Used solely on `OverlapPair`'s upper block, `md` and up.
 - **Aspect:** `portrait` (3/4), `plate` (4/3). Tokens exist so `MediaPlane` callers never need an arbitrary value.
+- **Utility:** `text-vertical` (`writing-mode: vertical-rl`) — an `@utility` block, not a token. Tailwind has no writing-mode utility and arbitrary properties are reserved for `OverlapPair`. Used only by the landing hero rail.
+
+### Pitfall: prose leaks utilities into the bundle
+
+Tailwind scans the whole project by default, and a class name written in prose is indistinguishable from one written in JSX. Rule files and changelog entries quoting `-ml-3` or `-mr-3.25` had those utilities emitted into production CSS even though no component used them.
+
+`globals.css` therefore opens with `@import "tailwindcss" source(none)` and names its four roots explicitly: `../app`, `../components`, `../config`, `../lib`. That cut the stylesheet from 27,116 to 23,630 bytes (−12.9%) and also removed `docs/`, `Obsidian/` and the vendored `.claude/rules/skills/` from the scan. **A new code directory must be added to that list, or its classes silently produce no CSS.**
 
 ### Pitfall: `max-w-prose`
 
@@ -30,9 +37,13 @@ All exist and are exported from `components/index.ts`. Only four are Client Comp
 
 **Route plumbing:** `RouteLoading` (Server) · `RouteError` (Client) — see `docs/codemap/routes.md`. Both import `./Container` directly rather than the barrel, to avoid a cycle through `index.ts`.
 
-**Layout:** `Container` — the single definition of the page measure (`mx-auto w-full max-w-5xl px-6`). `header` and `main` are full-bleed and each wraps its content in one. Nothing else declares a `max-width`.
+**Layout:** `Container` — the single definition of the page measure, three widths: `default` (max-w-5xl), `wide` (max-w-7xl, what full-screen sections use), `full` (gutter only). Nothing else declares a `max-width`. `Section` — the single scroll unit: `min-h-viewport` plus vertical `align` (`start`/`center`/`end`). Section owns height, Container owns measure; a block that bleeds to the page edge takes no Container.
 
-**Navbar:** `Navbar` (Server; a full-bleed `bg-surface` paper bar) · `NavLink` (**Client** — `usePathname` and `aria-current`, the only part of the navbar that has to be) · `SocialLinks` (Server) · `MobileMenu` (**Client**, Radix Dialog).
+**Navbar:** `Navbar` (Server; a full-bleed `bg-surface` paper bar, `sticky top-0` with a fixed `h-nav` height) · `NavLink` (**Client** — `usePathname` and `aria-current`, the only part of the navbar that has to be; also owns the hover rule below) · `SocialLinks` (Server) · `MobileMenu` (**Client**, Radix Dialog).
+
+The band may grow, but only through `--spacing-nav`: `--spacing-viewport` subtracts that token, so every `Section` follows automatically. Give the header a taller height any other way and the first screen overflows the viewport. The token equals the header's vertical padding plus its tallest child — currently `py-3.75` (2 × 15px) plus the 50px `text-lead` links, so `5rem`. The links, not the 48px social circles, set the floor on desktop.
+
+Both flanks now carry the same geometry: a 48px box holding a 36px mark, so the `MobileMenu` trigger matches the `SocialLinks` circles. The negative margins in `Navbar` (`-ml-1.5`, `-mr-1.5`) are **not** scale values: each cancels the 6px padding inside its icon box so the mark lands flush with the `Container` edge. They change only when a child's box or mark size changes, and scaling them alongside everything else breaks the alignment.
 
 **Common UI:** `Card` (shell, optional `title`) · `OverlapPair` (`media`, `content`, `reverse`; **single** overlap implementation) · `Reveal` (**Client**; `whileInView` + `once`; takes `children` so Server Components inside it stay on the server) · `PageTransition` (**Client**, inside `template.tsx`).
 
@@ -40,8 +51,22 @@ All exist and are exported from `components/index.ts`. Only four are Client Comp
 
 Two were added beyond the planned list:
 
-- **`MediaPlane`** — the single glass-plane implementation. `ProfileImage` and `ProjectCard` both use it, so the "photo missing → the plane still stands, no empty box" behaviour exists once.
+- **`MediaPlane`** — the single glass-plane implementation. `ProfileImage` and `ProjectCard` both use it, so the "photo missing → the plane still stands, no empty box" behaviour exists once. With no photo it draws a labelled placeholder in `ink-secondary` (`ink-muted` is 4.02:1 on `surface-media`, under AA).
 - **`BrandIcons`** — see the icon note below.
+
+### Navbar hover: CSS, not Motion
+
+`NavLink` draws a `raspberry-700` hairline that scales in from the left and collects to the right (`origin-right` at rest → `group-hover:origin-left` with `scale-x-0/100`), while the label lifts 2px. `SocialLinks` uses the same idiom for its rising fill. Both are plain CSS transitions rather than Motion: a pointer state should not cost a re-render, and the four Motion patterns cover entrances only.
+
+- Tailwind compiles `hover:` inside `@media (hover:hover)`, so touch devices never get a stuck hover state; `group-focus-visible:` stays outside it, so keyboard users get the same affordance everywhere.
+- Under `motion-reduce` the lift is dropped and the transition removed, but the underline still appears — the state change stays legible instead of being deleted.
+- Nav links are `text-lead`. `raspberry-500` cannot carry them: it is **4.00:1** on `surface`, under AA. `raspberry-700` is 6.43:1.
+
+### Pitfall: quarter-step spacing values
+
+Tailwind 4.3.3 accepts any spacing multiplier that is a multiple of `0.25`, so `py-3.75`, `gap-5.25`, `gap-10.5`, `size-5.5` and `-mr-1.5` are all real utilities, and the navbar depends on them.
+
+A multiplier that is _not_ a multiple of 0.25 (`py-2.625`) is not an error — Tailwind emits no CSS at all and the spacing silently collapses to zero. The same holds for any mistyped variant. When a spacing or state value looks ignored, grep the built stylesheet under `.next/static/chunks/*.css` for the declaration rather than trusting the class name in the source.
 
 ### Icons: lucide has no brand marks
 
@@ -52,21 +77,34 @@ lucide-react v1 ships 1796 icons and **zero brand logos**; `Github` and `Linkedi
 - **CSS colour cannot reach an `<img>`.** Colour lives inside each file, hover cannot re-tint it, and `brightness-0 invert` is not a workaround — it flattens a multicolour logo into a single blob. Both READMEs record this.
 - Brand colour is a scoped exception to the single-accent palette; `DESIGN.md` carries it as The Borrowed Ink Exception.
 
+### Rejected twice: the section-crossing curtain
+
+A full-screen curtain sweeping between the two `/` sections has now been built and reverted in two separate sessions, across five architectures. The reasons are mechanical, not taste, so read this before a third attempt:
+
+- **A scrubbed curtain and `scroll-snap-type: mandatory` cancel each other out.** The boundary is ~760px of scroll (920px viewport, 80px nav). Mandatory snap forbids resting anywhere inside it, so the browser crosses the whole range in a single frame and `scrollYProgress` jumps 0 → 0.83 in one event. The sweep then lasts as long as the browser's snap animation, never as long as the gesture — it reads as a cut.
+- **Making it timed moves the problem rather than solving it.** With snap the scroll is atomic, so whatever threshold fires, the user has already arrived; the curtain covers the _new_ section instead of the change. While snap is on, "during the crossing" is not a moment that exists.
+- **`scroll-padding-top` stops progress short of 1.** Section 2 snaps to nav height, not the viewport top, so `scrollYProgress` rests at ~0.83. A sweep mapped to `[0, 0.5, 1]` leaves the panel at -83%, i.e. the bottom ~17% of the screen covered for good. Any scroll-linked element on this page has to end its range near 0.8.
+- **A curtain must never carry `data-animated`.** The `<noscript>` rule forces `transform: none`, and for a covering panel that _is_ the covering position — the fallback would hide the page rather than reveal it. It needs its own `display: none`, or must not be server-rendered at all.
+- `whileInView` cannot observe a `fixed` element; it reads as permanently visible and fires on load. The driver has to be an in-flow marker.
+- Nesting a `fixed` child under `PageTransition` is safe: Motion's `buildTransform` emits `transform: none` once every value sits at its default, so the entrance animation leaves no containing block behind.
+
+The only combination that satisfies both "smooth" and "during the crossing" is: no mandatory snap, the curtain scrubbed against a real scroll runway, and a JS settle so stopping mid-band cannot strand a half-closed panel. That was reached and then reverted along with everything else.
+
 ### Dropped from the list
 
 `App`/`Outlet` (React Router concept; equivalent is `layout.tsx` + file system) · `Layout` (→ `app/layout.tsx`) · `OverlapText` (→ embedded into `OverlapPair`, DRY) · `TechIcons` (→ merged with `TechStack`) · `Image` (`next/image` is used directly).
 
 ### Decisions locked in `PLAN.md`
 
-- **`ProjectCard` is not an overlap.** 2-column / 1-row grid, `gap-4`: thumbnail left, brief description + `GitHubLink` right; single column below `md`. `OverlapPair` stays reserved for `/about`.
+- **`ProjectCard` is not an overlap.** 2-column / 1-row grid: media left, title + description + `GitHubLink` right; single column below `md`. It now fills a whole `Section`, so the measures are large (`md:p-12`, title at `text-h1`) and the title is an `h2` under the page `h1`. `OverlapPair` stays reserved for `/about`.
 - **Links are the only clickable surfaces on the site** — GitHub, LinkedIn, Mail. Cards, photos and text blocks are never anchors.
 - **`next/image`: `preload`, not `priority`.** Next 16 deprecated `priority`; `.claude/rules/ui.md` was corrected accordingly.
-- **The `<noscript>` rule is still missing from `globals.css`.** The UI rules require it before any reveal ships — it lands in Phase 2.1 together with `Reveal`.
+- **The `<noscript>` rule shipped with `Reveal` in Phase 2.1** and now lives in `globals.css`; see "The `<noscript>` rule" above. Any future animated element must stamp `data-animated` (or carry its own fallback) before it ships.
 - **`LazyMotion features={domAnimation}` is enough for `whileInView`.** The `inView` feature ships inside the `domAnimation` bundle; `domMax` is not needed.
 
 ## Static config — `config/`
 
-`site.ts` (name, title, description, url) · `nav.ts` (4 routes, TR label / EN href) · `social.ts` (GitHub, LinkedIn, Email; the `external` flag ensures mailto opens in the same tab). Public API `config/index.ts`.
+`site.ts` (name, role, title, description, url — `role` labels the landing hero rail) · `nav.ts` (4 routes, TR label / EN href) · `social.ts` (GitHub, LinkedIn, Email; the `external` flag ensures mailto opens in the same tab). Public API `config/index.ts`.
 
 The icon component is not kept in the config — `SocialLinks` matches via the `key`, so the config remains independent of React.
 

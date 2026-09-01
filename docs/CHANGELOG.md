@@ -69,3 +69,83 @@ komutlarıyla sona eklenir.
   onaylı paket listesinde değil ve production bağımlılığı olduğu için
   standalone Docker imajına giriyor. `devDependencies`'e taşınmalı ya da
   kaldırılmalı — karar senin.
+
+### Navbar pass
+
+(English from here on, per the working-language preference.)
+
+- **Navbar scaled up in three steps**, each driven through `--spacing-nav`
+  (3.75rem → 4.125rem → 4.25rem → 5rem) so `--spacing-viewport` kept every
+  `Section` in sync. Header padding, nav gaps and social sizing grew with it.
+- **Nav links moved from `text-body` to `text-lead`.** Its 1.7 prose
+  line-height made the links taller than the bar's content box, which is what
+  forced the bar to grow rather than the padding to shrink — trimming the link
+  padding instead would have dropped the mobile-menu touch target to 43px,
+  under the 44px floor.
+- **`NavLink` hover interaction added** — a `raspberry-700` hairline wiping in
+  from the left and collecting to the right, plus a 2px label lift. Plain CSS,
+  matching `SocialLinks`' existing rising fill rather than adding a fifth
+  Motion pattern.
+
+### Fixed
+
+- **`hover:text-raspberry-500` on nav links violated the palette split and
+  AA.** raspberry-500 measures 4.00:1 on `surface`, under the 4.5:1 needed for
+  16px body text; now `raspberry-700` at 6.43:1. This was the loose end carried
+  over from the previous session.
+- **Social marks overhung the container edge by 7px.** After the icons were
+  resized to 36px in 48px circles, `Navbar` still passed the old `-mr-3.25`
+  (13px) alignment constant; the inner padding is 6px, so it is now `-mr-1.5`.
+
+### Reverted
+
+- A section-crossing curtain transition plus scroll-snap on `/` was built and
+  then removed in full at the user's request. `CurtainReveal` and
+  `SectionCurtain`, the `snap-start` on `Section`, the
+  `html:has([data-snap-sections])` rule and the `[data-curtain]` no-JS rule are
+  all gone; a grep for them returns nothing.
+
+### Note
+
+- **Tailwind spacing multipliers must be multiples of 0.25.** `py-3.75`,
+  `gap-5.25`, `gap-10.5` and `size-5.5` are valid and now in use. An invalid
+  multiplier emits **no CSS and no error**, so the spacing silently collapses —
+  verify against the built stylesheet, not the class name.
+- Nothing in this pass was verified in a browser; no browser tooling was
+  available. Contrast figures are computed.
+
+### Section transition — built, iterated four times, reverted
+
+Net change to the codebase this pass: **none.** The work is recorded because the
+analysis is worth more than the code was.
+
+- A section-crossing curtain for `/` was rebuilt from a reference image
+  (full-screen sweep, raspberry ground, no text) and taken through four
+  architectures: scrubbed + `scroll-snap-type: mandatory`, then spring-smoothed
+  scrub, then a timed tween fired on crossing, then scrub with a JS settle and no
+  snap. The user then rewound to the pre-request state.
+- **The finding: a scrubbed curtain and mandatory snap are mutually exclusive.**
+  The boundary is ~760px of scroll, and mandatory snap forbids resting anywhere
+  inside it — the browser crosses it in one frame, so `scrollYProgress` jumps
+  0 → 0.83 in a single event. Scrubbed, the sweep lasts as long as the snap
+  animation rather than the gesture. Timed, it fires after arrival and covers the
+  new section instead of the change. Snap deletes the moment the transition needs.
+- **`scroll-padding-top` caps scroll progress below 1.** Section 2 snaps to nav
+  height, not the viewport top, so progress rests at ~0.83. A sweep mapped to
+  `[0, 0.5, 1]` strands the panel at -83% and leaves the bottom ~17% of the
+  screen permanently covered. Scroll-linked ranges on this page must end near 0.8.
+- **A covering panel must never carry `data-animated`.** The `<noscript>` rule
+  forces `transform: none`, which for a curtain _is_ the covering position; the
+  fallback would hide the page instead of revealing it.
+- Full reasoning is in `docs/codemap/ui.md` → "Rejected twice: the
+  section-crossing curtain". Read it before a third attempt.
+
+### Reverted
+
+- Every file touched is back to its pre-request state: `components/SectionWipe.tsx`
+  deleted, and `app/page.tsx`, `app/globals.css`, `components/index.ts`,
+  `.claude/rules/ui.md` restored by hand rather than with `git checkout`, since the
+  tree carries 30+ uncommitted files from earlier work. A grep for `SectionWipe`,
+  `scroll-snap`, `snap-sections`, `data-curtain` and `scroll-padding` across
+  `app/`, `components/`, `lib/`, `config/` and `.claude/rules/` returns nothing.
+  `lint` / `typecheck` / `build` clean, all 5 routes still static.

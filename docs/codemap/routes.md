@@ -15,12 +15,14 @@ Overview → `docs/codemap.md`.
 Single implementation instead of eight copies: route files re-export the shared component.
 
 ```
-app/<route>/loading.tsx  →  export { default } from "@/components/RouteLoading";
-app/<route>/error.tsx    →  "use client"; export { default } from "@/components/RouteError";
+app/<route>/loading.tsx  →  export { RouteLoading as default } from "@/components";
+app/<route>/error.tsx    →  "use client"; export { RouteError as default } from "@/components";
 
 ```
 
 `RouteError` is a Client Component (error boundary requirement), `RouteLoading` is Server.
+
+These eight files go through the barrel, not `@/components/RouteError` directly, so `app/` never reaches inside the module. It costs about 1.8 KB per route (0.24% of payload, measured) because the boundary chunk pulls the barrel; no cycle results, since `RouteError` imports `./Container` directly rather than re-entering `index.ts`.
 
 ## Render strategy
 
@@ -39,11 +41,15 @@ Each page fetches its own data in its Server Component via `lib/queries/`, then 
 - `/about` — `getAboutPage()`: about sections (photo+text) + `EDUCATION` roadmap
 - `/experience` — `getExperiencePage()`: experience text blocks + `WORK` roadmap
 
-## Page composition (Phase 2.5, off the canvas)
+## Page composition (Phase 3, scroll rework)
 
-- `/` — two columns. Left: `StatCard` over `WelcomeSection` + `TechStack`. Right: a tall `ProfileImage`. Reveals run left / up / right — the Partial FadeIn-Left&Right&Up pattern. `WelcomeSection` owns the page's only `text-display`, so the name leads rather than the project count.
-- `/about` — two `OverlapPair`s with alternating `reverse`, then the education `RoadMap` beside a text card, on a 5-column grid (3 / 2).
-- `/experience` — the work `RoadMap` as a rail on the left (2 of 5 columns), four `TextCard`s stacked on the right (3 of 5).
-- `/projects` — a `ProjectCard` list, plus an empty state. An empty list is **not** `notFound()`; only a missing page record is.
+Every page is a stack of `Section`s, each at least one viewport tall. `Section` sets the height, `Container width="wide"` sets the measure.
 
-Every section is wrapped in `Reveal`. `/projects` has no page record of its own, so it never calls `notFound()`.
+- `/` — **hero**: no Container, so the portrait bleeds to the right page edge. Left column carries the vertical `site.role` rail (`md` and up), a bare `StatCard`, `WelcomeSection` and the scroll cue, spread with `justify-between`. Reveals run left / up / right — the Partial FadeIn-Left&Right&Up pattern. `WelcomeSection` owns the page's only `text-display`, so the name leads rather than the project count. **Second section**: the welcome text as a `TextCard` beside `TechStack`.
+- `/about` — a title section, then one `OverlapPair` per section with alternating `reverse`, then the education `RoadMap` beside a text card on a 5-column grid (3 / 2).
+- `/experience` — a title section, then the work `RoadMap` as a rail on the left (2 of 5 columns) with the `TextCard`s stacked on the right (3 of 5). The rail and its texts stay in one section; they read together.
+- `/projects` — a title section carrying the count or the empty state, then **one project per section**. An empty list is **not** `notFound()`; only a missing page record is.
+
+Inner page titles use `text-h1`, not `text-display`: display is reserved for the landing hero.
+
+Every block is wrapped in `Reveal`. `/projects` has no page record of its own, so it never calls `notFound()`.
