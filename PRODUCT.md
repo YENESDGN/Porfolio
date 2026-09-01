@@ -21,7 +21,7 @@ Ek olarak `not-found`: geçersiz adres → sayfa bulunamadı mesajı + ana sayfa
 
 ## Kullanıcı akışı
 
-Tek kullanıcı tipi var: ziyaretçi. Sequence diyagramındaki akış (`Obsidian/Diagrams & Notes/pictures/portfolyo_sitesi_sequence_diyagrami.png`):
+Tek kullanıcı tipi var: ziyaretçi. Sequence diyagramından türetilen akış:
 
 1. Siteyi açar → ana sayfa görünür (navbar, hoşgeldin yazısı, tech stack, fotoğraf).
 2. Her gezinmede: navbar'dan sayfa seçer → sayfa geçiş animasyonuyla üst kısım görünür → aşağı kaydırdıkça bölümler scroll reveal ile belirir (fotoğraf, metin, roadmap, GitHub linki).

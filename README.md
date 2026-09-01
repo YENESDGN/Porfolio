@@ -35,6 +35,6 @@ PostgreSQL henüz kurulmadıysa `npm run dev` çalışır; veri çeken sayfalar 
 ## Dokümantasyon
 
 - `PRODUCT.md` — amaç, kapsam, kullanıcı akışı
-- `docs/codemap.md` — mimari, klasör düzeni, veri modeli
+- `docs/codemap.md` — mimari indeksi; ayrıntı `docs/codemap/` altında (routes, ui, data)
 - `CLAUDE.md` + `.claude/rules/` — geliştirme kuralları
 - `Obsidian/` — tasarımın kaynağı: canvas, diyagramlar, ham notlar

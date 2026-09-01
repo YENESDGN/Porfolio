@@ -109,7 +109,7 @@ Her subagent'a net görev + beklenen çıktı ver. Subagent işi kendi izole con
 
 ## Nerede ne var
 
-- Mimari ve yığın → `docs/codemap.md` (otomatik yüklenir). Amaç ve kapsam → `PRODUCT.md`.
+- Mimari ve yığın → `docs/codemap.md` (ince indeks, otomatik yüklenir). Ayrıntı `docs/codemap/{routes,ui,data}.md` — otomatik yüklenmez, gerekince oku. Amaç ve kapsam → `PRODUCT.md`.
 - Klasöre özel kurallar → `.claude/rules/`. Worker rolleri → `.claude/agents/`.
 - Tasarımın kaynağı (canvas, diyagram, ham notlar) → `Obsidian/`. Kural metinleri oradan türetildi; çelişki varsa repo içindeki kural dosyası geçerlidir.
 - Değişiklik geçmişi → `docs/CHANGELOG.md`. Session özetleri → `docs/sessions/`. İkisi de gerekince okunur, otomatik yüklenmez.

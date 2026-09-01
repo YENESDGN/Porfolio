@@ -1,10 +1,26 @@
 # Codemap
 
-Mimari ve yığının tek doğru kaynağı. Kurallar burada değil → `CLAUDE.md` ve `.claude/rules/`.
+Mimari ve yığının tek doğru kaynağı. Bu dosya her oturumda otomatik
+yüklenir — ince tutulur. Kurallar burada değil → `CLAUDE.md` ve
+`.claude/rules/`.
+
+**Ayrıntı alt dosyalarda; otomatik yüklenmezler, gerekince okunur:**
+
+| Dosya                    | İçerik                                                                      |
+| ------------------------ | --------------------------------------------------------------------------- |
+| `docs/codemap/routes.md` | Route katmanı, loading/error deseni, render stratejisi, sayfa→veri eşlemesi |
+| `docs/codemap/ui.md`     | Tema token'ları ve tuzakları, bileşen listesi, `config/`                    |
+| `docs/codemap/data.md`   | Prisma 7 kurulumu ve sürüm tuzağı, veri modeli, sorgular                    |
 
 ## Yığın
 
-Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 · PostgreSQL + Prisma · Motion · Radix Dialog (yalnız mobil menü) · lucide-react. Dağıtım: DigitalOcean, self-hosted, `output: "standalone"`, tek instance.
+Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 ·
+PostgreSQL + Prisma 7 (+ `@prisma/adapter-pg`) · Motion · Radix Dialog
+(yalnız mobil menü) · lucide-react · sharp.
+
+Dağıtım: DigitalOcean, self-hosted, `output: "standalone"`, tek instance.
+ISR cache'i instance'a özel — ikinci instance eklenmeden yatay ölçekleme
+yapılmaz.
 
 ## Klasör düzeni
 
@@ -12,68 +28,37 @@ Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind v4 · Pos
 
 ```
 app/         route'lar, layout, globals.css (tema token'ları @theme içinde)
-components/  UI bileşenleri (Faz 2)
+components/  UI bileşenleri
 lib/         saf yardımcılar; cn.ts, prisma.ts, queries/
-config/      sabit ayarlar; site.ts, nav.ts, social.ts
+config/      sabit ayarlar; site.ts, nav.ts, social.ts (+ index.ts)
 prisma/      schema.prisma, seed.ts, migrations/
+generated/   Prisma client — üretilir, gitignore'da
 public/      images/ altında görseller
-docs/        codemap, CHANGELOG, sessions
+docs/        codemap (+ codemap/), CHANGELOG, sessions
 Obsidian/    tasarımın kaynağı: canvas, diyagramlar, ham notlar
 ```
 
-## Route katmanı
-
-- `app/layout.tsx` — Server. html/body, IBM Plex Serif, (Faz 2) Navbar. Navigasyonda remount olmaz.
-- `app/template.tsx` — Client, **Faz 2**. Sayfa geçişi (Door FadeIn-Up&Down). `layout` değil `template`, çünkü giriş animasyonunun her gezinmede tetiklenmesi lazım.
-- `app/page.tsx` (LandingPage) · `app/projects/` · `app/about/` · `app/experience/`
-- `app/not-found.tsx` — sayfa yok + ana sayfaya dönüş, Navbar korunur.
-- Her route'ta `loading.tsx` ve `error.tsx`.
-
-## Tema token'ları — `app/globals.css`
-
-Tailwind v4: tema `@theme` bloğunda, `tailwind.config.ts` YOK.
-
-- Renk: `page`, `surface` / `surface-media`, `ink` / `-secondary` / `-muted` / `-inverse`, `line` / `-strong`, `raspberry-50/500/600/700`
-- Font: `--font-serif` → `--font-plex-serif` (next/font)
-- Ağırlık: yalnız `thin 100`, `light 300`, `normal 400`. `--font-weight-*: initial` reset'i `font-bold`/`font-semibold` sınıflarını tamamen kaldırır.
-- Boyut: `caption · small · body · lead · h3 · h2 · h1 · display` (son üçü clamp)
-- Boşluk: `overlap`, `overlap-lg`, `section` (clamp) · `max-w-prose` 62ch
-
-## Bileşenler — Faz 2'de yazılacak
-
-**Navbar:** `Navbar` (Server) · `NavLink` (Client; `usePathname`, `aria-current` — navbar'ın client olması gereken tek parçası) · `SocialLinks` (Server, `config/social.ts`) · `MobileMenu` (Client, Radix Dialog).
-
-**Ortak UI:** `Card` (kart kabuğu, `title` opsiyonel) · `OverlapPair` (`media`, `content`, `reverse`; **tek** overlap implementasyonu) · `Reveal` (Client; `whileInView` + `once`, `children` aldığı için içindeki Server Component'ler sunucuda kalır) · `PageTransition` (Client, `template.tsx` içinde).
-
-**İçerik (hepsi Server):** `RoadMap` · `TextCard` · `ProjectCard` (OverlapPair + opsiyonel `GitHubLink`) · `GitHubLink` (url yoksa hiç render edilmez) · `TechStack` · `StatCard` · `WelcomeSection` · `ProfileImage`.
-
-**Listeden düşenler:** `App`/`Outlet` (React Router kavramı; karşılığı `layout.tsx` + dosya sistemi) · `Layout` (→ `app/layout.tsx`) · `OverlapText` (→ `OverlapPair`'e gömüldü, DRY) · `TechIcons` (→ `TechStack` ile birleşti) · `Image` (`next/image` doğrudan kullanılır).
-
-## Veri modeli — `prisma/schema.prisma`
-
-Model PascalCase, tablo snake_case (`@@map`).
-
-| Model               | Tablo               | Not                                                              |
-| ------------------- | ------------------- | ---------------------------------------------------------------- |
-| `Media`             | media               | Tüm fotoğraf blokları buradan beslenir                           |
-| `LandingPage`       | landing_page        | Tek satır; proje sayısı COUNT ile, kolon yok                     |
-| `AboutSection`      | about_sections      | Foto+metin çiftleri, `order` ile sıralı                          |
-| `ExperienceSection` | experience_sections | /experience metin blokları                                       |
-| `RoadmapItem`       | roadmap_items       | `kind` (EDUCATION/WORK) ile öğrenim ve iş roadmap'i aynı tabloda |
-| `Project`           | projects            | `githubUrl` nullable, `isPublished`, `order`                     |
-| `TechStackItem`     | tech_stack_items    | LandingPage tech stack                                           |
-
-## Sayfa → veri eşlemesi
-
-Her sayfa kendi Server Component'inde `lib/queries/` üzerinden çeker.
-
-- `/` — proje sayısı (COUNT), hoşgeldin metni + fotoğraf, tech stack
-- `/projects` — yayınlanmış proje listesi (`order`)
-- `/about` — about bölümleri (foto+metin) + `EDUCATION` roadmap
-- `/experience` — experience metin blokları + `WORK` roadmap
+Modül public API'si `index.ts` ile açılır. `lib/` bir modül değil, küçük
+yardımcıların klasörü — `index.ts`'i yok; `lib/queries/` ve `config/`
+kendi `index.ts`'lerini taşır.
 
 ## Durum
 
-Faz 1 tamamlandı: yönetim dosyaları, araç zinciri, tema token'ları, Prisma şeması, app kabuğu (yer tutucu sayfalar).
+**Büyük Faz 1 tamamlandı.** Yönetim dosyaları, araç zinciri, tema
+token'ları, Prisma şeması, app kabuğu (yer tutucu sayfalar).
+`build` / `lint` / `typecheck` temiz, 5 route da statik.
 
-**(Sonra bakılacak)** — PostgreSQL henüz yok: `prisma migrate` ve `seed` çalıştırılmadı, `prisma/migrations/` boş. DB ayağa kalkınca ilk migration üretilecek (`db push` kullanılmayacak).
+### Açık uçlar
+
+- **(Sonra bakılacak)** PostgreSQL yok → migration ve seed çalıştırılmadı.
+  Ayrıntı: `docs/codemap/data.md`.
+- `config/site.ts` ve `config/social.ts` yer tutucu; favicon Next varsayılanı.
+- `next dev`, `CLAUDE.md` sonuna agent-rules bloğu ekler. Her çalışmada
+  yeniden yazıldığı için silinmez, commit'lenir.
+
+### Sıradaki — Büyük Faz 2
+
+Ortak UI (`Card`, `OverlapPair`, `Reveal`, `PageTransition` +
+`template.tsx`) → Navbar dörtlüsü → içerik bileşenleri → PostgreSQL, ilk
+migration, seed içeriği, `lib/queries/` sorguları → sayfaların canvas
+yerleşimlerine göre örülmesi → dört animasyon kalıbı.
