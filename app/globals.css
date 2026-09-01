@@ -60,6 +60,11 @@
      Yalnızca OverlapPair içerik bloğunda, yalnızca md ve üstünde kullanılır. */
   --shadow-contact: 0 4px 16px rgba(53, 53, 53, 0.08);
 
+  /* Cam levhanın oranları token olarak durur: arbitrary değer yalnızca
+     OverlapPair hesabına ayrılmış. */
+  --aspect-portrait: 3 / 4;
+  --aspect-plate: 4 / 3;
+
   --spacing-overlap: 3rem;
   --spacing-overlap-lg: 4.5rem;
   --spacing-section: clamp(4rem, 2rem + 7vw, 7rem);

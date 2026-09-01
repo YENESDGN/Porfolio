@@ -22,7 +22,7 @@ export function MobileMenu() {
 
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-ink/20" />
-        <Dialog.Content className="fixed inset-y-0 left-0 flex w-72 max-w-[80vw] flex-col bg-surface px-6 py-6">
+        <Dialog.Content className="fixed inset-y-0 left-0 flex w-72 max-w-full flex-col bg-surface px-6 py-6">
           <div className="flex items-center justify-between">
             <Dialog.Title className="text-h3 text-ink">Menü</Dialog.Title>
             <Dialog.Close

@@ -139,7 +139,7 @@ Palet dar ve bilinçli bir sıcak–soğuk karşıtlığı üzerine kurulu: sıc
 
 ### Named Rules
 
-**The Two Materials Rule.** `surface` kâğıttır, `surface-media` camdır. Metin bloğu cama, görsel bloğu kâğıda konmaz. Bir bloğun hangi malzeme olduğu belirsizse tasarım kararı henüz verilmemiştir.
+**The Two Materials Rule.** `surface` kâğıttır, `surface-media` camdır. Metin bloğunun malzemesi kâğıt, görsel bloğunun malzemesi camdır; biri diğerinin malzemesini giymez. Cam levhanın kâğıdın üstüne monte edilmesi kuralın ihlali değil, tam da kendisidir. Bir bloğun hangi malzeme olduğu belirsizse tasarım kararı henüz verilmemiştir.
 
 **The Ink Rarity Rule.** Ahududu bir ekranın %10'undan fazlasını kaplamaz. Nadirliği onun gücüdür; ikinci bir canlı renk eklenmeden önce sorulur.
 
