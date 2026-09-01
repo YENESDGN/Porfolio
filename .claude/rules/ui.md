@@ -19,9 +19,10 @@ globs: ["components/**", "app/**", "config/**"]
 The palette is defined as tokens inside `@theme`. Do not write bare hex values.
 
 - Background `bg-page`, card `bg-surface`, image block `bg-surface-media`. Overlap is perceived through the difference of these three tones; do not add borders.
+- **The ground is dark.** `bg-page-deep` is a second, deeper ground: stacked full-screen sections alternate with it so scrolling reads as a transition. Ink tokens are light; `text-ink-inverse` is dark and belongs on light or accent fills.
 - Text hierarchy is established with color: heading `text-ink`, body `text-ink-secondary`, date and note `text-ink-muted`.
-- `text-ink-muted` is used only with 300 and 400 weights. Combined with 100, the contrast falls below AA.
-- **Raspberry is split in two.** `raspberry-500` is for decorative fill; it does not carry text on top (4.3:1 with white text, below AA). `raspberry-700` is used for text, links, and badge backgrounds.
+- `text-ink-muted` is 4.5:1 on `bg-surface` — the tightest pair in the system. Do not lighten the surfaces further without darkening it.
+- **Raspberry is split by job.** `raspberry-700` is a fill only — as text on the dark ground it is 3.4:1, below AA. `raspberry-400` carries text, links and underlines (4.7:1 on `bg-surface`). `text-ink` on a `raspberry-700` fill is 6.3:1.
 - There is only one accent color on the site. Ask before adding a second vibrant color.
 
 ## Typography
@@ -45,7 +46,7 @@ The palette is defined as tokens inside `@theme`. Do not write bare hex values.
 ## Layout and responsive
 
 - **The page is a scroll composition.** Every block is a `Section`: at least one viewport tall, stacked. `Section` owns height and vertical alignment, `Container` owns measure — one wraps the other, they are not merged.
-- `Container` has three widths: `default` (max-w-5xl, prose-scale blocks), `wide` (max-w-7xl, full-screen sections), `full` (gutter only). A block that has to bleed to the page edge takes no Container at all.
+- `Container` is full-bleed: `w-full px-16`, no max-width and no centering margin. It owns the gutter, not the measure — line length is held by `max-w-prose` on the text block itself.
 - The overlap effect is the visual identity of the site and the first thing to break on a narrow screen. Overlap is only on `md` and above; below that, blocks stack vertically.
 - **DOM order is fixed: image first, then text.** The `reverse` prop only changes the placement on desktop (CSS `order`/grid), it does not touch the DOM. Thus, mobile stacking and screen reader order remain the same everywhere.
 - On mobile, the overlap is removed but the spacing remains; the rhythm between blocks is carried by `gap`.

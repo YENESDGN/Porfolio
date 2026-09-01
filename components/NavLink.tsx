@@ -25,9 +25,9 @@ export function NavLink({ href, label, className, onNavigate }: NavLinkProps) {
       onClick={onNavigate}
       className={cn(
         "group relative inline-block py-2 text-lead transition-colors duration-300",
-        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-raspberry-700",
-        // raspberry-500 metin taşımaz: kâğıt zeminde 4.00:1 ile AA'nın altında.
-        isActive ? "text-ink" : "text-ink-secondary hover:text-raspberry-700",
+        "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-raspberry-400",
+        // raspberry-400 koyu zeminde metin taşır: 700 orada 3.4:1 ile AA altında.
+        isActive ? "text-ink" : "text-ink-secondary hover:text-raspberry-400",
         className,
       )}
     >
@@ -47,7 +47,7 @@ export function NavLink({ href, label, className, onNavigate }: NavLinkProps) {
       <span
         aria-hidden="true"
         className={cn(
-          "absolute inset-x-0 bottom-1 h-px origin-right scale-x-0 bg-raspberry-700",
+          "absolute inset-x-0 bottom-1 h-px origin-right scale-x-0 bg-raspberry-400",
           "transition-transform duration-300 ease-out",
           "group-hover:origin-left group-hover:scale-x-100",
           "group-focus-visible:origin-left group-focus-visible:scale-x-100",

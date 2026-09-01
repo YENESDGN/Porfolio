@@ -21,7 +21,7 @@ export function SocialLinks({ className }: { className?: string }) {
               "before:absolute before:inset-x-0 before:top-full before:-z-10 before:h-full before:bg-raspberry-700 before:transition-all before:duration-500",
               "hover:before:top-0 focus-visible:before:top-0",
               "motion-reduce:before:transition-none",
-              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700",
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-400",
             )}
           >
             <Image

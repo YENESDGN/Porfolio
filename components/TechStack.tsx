@@ -30,7 +30,7 @@ export function TechStack({ items, className }: TechStackProps) {
             "motion-reduce:before:transition-none",
             "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-line",
             "after:transition-colors after:duration-300",
-            "hover:after:bg-raspberry-700",
+            "hover:after:bg-raspberry-400",
             "motion-reduce:after:transition-none",
           )}
         >
