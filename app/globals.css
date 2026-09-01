@@ -72,3 +72,12 @@
     font-family: var(--font-serif);
   }
 }
+
+/* Motion, initial={{ opacity: 0 }} değerini SSR HTML'ine yazar; JS gelmezse
+   içerik görünmez kalır. JS kapalıyken animasyonlu bloklar tam açılır. */
+@media (scripting: none) {
+  [data-animated] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

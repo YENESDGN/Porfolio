@@ -17,6 +17,8 @@ const eslintConfig = defineConfig([
     "types/**",
     // Obsidian kasasının kendi eklenti paketleri.
     ".obsidian/**",
+    // Ajan araç zinciri; proje kaynağı değil.
+    ".claude/**",
   ]),
 ]);
 
