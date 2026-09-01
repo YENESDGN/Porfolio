@@ -1,33 +1,39 @@
 # Tech stack işaretleri
 
 `TechStackItem.icon` kolonu buradaki dosyanın yolunu tutar
-(`/images/tech/react.svg`). Bileşen `next/image` ile `unoptimized` çizer —
-vektörde optimizasyon kazancı yok.
+(`/images/tech/react.svg`). `TechStack` bileşeni `next/image` ile
+`unoptimized` çizer — vektörde optimizasyon kazancı yok ve `unoptimized`
+Next'in SVG kısıtını da atlar.
 
-## Şu an hepsi YER TUTUCU
+## Dosyalar
 
-Buradaki altı dosya resmi logo **değil**; hiçbiri kırık görsel kalmasın diye
-elle çizilmiş tek renk yaklaşımlar. Resmi işaretlerle değiştirilmeli.
+Hepsi resmi marka işareti, kendi marka renkleriyle.
 
-| Dosya            | Karşılığı    | Yer tutucunun durumu                |
-| ---------------- | ------------ | ----------------------------------- |
-| `react.svg`      | React        | Biçim doğru (atom)                  |
-| `typescript.svg` | TypeScript   | Biçim doğru (kare + TS)             |
-| `nextjs.svg`     | Next.js      | Yakın                               |
-| `tailwind.svg`   | Tailwind CSS | Yaklaşık                            |
-| `postgresql.svg` | PostgreSQL   | **Yanlış** — fil işareti çizilemedi |
-| `prisma.svg`     | Prisma       | **Yaklaşık** — üçgen kabaca         |
+| Dosya            | Karşılığı    | viewBox         |
+| ---------------- | ------------ | --------------- |
+| `typescript.svg` | TypeScript   | `0 0 32 32`     |
+| `python.svg`     | Python       | `0 0 32 32`     |
+| `react.svg`      | React        | `0 -14 256 256` |
+| `nextjs.svg`     | Next.js      | `0 0 24 24`     |
+| `tailwind.svg`   | Tailwind CSS | `0 -51 256 256` |
+| `postgresql.svg` | PostgreSQL   | `-4 0 264 264`  |
+| `prisma.svg`     | Prisma       | `0 0 32 32`     |
 
-Resmi SVG'ler: <https://simpleicons.org> — dosya adlarını değiştirmeden
-üzerine yaz, kod dokunmadan çalışır.
+viewBox'lar birbirinden farklı; sorun değil, `preserveAspectRatio` varsayılanı
+her işareti 28×28 kutuya ortalayarak sığdırıyor.
 
-## Değiştirirken
+## Yeni işaret eklerken
 
-- **Tek renk.** `stroke` ya da `fill` değeri `#5c5c58` (`ink-secondary`)
-  olmalı. `next/image` bir `<img>` çizer, CSS rengi SVG'ye geçmez —
-  renk dosyanın içinde durur.
-- **`viewBox="0 0 24 24"`.** Bileşen 24×24 çiziyor; farklı viewBox işareti
-  komşularına göre büyük ya da küçük gösterir.
-- Genişlik/yükseklik özniteliği koyma; `viewBox` yeter.
-- Marka renkleri kullanılmaz: sitede tek vurgu rengi var (ahududu) ve altı
-  ayrı marka rengi onu boğar. Bkz. `DESIGN.md`, The Ink Rarity Rule.
+- **Renk dosyanın içinde durur.** `next/image` bir `<img>` çizer; CSS rengi
+  SVG'ye geçmez, `currentColor` çalışmaz.
+- Kök `<svg>` üzerinde genişlik/yükseklik verme, `viewBox` yeter.
+- Gradient ve `clipPath` id'leri dosyaya özel olmalı (`pyA`, `twGradient`,
+  `nextClip` gibi). Her dosya ayrı belge olarak yüklendiği için çakışma
+  olmuyor, ama tek harfli id'ler (`a`, `b`) ileride inline kullanımda çakışır.
+- İndirilen dosyalardaki `SVGRepo_bgCarrier` / `SVGRepo_tracerCarrier` /
+  `SVGRepo_iconCarrier` grupları ve `<title>` etiketi gereksiz; temizlenir.
+
+## Renk istisnası
+
+Bu işaretler sitedeki tek yerdir ki marka renkleri taşır. `DESIGN.md`'deki
+The Ink Rarity Rule'un kapsamı dışında; gerekçesi orada yazılı.

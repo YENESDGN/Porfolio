@@ -23,10 +23,10 @@ export function TechStack({ items, className }: TechStackProps) {
             <Image
               src={item.icon}
               alt=""
-              width={24}
-              height={24}
+              width={28}
+              height={28}
               unoptimized
-              className="size-6"
+              className="size-7"
             />
             <span className="sr-only">{item.name}</span>
           </li>

@@ -146,6 +146,8 @@ Palet dar ve bilinçli bir sıcak–soğuk karşıtlığı üzerine kurulu: sıc
 
 **The Ink Rarity Rule.** Ahududu bir ekranın %10'undan fazlasını kaplamaz. Nadirliği onun gücüdür; ikinci bir canlı renk eklenmeden önce sorulur.
 
+**The Borrowed Ink Exception.** Kuralın tek istisnası tech stack işaretleridir: resmi marka logoları kendi renkleriyle durur, çünkü tanınırlıkları renklerine bağlı ve tek renge indirgenmiş bir logo yanlış logodur. İstisna dardır — yalnızca ana sayfadaki tek satır, 28×28 boyutunda. Site paletine katılmazlar; hiçbir token bu renklerden türetilmez ve başka hiçbir yüzey marka rengi taşımaz.
+
 **The Never Gray On Color Rule.** Renkli zemin üzerinde `ink-muted` kullanılmaz; ikincil metin o zeminin kendi tonundan koyultularak türetilir.
 
 ## Typography
@@ -243,6 +245,13 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 
 - **Malzeme:** `bg-surface-media` (buz camı). Görsel yüklenmeden önce de bu levha görünür; boş kutu bırakılmaz.
 - **Görsel:** Her zaman `next/image`, `alt` zorunlu, dekoratifse `alt=""`. Katlanın üstündeki görselde `preload` — Next 16'da `priority` kullanımdan kaldırıldı.
+
+### Tech stack işaretleri
+
+- **Kaynak:** `public/images/tech/*.svg`, yol `TechStackItem.icon` kolonunda.
+- **Boyut:** 28×28, `gap-5` ile tek satır.
+- **Renk:** Marka renkleri — bkz. The Borrowed Ink Exception.
+- **Ad kaybolmaz:** `alt=""` + `sr-only` ad + `title`; logoyu tanımayan da karşılığını görür.
 
 ### Linkler
 

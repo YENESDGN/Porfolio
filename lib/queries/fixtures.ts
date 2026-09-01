@@ -19,11 +19,12 @@ export const landingFixture: LandingPageData = {
   },
   techStack: [
     { id: 1, name: "TypeScript", icon: "/images/tech/typescript.svg" },
-    { id: 2, name: "React", icon: "/images/tech/react.svg" },
-    { id: 3, name: "Next.js", icon: "/images/tech/nextjs.svg" },
-    { id: 4, name: "Tailwind CSS", icon: "/images/tech/tailwind.svg" },
-    { id: 5, name: "PostgreSQL", icon: "/images/tech/postgresql.svg" },
-    { id: 6, name: "Prisma", icon: "/images/tech/prisma.svg" },
+    { id: 2, name: "Python", icon: "/images/tech/python.svg" },
+    { id: 3, name: "React", icon: "/images/tech/react.svg" },
+    { id: 4, name: "Next.js", icon: "/images/tech/nextjs.svg" },
+    { id: 5, name: "Tailwind CSS", icon: "/images/tech/tailwind.svg" },
+    { id: 6, name: "PostgreSQL", icon: "/images/tech/postgresql.svg" },
+    { id: 7, name: "Prisma", icon: "/images/tech/prisma.svg" },
   ],
   projectCount: 3,
 };
