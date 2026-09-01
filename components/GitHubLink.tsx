@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { GithubIcon } from "./BrandIcons";
 
@@ -21,14 +22,33 @@ export function GitHubLink({
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "inline-flex items-center gap-2 py-2 text-body text-raspberry-700 underline underline-offset-4 transition-colors",
-        "hover:text-raspberry-600",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700",
+        "group relative inline-flex items-center rounded-full bg-raspberry-700 py-2.5 pr-11 pl-5 text-body text-ink",
+        "transition-colors duration-300 hover:bg-raspberry-600",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-600",
         className,
       )}
     >
-      <GithubIcon aria-hidden="true" strokeWidth={1.5} className="size-4" />
-      {label}
+      <span
+        className={cn(
+          "inline-flex items-center gap-2 transition-transform duration-300 ease-out",
+          "group-hover:-translate-x-1 group-focus-visible:-translate-x-1",
+          "motion-reduce:transform-none motion-reduce:transition-none",
+        )}
+      >
+        <GithubIcon aria-hidden="true" strokeWidth={1.5} className="size-4" />
+        {label}
+      </span>
+
+      <ArrowUpRight
+        aria-hidden="true"
+        strokeWidth={1.5}
+        className={cn(
+          "absolute right-5 size-4 translate-x-3 opacity-0 transition duration-300 ease-out",
+          "group-hover:translate-x-0 group-hover:opacity-100",
+          "group-focus-visible:translate-x-0 group-focus-visible:opacity-100",
+          "motion-reduce:transform-none motion-reduce:transition-none",
+        )}
+      />
       <span className="sr-only"> (yeni sekmede açılır)</span>
     </a>
   );
