@@ -1,4 +1,4 @@
-export { GithubIcon, LinkedinIcon } from "./BrandIcons";
+export { GithubIcon } from "./BrandIcons";
 export { Card } from "./Card";
 export { Container } from "./Container";
 export { GitHubLink } from "./GitHubLink";

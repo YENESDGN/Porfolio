@@ -146,7 +146,7 @@ Palet dar ve bilinçli bir sıcak–soğuk karşıtlığı üzerine kurulu: sıc
 
 **The Ink Rarity Rule.** Ahududu bir ekranın %10'undan fazlasını kaplamaz. Nadirliği onun gücüdür; ikinci bir canlı renk eklenmeden önce sorulur.
 
-**The Borrowed Ink Exception.** Kuralın tek istisnası tech stack işaretleridir: resmi marka logoları kendi renkleriyle durur, çünkü tanınırlıkları renklerine bağlı ve tek renge indirgenmiş bir logo yanlış logodur. İstisna dardır — yalnızca ana sayfadaki tek satır, 28×28 boyutunda. Site paletine katılmazlar; hiçbir token bu renklerden türetilmez ve başka hiçbir yüzey marka rengi taşımaz.
+**The Borrowed Ink Exception.** Kuralın tek istisnası tech stack işaretleridir: resmi marka logoları kendi renkleriyle durur, çünkü tanınırlıkları renklerine bağlı ve tek renge indirgenmiş bir logo yanlış logodur. İstisna dardır — ana sayfadaki tech stack satırı (28×28) ve navbar'daki üç sosyal işaret (20×20). Site paletine katılmazlar; hiçbir token bu renklerden türetilmez ve başka hiçbir yüzey marka rengi taşımaz.
 
 **The Never Gray On Color Rule.** Renkli zemin üzerinde `ink-muted` kullanılmaz; ikincil metin o zeminin kendi tonundan koyultularak türetilir.
 
@@ -256,7 +256,7 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 ### Linkler
 
 - **Vurgu linki:** `text-raspberry-700`, `underline underline-offset-4`. Sitedeki tıklanabilir tek yüzey linktir; kart, fotoğraf ve metin bloğu asla anchor değildir.
-- **İkon linki:** 44×44 dokunma hedefi, `aria-label` zorunlu. GitHub/LinkedIn `target="_blank" rel="noopener noreferrer"`; `mailto:` hiçbiri — yeni sekme boş sekme bırakır.
+- **İkon linki:** 44×44 dokunma hedefi, `aria-label` zorunlu. GitHub/LinkedIn `target="_blank" rel="noopener noreferrer"`; `mailto:` hiçbiri — yeni sekme boş sekme bırakır. İşaretler resmi marka logosu olduğu için vurgu renkle değil opaklıkla verilir (`opacity-80` → `opacity-100`); odak halkası bağlantının kendisinde durur.
 
 ### Navigasyon
 
