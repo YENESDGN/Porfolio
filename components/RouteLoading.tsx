@@ -2,7 +2,7 @@
 // render edildiği için nadiren görünür, yine de eksik bırakılmaz.
 export default function RouteLoading() {
   return (
-    <main className="px-6 py-section">
+    <main className="py-section">
       <p className="text-body text-ink-muted">Yükleniyor…</p>
     </main>
   );

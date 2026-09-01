@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="px-6 py-section">
+    <main className="py-section">
       <h1 className="text-h1 text-ink">Sayfa bulunamadı</h1>
       <p className="mt-4 max-w-prose text-body text-ink-secondary">
         Aradığın sayfa taşınmış ya da hiç var olmamış olabilir.

@@ -7,7 +7,7 @@ import { SocialLinks } from "./SocialLinks";
 // iletişim her ekranda tek dokunuş uzakta.
 export function Navbar() {
   return (
-    <header className="px-6 pt-6">
+    <header className="pt-6">
       <nav
         aria-label="Ana gezinme"
         className="flex items-center justify-between gap-4"

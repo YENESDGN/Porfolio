@@ -69,6 +69,12 @@ export const aboutFixture: AboutPageData = {
         "Çalışma biçimim yavaş ve tekrarlı. Bir şeyi bitirmeden ikincisine geçmemeye, ne yaptığımı sonradan okuyabileceğim kadar açık bırakmaya çalışıyorum.",
       photo: null,
     },
+    {
+      id: 3,
+      content:
+        "Öğrenmeyi sıraya koymayı seviyorum: önce neyi bilmediğimi yazıyorum, sonra tek tek üstünü çiziyorum. Yandaki liste tam olarak bu — bitmiş bir yol değil, hâlâ süren bir sıra.",
+      photo: null,
+    },
   ],
   roadmap: [
     {

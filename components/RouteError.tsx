@@ -3,7 +3,7 @@
 // Error boundary Client Component olmak zorunda; her route'un error.tsx'i bunu yeniden dışa aktarır.
 export default function RouteError({ reset }: { reset: () => void }) {
   return (
-    <main className="px-6 py-section">
+    <main className="py-section">
       <h1 className="text-h1 text-ink">Bir şeyler ters gitti</h1>
       <p className="mt-4 max-w-prose text-body text-ink-secondary">
         Sayfa yüklenirken bir hata oluştu. Yeniden denemek ister misin?
