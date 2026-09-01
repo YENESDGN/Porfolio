@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import {
+  Container,
   ProfileImage,
   Reveal,
   StatCard,
@@ -16,25 +17,27 @@ export default async function LandingPage() {
 
   return (
     <main className="py-section">
-      <div className="grid gap-10 md:grid-cols-2 md:gap-12">
-        <div className="flex flex-col gap-10">
-          <Reveal direction="left">
-            <StatCard value={data.projectCount} label="Proje" />
-          </Reveal>
+      <Container>
+        <div className="grid gap-10 md:grid-cols-2 md:gap-12">
+          <div className="flex flex-col gap-10">
+            <Reveal direction="left">
+              <StatCard value={data.projectCount} label="Proje" />
+            </Reveal>
 
-          <Reveal direction="up">
-            <WelcomeSection text={data.content.welcomeText} />
-          </Reveal>
+            <Reveal direction="up">
+              <WelcomeSection text={data.content.welcomeText} />
+            </Reveal>
 
-          <Reveal direction="up" delay={0.1}>
-            <TechStack items={data.techStack} />
+            <Reveal direction="up" delay={0.1}>
+              <TechStack items={data.techStack} />
+            </Reveal>
+          </div>
+
+          <Reveal direction="right" className="md:h-full">
+            <ProfileImage photo={data.content.photo} className="md:h-full" />
           </Reveal>
         </div>
-
-        <Reveal direction="right" className="md:h-full">
-          <ProfileImage photo={data.content.photo} className="md:h-full" />
-        </Reveal>
-      </div>
+      </Container>
     </main>
   );
 }

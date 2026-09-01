@@ -65,6 +65,9 @@ spacing:
   overlap-lg: "4.5rem"
   section: "clamp(4rem, 2rem + 7vw, 7rem)"
 components:
+  container:
+    width: "64rem"
+    padding: "0 1.5rem"
   card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.ink}"
@@ -174,6 +177,8 @@ Palet dar ve bilinçli bir sıcak–soğuk karşıtlığı üzerine kurulu: sıc
 
 Mobil önce: temel sınıf mobil, `md:` ve üstü masaüstü.
 
+Sayfa ölçüsünün tek tanımı `Container`: `max-w-5xl` (64rem) ve `px-6`. `header` ile `main` tam genişlikte durur, ölçüyü içerideki `Container` taşır. Navbar ve içerik bu sayede aynı kenardan hizalanır, tam genişlikte bir zemin gerektiğinde de yerleşim bozulmaz.
+
 Bölümler arası ritim `py-section` (`clamp(4rem → 7rem)`) ile kurulur. Overlap kayması `overlap` (3rem) ve geniş ekranda `overlap-lg` (4.5rem) token'larıyla verilir; elle negatif değer yazılmaz. Kalan boşluk Tailwind'in 4px ölçeğinden gelir.
 
 Overlap yalnızca `md` ve üstünde vardır. Altında bloklar dikey yığılır ve ritmi `gap` taşır — kayma kaybolur, nefes kaybolmaz. DOM sırası her koşulda görsel → metin; `reverse` yalnızca masaüstü sütununu değiştirir, böylece mobil yığın ve ekran okuyucu sırası her yerde aynı kalır.
@@ -183,6 +188,8 @@ Dokunma hedefi mobilde en az 44×44px. İkon küçülürken tıklama alanı kü�
 ### Named Rules
 
 **The Single Overlap Rule.** Sitede tek overlap uygulaması vardır: `OverlapPair`. İkincisi yazılmaz; yön farkı `reverse` prop'uyla verilir.
+
+**The Single Measure Rule.** Sayfa ölçüsü yalnızca `Container` içinde tanımlıdır. Hiçbir sayfa, bölüm ya da bileşen kendi `max-width` ve yatay dolgusunu yazmaz; ölçü gerekiyorsa `Container` sarar.
 
 **The Both Breakpoints Rule.** Yeni bir bölüm masaüstü **ve** mobiliyle birlikte teslim edilir. Tek breakpoint'lik iş tamamlanmış sayılmaz.
 
@@ -213,6 +220,11 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 **The No Card Border Rule.** Kartın kenarlığı yoktur. Kenarlık ihtiyacı hissediliyorsa ton farkı yeterince çalışmıyordur; çözüm çizgi değil ton.
 
 ## Components
+
+### Ölçü (`Container`)
+
+- **Genişlik:** `max-w-5xl` (64rem), `mx-auto`, `px-6`.
+- **Kullanım:** `header` ve `main` içinde birer kez. Tek başına görünmez; yalnızca hizayı taşır.
 
 ### Kart (`Card`)
 

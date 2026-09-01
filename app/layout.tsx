@@ -24,8 +24,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="tr" className={`${plexSerif.variable} h-full antialiased`}>
-      {/* Sayfa ölçüsü tek yerde: navbar ve tüm sayfalar aynı kenardan hizalanır. */}
-      <body className="mx-auto flex min-h-full w-full max-w-5xl flex-col px-6">
+      <body className="flex min-h-full flex-col">
         <Navbar />
         {children}
       </body>

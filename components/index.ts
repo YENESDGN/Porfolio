@@ -1,5 +1,6 @@
 export { GithubIcon, LinkedinIcon } from "./BrandIcons";
 export { Card } from "./Card";
+export { Container } from "./Container";
 export { GitHubLink } from "./GitHubLink";
 export { MediaPlane } from "./MediaPlane";
 export { MobileMenu } from "./MobileMenu";
