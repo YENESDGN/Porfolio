@@ -19,18 +19,19 @@
 
   --font-serif: var(--font-plex-serif), Georgia, serif;
 
-  --color-page: #fffcff;
+  --color-page: #1c2f38;
+  --color-page-deep: #14222a;
 
-  --color-surface: #f6f7eb;
-  --color-surface-media: #d1f5ff;
+  --color-surface: #27404b;
+  --color-surface-media: #3a5c6a;
 
-  --color-ink: #353535;
-  --color-ink-secondary: #5c5c58;
-  --color-ink-muted: #75756f;
-  --color-ink-inverse: #fffcff;
+  --color-ink: #edf4f7;
+  --color-ink-secondary: #c2d4dc;
+  --color-ink-muted: #93aab5;
+  --color-ink-inverse: #14222a;
 
-  --color-line: #e4e4dc;
-  --color-line-strong: #cfcfc5;
+  --color-line: #37525e;
+  --color-line-strong: #52737f;
 
   --color-raspberry-50: #fbeaec;
   --color-raspberry-500: #de3c4b;
@@ -68,7 +69,7 @@
 
   /* Sistemdeki tek gölge: üstteki kâğıdın cam levhayı kestiği temas noktası.
      Yalnızca OverlapPair içerik bloğunda, yalnızca md ve üstünde kullanılır. */
-  --shadow-contact: 0 4px 16px rgba(53, 53, 53, 0.08);
+  --shadow-contact: 0 2px 10px rgba(0, 0, 0, 0.45);
 
   /* Cam levhanın oranları token olarak durur: arbitrary değer yalnızca
      OverlapPair hesabına ayrılmış. */
