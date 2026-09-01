@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 
 export function SocialLinks({ className }: { className?: string }) {
   return (
-    <ul className={cn("flex items-center", className)}>
+    <ul className={cn("flex items-center gap-2", className)}>
       {socialLinks.map((link) => (
         <li key={link.key}>
           <a
