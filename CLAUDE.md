@@ -89,6 +89,8 @@ If you are having trouble running a function, skip it and its dependents, write 
 - NO probability assessments. Do not use speculative sentences like "This could also be / maybe / it could also be done like this". Write exactly what will be done.
 - Divide into phases, put substeps under phases.
 - Give a very brief report at the end of each phase.
+- **Do not explain in detail.** Do the task, then report in a few lines. No walkthrough of what was done and why.
+- **Point at code, not file names.** When something needs attention, quote the line or snippet with its `path:line` and say in one sentence what is wrong: "`components/Card.tsx:12` — `bg-surface p-6` is repeated in TextCard, violates DRY." A bare file name is not a report.
 
 ## Bug vs. enhancement
 
