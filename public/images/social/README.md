@@ -14,10 +14,14 @@ Exception kapsamındalar.
 
 ## Bilinmesi gerekenler
 
-- **Hover: ahududu dolgu.** Dinlenirken şeffaf; üzerine gelindiğinde ahududu
-  daireyi alttan doldurur ve işaret beyaz silüete döner. Beyaza dönüş CSS
-  rengiyle değil `brightness-0 invert` filtresiyle kurulur — marka rengi
-  dosyanın içinde ve CSS rengi görsele geçmiyor.
+- **Hover: ahududu dolgu + beyaz disk.** Dinlenirken şeffaf; üzerine
+  gelindiğinde ahududu daireyi alttan doldurur ve işaretin arkasında beyaz
+  bir disk belirir (`group-hover:bg-white`, görselin kutusu `size-7 p-1` =
+  28px disk, görselin kendisi 20px). İşaret kendi rengini korur.
+- **İşareti filtreyle beyazlatma.** `brightness-0 invert` denendi ve
+  bırakıldı: filtre diski de glifi de aynı beyaza çevirdiği için LinkedIn ve
+  Gmail işaretleri tek parça beyaz lekeye dönüşüyordu. Çok renkli bir
+  logoda iç kontrast filtreyle korunamaz.
 - **Gmail zemini daire yapıldı.** Resmi işaret yuvarlatılmış kare (squircle)
   zemin taşır; LinkedIn diskiyle aynı aileye girsin diye daireye çevrildi
   (`<circle cx="16" cy="16" r="14.93">`, LinkedIn ile aynı oran: yarıçap /

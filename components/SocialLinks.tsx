@@ -23,6 +23,8 @@ export function SocialLinks({ className }: { className?: string }) {
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700",
             )}
           >
+            {/* p-1 ile kutu 28px, görselin kendisi 20px kalır: hover'da beliren
+                beyaz disk işaretin çevresinde gerçek bir pay bırakır. */}
             <Image
               src={link.icon}
               alt=""
@@ -30,11 +32,9 @@ export function SocialLinks({ className }: { className?: string }) {
               height={20}
               unoptimized
               className={cn(
-                "size-5 transition-all duration-500 motion-reduce:transition-none",
-                // Marka rengi dosyanın içinde; CSS rengi görsele geçmediği için
-                // beyaz siluet filtreyle kuruluyor.
-                "group-hover:brightness-0 group-hover:invert",
-                "group-focus-visible:brightness-0 group-focus-visible:invert",
+                "size-7 rounded-full p-1 transition-all duration-500 motion-reduce:transition-none",
+                // İşaret kendi renginde kalır; beyazlayan yalnızca arkası.
+                "group-hover:bg-white group-focus-visible:bg-white",
               )}
             />
           </a>
