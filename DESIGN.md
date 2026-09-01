@@ -207,6 +207,8 @@ Tek istisna temas gölgesidir: üstteki kâğıt alttaki cam levhayı kestiği y
 
 ### Named Rules
 
+**The Rising Ink Rule.** Sitedeki tek hover animasyonu sosyal ikon dolgusudur: ahududu alttan yükselir. Dört animasyon kalıbı sayfa ve bölüm geçişlerini yönetir; bu onlardan biri değil, etkileşim geri bildirimidir. İkinci bir hover animasyonu eklenmeden önce sorulur.
+
 **The One Shadow Rule.** Sistemde tek bir gölge vardır ve tek bir işi vardır. Kart, buton, navbar, menü gölge almaz. İkinci bir gölge gerekiyorsa hiyerarşi başka bir yerde çözülmemiş demektir.
 
 ## Shapes
@@ -218,6 +220,8 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 ### Named Rules
 
 **The Square Edge Rule.** Hiçbir yüzey yuvarlatılmaz. Buton, kart, görsel, menü — hepsi keskin köşelidir.
+
+**The Round Target Exception.** Tek istisna navbar'daki sosyal ikon hedefleridir: 44×44 daire. Gerekçe biçimsel değil davranışsal — ahududu dolgu alttan yükselerek hedefi doldurur ve bu hareket dairede tamamlanmış, karede kesik görünür. İstisna bu üç bağlantıyla sınırlıdır; başka hiçbir yüzey yuvarlatılmaz.
 
 **The No Card Border Rule.** Kartın kenarlığı yoktur. Kenarlık ihtiyacı hissediliyorsa ton farkı yeterince çalışmıyordur; çözüm çizgi değil ton.
 
@@ -256,7 +260,8 @@ Kenarlık kart çevresinde kullanılmaz — bir bloğun sınırı arka plan tonu
 ### Linkler
 
 - **Vurgu linki:** `text-raspberry-700`, `underline underline-offset-4`. Sitedeki tıklanabilir tek yüzey linktir; kart, fotoğraf ve metin bloğu asla anchor değildir.
-- **İkon linki:** 44×44 dokunma hedefi, `aria-label` zorunlu. GitHub/LinkedIn `target="_blank" rel="noopener noreferrer"`; `mailto:` hiçbiri — yeni sekme boş sekme bırakır. İşaretler resmi marka logosu olduğu için vurgu renkle değil opaklıkla verilir (`opacity-80` → `opacity-100`); odak halkası bağlantının kendisinde durur.
+- **İkon linki:** 44×44 daire dokunma hedefi, `aria-label` zorunlu. GitHub/LinkedIn `target="_blank" rel="noopener noreferrer"`; `mailto:` hiçbiri — yeni sekme boş sekme bırakır.
+- **İkon linki — hover ve odak:** Dinlenirken şeffaf, marka işareti kendi renginde. Üzerine gelindiğinde ahududu dolgu alttan yükselip daireyi doldurur (500ms) ve işaret beyaz silüete döner. Renk dosyanın içinde olduğu için beyaza dönüş CSS rengiyle değil `brightness-0 invert` filtresiyle kurulur. Klavye odağı aynı durumu verir, üstüne odak halkası çizilir. `prefers-reduced-motion` açıkken durum yine değişir ama kaymaz.
 
 ### Navigasyon
 

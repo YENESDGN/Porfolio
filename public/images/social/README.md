@@ -14,12 +14,14 @@ Exception kapsamındalar.
 
 ## Bilinmesi gerekenler
 
-- **Hover rengi yok.** `next/image` bir `<img>` çizer; CSS rengi görsele
-  geçmez. Vurgu artık opaklıkla veriliyor (`opacity-80` → `opacity-100`).
-  Odak halkası `<a>` üzerinde, etkilenmiyor.
-- **Gmail işareti beyaz bir kart taşır.** Navbar kâğıt bandı fildişi
-  (`#f6f7eb`) olduğu için bu kart hafif daha parlak bir kutu olarak okunur.
-  Marka işaretinin kendi tasarımı; kaldırmak logoyu bozar.
+- **Hover: ahududu dolgu.** Dinlenirken şeffaf; üzerine gelindiğinde ahududu
+  daireyi alttan doldurur ve işaret beyaz silüete döner. Beyaza dönüş CSS
+  rengiyle değil `brightness-0 invert` filtresiyle kurulur — marka rengi
+  dosyanın içinde ve CSS rengi görsele geçmiyor.
+- **Gmail işareti beyaz bir kart taşır.** Dinlenirken fildişi bant üzerinde
+  hafif daha parlak okunur; hover halinde filtre onu da beyaza çevirdiği için
+  ahududu üstünde sorun çıkarmaz. Marka işaretinin kendi tasarımı; kaldırmak
+  logoyu bozar.
 - `GitHubLink` (proje kartındaki metin linki) bu dosyayı **kullanmaz**:
   orada ikon metnin rengini alması gerektiği için `components/BrandIcons.tsx`
   içindeki `currentColor` sürümü çiziliyor.
