@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, ProjectCard, Reveal } from "@/components";
+import { Container, ProjectCard, Reveal, Section } from "@/components";
 import { getPublishedProjects } from "@/lib/queries";
 
 export const metadata: Metadata = {
@@ -11,26 +11,17 @@ export default async function ProjectsPage() {
   const projects = await getPublishedProjects();
 
   return (
-    <main className="py-section">
-      <Container>
-        <h1 className="text-h1 text-ink">Projeler</h1>
-
-        {projects.length === 0 ? (
-          <p className="mt-8 max-w-prose text-body text-ink-secondary">
-            Yayına alınmış proje henüz yok. Yakında burada olacak.
-          </p>
-        ) : (
-          <ul className="mt-12 flex flex-col gap-6">
-            {projects.map((project, index) => (
-              <li key={project.id}>
-                <Reveal delay={index * 0.06}>
-                  <ProjectCard project={project} />
-                </Reveal>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Container>
+    <main>
+      {/* Her proje bir ekran: liste değil, sırayla gelen bloklar. */}
+      {projects.map((project) => (
+        <Section key={project.id}>
+          <Container width="wide">
+            <Reveal>
+              <ProjectCard project={project} />
+            </Reveal>
+          </Container>
+        </Section>
+      ))}
     </main>
   );
 }

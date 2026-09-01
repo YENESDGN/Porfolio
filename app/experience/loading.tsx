@@ -1,1 +1,1 @@
-export { default } from "@/components/RouteLoading";
+export { RouteLoading as default } from "@/components";

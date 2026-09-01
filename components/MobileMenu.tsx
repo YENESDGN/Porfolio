@@ -15,9 +15,9 @@ export function MobileMenu() {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         aria-label="Menüyü aç"
-        className="flex size-11 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
+        className="flex size-12 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
       >
-        <Menu aria-hidden="true" strokeWidth={1.5} className="size-5" />
+        <Menu aria-hidden="true" strokeWidth={1.5} className="size-9" />
       </Dialog.Trigger>
 
       <Dialog.Portal>
@@ -27,9 +27,9 @@ export function MobileMenu() {
             <Dialog.Title className="text-h3 text-ink">Menü</Dialog.Title>
             <Dialog.Close
               aria-label="Menüyü kapat"
-              className="-mr-3 flex size-11 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
+              className="-mr-1.5 flex size-12 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
             >
-              <X aria-hidden="true" strokeWidth={1.5} className="size-5" />
+              <X aria-hidden="true" strokeWidth={1.5} className="size-9" />
             </Dialog.Close>
           </div>
           <Dialog.Description className="sr-only">

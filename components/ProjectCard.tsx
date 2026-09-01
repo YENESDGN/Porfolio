@@ -4,27 +4,34 @@ import { Card } from "./Card";
 import { GitHubLink } from "./GitHubLink";
 import { MediaPlane } from "./MediaPlane";
 
-type ProjectCardProps = {
+// Overlap değil: 2 sütun / 1 satır grid. Kart bir bölümün tamamını doldurur,
+// bu yüzden ölçüler büyük. Kartın kendisi tıklanabilir değil; tek tıklanır
+// yüzey GitHub linki.
+export function ProjectCard({
+  project,
+  className,
+}: {
   project: ProjectSummary;
   className?: string;
-};
-
-// Overlap değil: 2 sütun / 1 satır grid. Solda küçük görsel, sağda kısa
-// açıklama. Kartın kendisi tıklanabilir değil; tek tıklanır yüzey GitHub linki.
-export function ProjectCard({ project, className }: ProjectCardProps) {
+}) {
   return (
-    <Card className={cn("grid gap-4 md:grid-cols-2", className)}>
+    <Card
+      className={cn(
+        "grid gap-8 md:grid-cols-2 md:items-center md:gap-12 md:p-12",
+        className,
+      )}
+    >
       <MediaPlane
         photo={project.coverPhoto}
-        sizes="(min-width: 768px) 30vw, 90vw"
+        sizes="(min-width: 768px) 45vw, 90vw"
         className="aspect-plate"
       />
       <div>
-        <h3 className="text-h3 text-ink">{project.title}</h3>
-        <p className="mt-2 max-w-prose text-body text-ink-secondary">
+        <h2 className="text-h1 text-ink">{project.title}</h2>
+        <p className="mt-4 max-w-prose text-lead text-ink-secondary">
           {project.description}
         </p>
-        <GitHubLink url={project.githubUrl} className="mt-3" />
+        <GitHubLink url={project.githubUrl} className="mt-6" />
       </div>
     </Card>
   );

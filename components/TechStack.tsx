@@ -15,7 +15,7 @@ export function TechStack({ items, className }: TechStackProps) {
   return (
     <div className={cn(className)}>
       <h2 className="text-caption text-ink-muted">Tech Stack</h2>
-      <ul className="mt-4 flex flex-wrap items-center gap-5">
+      <ul className="mt-6 flex flex-wrap items-center gap-6 md:gap-8">
         {items.map((item) => (
           <li key={item.id} title={item.name} className="flex items-center">
             {/* SVG optimize edilmez: vektörde kazanç yok ve unoptimized
@@ -23,10 +23,10 @@ export function TechStack({ items, className }: TechStackProps) {
             <Image
               src={item.icon}
               alt=""
-              width={28}
-              height={28}
+              width={40}
+              height={40}
               unoptimized
-              className="size-7"
+              className="size-8 md:size-10"
             />
             <span className="sr-only">{item.name}</span>
           </li>

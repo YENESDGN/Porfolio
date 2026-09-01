@@ -6,6 +6,7 @@ import {
   OverlapPair,
   Reveal,
   RoadMap,
+  Section,
   TextCard,
 } from "@/components";
 import { getAboutPage } from "@/lib/queries";
@@ -25,16 +26,12 @@ export default async function AboutPage() {
   const aside = data.sections[2];
 
   return (
-    <main className="py-section">
-      <Container>
-        <h1 className="text-h1 text-ink">Hakkımda</h1>
-
-        <div className="mt-12 flex flex-col gap-16 md:gap-20">
-          {pairs.map((section, index) => (
-            <Reveal
-              key={section.id}
-              direction={index % 2 === 1 ? "right" : "left"}
-            >
+    <main>
+      {/* Her overlap çifti kendi ekranını doldurur; kayma payı token'dan gelir. */}
+      {pairs.map((section, index) => (
+        <Section key={section.id}>
+          <Container width="wide">
+            <Reveal direction={index % 2 === 1 ? "right" : "left"}>
               <OverlapPair
                 reverse={index % 2 === 1}
                 media={
@@ -44,13 +41,19 @@ export default async function AboutPage() {
                     className="aspect-plate"
                   />
                 }
-                content={<TextCard content={section.content} />}
+                content={
+                  <TextCard content={section.content} className="md:p-10" />
+                }
               />
             </Reveal>
-          ))}
+          </Container>
+        </Section>
+      ))}
 
+      <Section>
+        <Container width="wide">
           <Reveal>
-            <div className="grid gap-8 md:grid-cols-5 md:gap-10">
+            <div className="grid gap-10 md:grid-cols-5 md:gap-12">
               <RoadMap
                 items={data.roadmap}
                 title="Öğrenim"
@@ -61,8 +64,8 @@ export default async function AboutPage() {
               ) : null}
             </div>
           </Reveal>
-        </div>
-      </Container>
+        </Container>
+      </Section>
     </main>
   );
 }

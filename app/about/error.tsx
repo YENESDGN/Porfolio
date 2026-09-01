@@ -1,3 +1,3 @@
 "use client";
 
-export { default } from "@/components/RouteError";
+export { RouteError as default } from "@/components";

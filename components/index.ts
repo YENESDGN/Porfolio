@@ -12,6 +12,7 @@ export { ProfileImage } from "./ProfileImage";
 export { ProjectCard } from "./ProjectCard";
 export { Reveal } from "./Reveal";
 export { RoadMap } from "./RoadMap";
+export { Section } from "./Section";
 export { SocialLinks } from "./SocialLinks";
 export { StatCard } from "./StatCard";
 export { TechStack } from "./TechStack";

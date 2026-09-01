@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Container, Reveal, RoadMap, TextCard } from "@/components";
+import { Container, Reveal, RoadMap, Section, TextCard } from "@/components";
 import { getExperiencePage } from "@/lib/queries";
 
 export const metadata: Metadata = {
@@ -13,24 +13,25 @@ export default async function ExperiencePage() {
   if (!data) notFound();
 
   return (
-    <main className="py-section">
-      <Container>
-        <h1 className="text-h1 text-ink">Tecrübe</h1>
+    <main>
+      {/* Ray ve metinler tek bölümde kalır: ikisi birbirini okutuyor. */}
+      <Section>
+        <Container width="wide">
+          <div className="grid gap-12 md:grid-cols-5 md:gap-16">
+            <Reveal direction="left" className="md:col-span-2">
+              <RoadMap items={data.roadmap} title="İş hayatı" />
+            </Reveal>
 
-        <div className="mt-12 grid gap-10 md:grid-cols-5 md:gap-12">
-          <Reveal direction="left" className="md:col-span-2">
-            <RoadMap items={data.roadmap} title="İş hayatı" />
-          </Reveal>
-
-          <div className="flex flex-col gap-6 md:col-span-3">
-            {data.sections.map((section, index) => (
-              <Reveal key={section.id} direction="right" delay={index * 0.06}>
-                <TextCard content={section.content} />
-              </Reveal>
-            ))}
+            <div className="flex flex-col gap-8 md:col-span-3">
+              {data.sections.map((section, index) => (
+                <Reveal key={section.id} direction="right" delay={index * 0.06}>
+                  <TextCard content={section.content} />
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </Container>
+        </Container>
+      </Section>
     </main>
   );
 }

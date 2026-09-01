@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 
 export function SocialLinks({ className }: { className?: string }) {
   return (
-    <ul className={cn("flex items-center gap-2", className)}>
+    <ul className={cn("flex items-center gap-4", className)}>
       {socialLinks.map((link) => (
         <li key={link.key}>
           <a
@@ -14,7 +14,7 @@ export function SocialLinks({ className }: { className?: string }) {
             target={link.external ? "_blank" : undefined}
             rel={link.external ? "noopener noreferrer" : undefined}
             className={cn(
-              "group relative isolate flex size-11 items-center justify-center overflow-hidden rounded-full",
+              "group relative isolate flex size-12 items-center justify-center overflow-hidden rounded-full",
               // Ahududu dolgu alttan yükselir ve işaretlerin arkasında kalır.
               // isolate olmadan -z-10 navbar'ın arkasına kaçar; overflow-hidden
               // dolguyu daireye kırpar.
@@ -27,10 +27,10 @@ export function SocialLinks({ className }: { className?: string }) {
             <Image
               src={link.icon}
               alt=""
-              width={20}
-              height={20}
+              width={55}
+              height={55}
               unoptimized
-              className="size-5"
+              className="size-9"
             />
           </a>
         </li>

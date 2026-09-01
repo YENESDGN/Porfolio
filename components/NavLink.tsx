@@ -24,13 +24,36 @@ export function NavLink({ href, label, className, onNavigate }: NavLinkProps) {
       aria-current={isActive ? "page" : undefined}
       onClick={onNavigate}
       className={cn(
-        "inline-block py-2 text-body transition-colors",
+        "group relative inline-block py-2 text-lead transition-colors duration-300",
         "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-raspberry-700",
-        isActive ? "text-ink" : "text-ink-secondary hover:text-ink",
+        // raspberry-500 metin taşımaz: kâğıt zeminde 4.00:1 ile AA'nın altında.
+        isActive ? "text-ink" : "text-ink-secondary hover:text-raspberry-700",
         className,
       )}
     >
-      {label}
+      {/* Sözcük çizgiden hafifçe kalkar: transform, satırı kıpırdatmaz. */}
+      <span
+        className={cn(
+          "inline-block transition-transform duration-300 ease-out",
+          "group-hover:-translate-y-0.5 group-focus-visible:-translate-y-0.5",
+          "motion-reduce:transform-none motion-reduce:transition-none",
+        )}
+      >
+        {label}
+      </span>
+
+      {/* Çizgi girişte soldan açılır, çıkışta sağa toplanır: origin değişimi
+          hareketi tek yönlü tutar, gidiş geri sarma gibi görünmez. */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "absolute inset-x-0 bottom-1 h-px origin-right scale-x-0 bg-raspberry-700",
+          "transition-transform duration-300 ease-out",
+          "group-hover:origin-left group-hover:scale-x-100",
+          "group-focus-visible:origin-left group-focus-visible:scale-x-100",
+          "motion-reduce:transition-none",
+        )}
+      />
     </Link>
   );
 }

@@ -32,7 +32,13 @@ export function MediaPlane({
           preload={preload}
           className="object-cover"
         />
-      ) : null}
+      ) : (
+        // Yer tutucu etiketi ink-secondary ile yazılır: ink-muted bu zeminde
+        // 4.02:1 ile AA'nın altında kalıyor.
+        <span className="absolute inset-0 flex items-center justify-center text-caption text-ink-secondary">
+          Görsel yakında
+        </span>
+      )}
     </div>
   );
 }

@@ -13,7 +13,7 @@ export function ProfileImage({ photo, className }: ProfileImageProps) {
     <MediaPlane
       photo={photo}
       preload
-      sizes="(min-width: 768px) 40vw, 100vw"
+      sizes="(min-width: 768px) 50vw, 100vw"
       className={cn("aspect-portrait md:aspect-auto md:h-full", className)}
     />
   );
