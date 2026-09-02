@@ -86,8 +86,9 @@
   --spacing-nav: 5rem;
   --spacing-viewport: calc(100svh - var(--spacing-nav));
 
-  --spacing-overlap: 5rem;
-  --spacing-overlap-lg: 8rem;
+  /* Yüzde: kayma payı bitişik sütunun genişliğine bağlanır, bu yüzden ayrı bir
+     lg adımı gerekmez — levha her genişlikte görselin aynı oranına girer. */
+  --spacing-overlap: 25%;
   --spacing-section: clamp(4rem, 2rem + 7vw, 7rem);
 
   /* max-w-prose --container-* değil --max-width-* namespace'inden okur;

@@ -40,7 +40,8 @@ The palette is defined as tokens inside `@theme`. Do not write bare hex values.
 
 - Vertical rhythm belongs to `Section`, not to the page: it carries `min-h-viewport` (`100svh` minus the navbar) plus its own padding. `py-section` remains for blocks that are not a full screen.
 - `--spacing-viewport` reads `svh`, not `vh`: mobile browser chrome must not clip a section.
-- Overlap shift is given with the `overlap` and `overlap-lg` tokens (e.g., `-mt-overlap`); do not write negative margin values manually.
+- Overlap shift is given with the `overlap` token (e.g., `-ml-overlap`); do not write negative margin values manually. The token is a percentage, so it resolves against the grid column width and needs no `lg` step.
+- Vertical overlap is a grid row (`md:grid-rows-[auto_5rem]` + `row-span-2` on the plate), never `translate-y` or a negative margin. Neither of those reserves space, so the hanging part lands on top of the next `Section`. A percentage margin is doubly wrong vertically: it resolves against width.
 - The rest of the spacing is Tailwind's default 4px scale.
 
 ## Layout and responsive
