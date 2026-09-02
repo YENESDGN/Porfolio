@@ -1,4 +1,5 @@
 import type { ProjectDetail } from "@/lib/queries";
+import { Card } from "./Card";
 import { MediaPlane } from "./MediaPlane";
 
 // Görsel yoksa hiç çizilmez: RoadMap ve TechStack ile aynı davranış.
@@ -14,9 +15,7 @@ export function ProjectGallery({
   if (images.length === 0) return null;
 
   return (
-    <div className={className}>
-      {title ? <h2 className="mb-8 text-h2 text-ink">{title}</h2> : null}
-
+    <Card variant="bare" title={title} className={className}>
       <ul className="grid gap-8 md:grid-cols-2 md:gap-10">
         {images.map((image) => (
           <li key={image.id}>
@@ -33,6 +32,6 @@ export function ProjectGallery({
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 }

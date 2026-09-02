@@ -1,6 +1,6 @@
 import type { RoadmapEntry } from "@/lib/queries";
-import { cn } from "@/lib/cn";
 import { formatDateRange } from "@/lib/formatDate";
+import { Card } from "./Card";
 
 type RoadMapProps = {
   items: RoadmapEntry[];
@@ -9,18 +9,14 @@ type RoadMapProps = {
 };
 
 // Öğrenim ve iş hayatı için tek uygulama; ayıran şey yalnızca gelen liste.
-// Dikey ray line-strong'un ayrıldığı iki yerden biri.
 export function RoadMap({ items, title, className }: RoadMapProps) {
   if (items.length === 0) return null;
 
   return (
-    <section className={cn(className)}>
-      {title ? <h2 className="text-h2 text-ink">{title}</h2> : null}
-      <ol className={cn("border-l border-line-strong", title && "mt-6")}>
+    <Card variant="bare" title={title} className={className}>
+      <ol className="border-l border-line-strong">
         {items.map((item) => (
           <li key={item.id} className="relative pb-8 pl-6 last:pb-0">
-            {/* Dekoratif dolgu, üzerine metin gelmiyor: raspberry-500 burada
-                AA sınırına takılmaz. */}
             <span
               aria-hidden="true"
               className="absolute top-2 left-0 size-2 -translate-x-1/2 bg-raspberry-500"
@@ -37,6 +33,6 @@ export function RoadMap({ items, title, className }: RoadMapProps) {
           </li>
         ))}
       </ol>
-    </section>
+    </Card>
   );
 }

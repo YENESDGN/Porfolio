@@ -5,7 +5,6 @@ import { Card } from "./Card";
 import { GitHubLink } from "./GitHubLink";
 import { TextLink } from "./TextLink";
 
-// Detay sayfasının künyesi: OverlapPair'in cam levhaya binen kâğıt bloğu.
 // Boş alan yazılmaz — rol, tarih ve linkler yalnızca doluysa çizilir.
 export function ProjectHeader({
   project,

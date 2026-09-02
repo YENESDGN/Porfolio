@@ -4,30 +4,30 @@ import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Menu, X } from "lucide-react";
 import { navLinks } from "@/config";
+import { cn } from "@/lib/cn";
 import { NavLink } from "./NavLink";
 
-// Focus trap, Escape, scroll kilidi ve aria bağları Radix'ten geliyor;
-// elle yazmak göründüğünden zor.
+const iconButton =
+  "flex size-12 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-400";
+
+// Focus trap, Escape, scroll kilidi ve aria bağları Radix'ten geliyor; elle yazmak göründüğünden zor.
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger
-        aria-label="Menüyü aç"
-        className="flex size-12 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
-      >
+      <Dialog.Trigger aria-label="Menüyü aç" className={iconButton}>
         <Menu aria-hidden="true" strokeWidth={1.5} className="size-9" />
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-ink/20" />
+        <Dialog.Overlay className="fixed inset-0 bg-page-deep/60" />
         <Dialog.Content className="fixed inset-y-0 left-0 flex w-72 max-w-full flex-col bg-surface px-6 py-6">
           <div className="flex items-center justify-between">
             <Dialog.Title className="text-h3 text-ink">Menü</Dialog.Title>
             <Dialog.Close
               aria-label="Menüyü kapat"
-              className="-mr-1.5 flex size-12 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
+              className={cn(iconButton, "-mr-1.5")}
             >
               <X aria-hidden="true" strokeWidth={1.5} className="size-9" />
             </Dialog.Close>
@@ -43,7 +43,6 @@ export function MobileMenu() {
                   <NavLink
                     href={link.href}
                     label={link.label}
-                    className="text-lead"
                     onNavigate={() => setOpen(false)}
                   />
                 </li>

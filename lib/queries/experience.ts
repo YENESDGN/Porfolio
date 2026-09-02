@@ -7,7 +7,7 @@ export const experienceSectionSelect = {
   content: true,
 } satisfies Prisma.ExperienceSectionSelect;
 
-export type ExperienceSectionEntry = Prisma.ExperienceSectionGetPayload<{
+type ExperienceSectionEntry = Prisma.ExperienceSectionGetPayload<{
   select: typeof experienceSectionSelect;
 }>;
 

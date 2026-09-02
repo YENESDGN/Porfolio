@@ -14,7 +14,6 @@ export type ProjectSummary = Prisma.ProjectGetPayload<{
   select: typeof projectSelect;
 }>;
 
-// Detay sayfası listeden fazlasını ister: anlatı, künye, galeri, teknoloji.
 // Sıralama iki ilişkide de veriden gelir, kodda yeniden dizilmez.
 export const projectDetailSelect = {
   id: true,
@@ -50,17 +49,14 @@ export async function getPublishedProjects(): Promise<ProjectSummary[]> {
   return projectsFixture;
 }
 
-export async function getPublishedProjectCount(): Promise<number> {
-  return projectsFixture.length;
-}
-
 export async function getProjectBySlug(
   slug: string,
 ): Promise<ProjectDetail | null> {
   return projectDetailsFixture.find((project) => project.slug === slug) ?? null;
 }
 
-// generateStaticParams'ın tek ihtiyacı: yayındaki adreslerin listesi.
-export async function getProjectSlugs(): Promise<{ slug: string }[]> {
+export async function getProjectSlugs(): Promise<
+  Pick<ProjectDetail, "slug">[]
+> {
   return projectDetailsFixture.map(({ slug }) => ({ slug }));
 }

@@ -5,3 +5,6 @@ build
 generated
 package-lock.json
 Obsidian
+.obsidian
+.claude
+.impeccable

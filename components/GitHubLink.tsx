@@ -2,18 +2,14 @@ import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { GithubIcon } from "./BrandIcons";
 
-type GitHubLinkProps = {
-  url: string | null;
-  label?: string;
-  className?: string;
-};
-
 // url yoksa hiç çizilmez: boş kutu bırakmaktansa blok yok sayılır.
 export function GitHubLink({
   url,
-  label = "GitHub'da gör",
   className,
-}: GitHubLinkProps) {
+}: {
+  url: string | null;
+  className?: string;
+}) {
   if (!url) return null;
 
   return (
@@ -24,7 +20,7 @@ export function GitHubLink({
       className={cn(
         "group relative inline-flex items-center rounded-full bg-raspberry-700 py-2.5 pr-11 pl-5 text-body text-ink",
         "transition-colors duration-300 hover:bg-raspberry-600",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-600",
+        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-400",
         className,
       )}
     >
@@ -35,8 +31,8 @@ export function GitHubLink({
           "motion-reduce:transform-none motion-reduce:transition-none",
         )}
       >
-        <GithubIcon aria-hidden="true" strokeWidth={1.5} className="size-4" />
-        {label}
+        <GithubIcon aria-hidden="true" className="size-4" />
+        GitHub&apos;da gör
       </span>
 
       <ArrowUpRight

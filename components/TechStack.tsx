@@ -7,15 +7,14 @@ type TechStackProps = {
   className?: string;
 };
 
-// İşaretler yalnızca görsel; ad sr-only olarak taşınır, logoyu tanımayan
-// ziyaretçi de title ile karşılığını görür. Başlık görünmüyor, bu yüzden
-// listenin kimliği aria-label ile duruyor.
+// İşaretler yalnızca görsel; ad sr-only olarak taşınır, title ile de görünür.
+// Başlık çizilmediği için listenin kimliği aria-label ile duruyor.
 export function TechStack({ items, className }: TechStackProps) {
   if (items.length === 0) return null;
 
   return (
     <ul
-      aria-label="Tech Stack"
+      aria-label="Teknolojiler"
       className={cn("grid grid-cols-3 gap-2 md:gap-4", className)}
     >
       {items.map((item) => (
@@ -34,8 +33,6 @@ export function TechStack({ items, className }: TechStackProps) {
             "motion-reduce:after:transition-none",
           )}
         >
-          {/* SVG optimize edilmez: vektörde kazanç yok ve unoptimized
-              Next'in SVG kısıtını da atlar. */}
           <Image
             src={item.icon}
             alt=""

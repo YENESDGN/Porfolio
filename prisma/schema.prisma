@@ -1,6 +1,3 @@
-// Model adları PascalCase, tablo adları @@map ile snake_case.
-// Veri modelinin anlatımı: docs/codemap.md
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -12,10 +9,6 @@ datasource db {
   provider = "postgresql"
 }
 
-// ---------- Ortak ----------
-
-// Tüm fotoğraf blokları buradan beslenir. Diyagramda 1-1 çizilmişti;
-// aynı görselin birden çok blokta kullanılabilmesi için 1-N bırakıldı.
 model Media {
   id        Int      @id @default(autoincrement())
   url       String   @db.VarChar(500)
@@ -30,9 +23,6 @@ model Media {
   @@map("media")
 }
 
-// ---------- LandingPage ----------
-
-// "Projeler + (sayısı)" bloğu projects tablosundan COUNT ile hesaplanır, ayrı kolon yok.
 model LandingPage {
   id          Int      @id @default(autoincrement())
   welcomeText String   @map("welcome_text")
@@ -55,8 +45,6 @@ model TechStackItem {
   @@map("tech_stack_items")
 }
 
-// ---------- Hakkımda ----------
-
 model AboutSection {
   id        Int      @id @default(autoincrement())
   content   String
@@ -69,8 +57,6 @@ model AboutSection {
   @@map("about_sections")
 }
 
-// ---------- Tecrübe ----------
-
 model ExperienceSection {
   id        Int      @id @default(autoincrement())
   content   String
@@ -80,7 +66,6 @@ model ExperienceSection {
   @@map("experience_sections")
 }
 
-// Öğrenim ve iş hayatı roadmap'i aynı tabloda; ayıran alan `kind`.
 model RoadmapItem {
   id          Int         @id @default(autoincrement())
   kind        RoadmapKind
@@ -101,11 +86,6 @@ enum RoadmapKind {
   @@map("roadmap_kind")
 }
 
-// ---------- Projeler ----------
-
-// slug veriye yazılır, başlıktan türetilmez: başlık değişince adres kırılmasın
-// ve Türkçe harf çeviren bir yardımcıya ihtiyaç doğmasın.
-// description kart özeti, body detay sayfasının anlatısı — ikisi ayrı iş.
 model Project {
   id           Int       @id @default(autoincrement())
   slug         String    @unique @db.VarChar(160)
@@ -130,7 +110,6 @@ model Project {
   @@map("projects")
 }
 
-// Detay sayfasının galerisi. Media 1-N: aynı görsel birden çok projede durabilir.
 model ProjectImage {
   id        Int     @id @default(autoincrement())
   projectId Int     @map("project_id")
@@ -145,8 +124,6 @@ model ProjectImage {
   @@map("project_images")
 }
 
-// Örtük N-N yerine açık model: örtük tablo _ProjectToTechStackItem adını alır,
-// order taşıyamaz ve tabloların snake_case düzenini bozar.
 model ProjectTech {
   projectId Int @map("project_id")
   techId    Int @map("tech_id")

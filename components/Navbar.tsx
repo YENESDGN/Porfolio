@@ -4,12 +4,6 @@ import { MobileMenu } from "./MobileMenu";
 import { NavLink } from "./NavLink";
 import { SocialLinks } from "./SocialLinks";
 
-// Kâğıt bant tam genişlikte; ölçüyü içerideki Container taşır. Sayfa
-// zemininden ayrımı ton farkı kurar — kenarlık ya da gölge yok.
-// İkonlar mobilde de görünür kalır, yalnızca sayfa linkleri menüye taşınır:
-// iletişim her ekranda tek dokunuş uzakta.
-// h-nav sabit: bölüm yüksekliği bu değeri düştüğü için bandın büyümesi ilk
-// ekranı taşırırdı. sticky bandı tam ekran bölümler boyunca üstte tutar.
 export function Navbar() {
   return (
     <header className="sticky top-0 z-40 h-nav bg-surface py-3.75">

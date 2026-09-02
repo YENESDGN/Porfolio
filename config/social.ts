@@ -1,11 +1,9 @@
-// İkon bir yol dizesi olarak burada durur, bileşen olarak değil — config
-// React'tan bağımsız kalır. Dosyalar: public/images/social/.
-// `external: false` olan mailto aynı sekmede açılır — target="_blank" boş sekme bırakır.
+// (Sonra bakılacak) Profil adresleri yer tutucu. `external: false` olan mailto aynı
+// sekmede açılır; ikon bileşen değil yol dizesi ki config React'tan bağımsız kalsın.
 export const socialLinks = [
   {
     key: "github",
     label: "GitHub",
-    // (Sonra bakılacak) Gerçek profil adresleriyle değiştirilecek.
     href: "https://github.com/kullanici",
     icon: "/images/social/github.svg",
     external: true,
@@ -25,6 +23,3 @@ export const socialLinks = [
     external: false,
   },
 ] as const;
-
-export type SocialLink = (typeof socialLinks)[number];
-export type SocialKey = SocialLink["key"];

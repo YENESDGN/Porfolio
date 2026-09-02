@@ -1,4 +1,3 @@
-import { cn } from "@/lib/cn";
 import { Card, type CardVariant } from "./Card";
 
 type TextCardProps = {
@@ -15,7 +14,7 @@ export function TextCard({
   className,
 }: TextCardProps) {
   return (
-    <Card title={title} variant={variant} className={cn(className)}>
+    <Card title={title} variant={variant} className={className}>
       <p className="max-w-prose text-body text-ink-secondary">{content}</p>
     </Card>
   );

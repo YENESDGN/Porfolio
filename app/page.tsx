@@ -12,8 +12,6 @@ import {
 import { site } from "@/config";
 import { getLandingPage } from "@/lib/queries";
 
-// Partial FadeIn-Left&Right&Up: sol sütun soldan, sağdaki uzun görsel sağdan,
-// karşılama bloğu aşağıdan girer.
 export default async function LandingPage() {
   const data = await getLandingPage();
   if (!data) notFound();
@@ -22,7 +20,7 @@ export default async function LandingPage() {
     <main>
       {/* İlk ekran: metin sütunu ölçüyü tutar, portre sayfanın sağ kenarına
           kadar taşar — bu yüzden burada Container yok. */}
-      <Section align="start" className="py-0">
+      <Section align="start">
         <div className="flex flex-1 flex-col md:grid md:grid-cols-2">
           <div className="flex gap-4 px-6 pt-12 pb-10 md:gap-6 md:py-16 md:pl-10">
             <span
@@ -34,11 +32,7 @@ export default async function LandingPage() {
 
             <div className="flex flex-1 flex-col justify-between gap-12">
               <Reveal direction="left">
-                <StatCard
-                  value={data.projectCount}
-                  label="Proje"
-                  variant="bare"
-                />
+                <StatCard value={data.projectCount} label="Proje" />
               </Reveal>
 
               <Reveal direction="up" delay={0.06}>

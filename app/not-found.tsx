@@ -1,6 +1,5 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import { Container } from "@/components";
+import { Container, TextLink } from "@/components";
 
 export const metadata: Metadata = {
   title: "Sayfa bulunamadı",
@@ -14,12 +13,9 @@ export default function NotFound() {
         <p className="mt-4 max-w-prose text-body text-ink-secondary">
           Aradığın sayfa taşınmış ya da hiç var olmamış olabilir.
         </p>
-        <Link
-          href="/"
-          className="mt-8 inline-block text-body text-raspberry-700 underline underline-offset-4"
-        >
+        <TextLink href="/" className="mt-8">
           Ana sayfaya dön
-        </Link>
+        </TextLink>
       </Container>
     </main>
   );

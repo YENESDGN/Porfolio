@@ -1,37 +1,11 @@
-// GEÇİCİ. PostgreSQL gelene kadar sorgu gövdelerini besleyen tek dosya;
-// Faz 2.6'da silinir ve içerik prisma/seed.ts'e taşınır. "İçerik hardcode
-// edilmez" kuralından bilinçli ve tek dosyayla sınırlı sapma.
-//
-// Metinler yer tutucudur: gerçek kurum, şirket ve tarih iddiası taşımaz.
-// Fotoğraf alanları null — public/images/ henüz boş ve kırık görsel
-// bırakmaktansa cam levha tek başına duruyor.
+// GEÇİCİ: PostgreSQL gelene kadar sorgu gövdelerini besleyen tek dosya; Faz 2.6'da silinir.
+// Metinler yer tutucudur, fotoğraf alanları null — kırık görsel yerine cam levha tek başına durur.
 
 import type { AboutPageData } from "./about";
 import type { ExperiencePageData } from "./experience";
 import type { LandingPageData } from "./landing";
 import type { ProjectDetail, ProjectSummary } from "./projects";
 
-export const landingFixture: LandingPageData = {
-  content: {
-    welcomeText:
-      "Merhaba, ben Yağız. Arayüz tarafında çalışıyorum; işin görünen yüzünü kurmayı, yavaş ve okunur şeyler yapmayı seviyorum. Burada ne yaptığımı, nasıl öğrendiğimi ve nerelerde çalıştığımı bulacaksın.",
-    photo: null,
-  },
-  techStack: [
-    { id: 1, name: "TypeScript", icon: "/images/tech/typescript.svg" },
-    { id: 2, name: "Python", icon: "/images/tech/python.svg" },
-    { id: 3, name: "React", icon: "/images/tech/react.svg" },
-    { id: 4, name: "Next.js", icon: "/images/tech/nextjs.svg" },
-    { id: 5, name: "Tailwind CSS", icon: "/images/tech/tailwind.svg" },
-    { id: 6, name: "PostgreSQL", icon: "/images/tech/postgresql.svg" },
-    { id: 7, name: "Prisma", icon: "/images/tech/prisma.svg" },
-  ],
-  projectCount: 3,
-};
-
-// Projelerin tek kaynağı detay kaydı; kart özeti bundan türetilir, böylece
-// aynı içerik iki kez yazılmaz. Galeriler boş: public/images/ henüz fotoğraf
-// taşımıyor ve var olmayan bir dosyaya işaret etmektense blok hiç çizilmiyor.
 export const projectDetailsFixture: ProjectDetail[] = [
   {
     id: 1,
@@ -151,7 +125,6 @@ Sonradan öğrendiğim şey ölçekle ilgiliydi: sıcaklık aralığı sabit bir
   },
 ];
 
-// Kart özeti detay kaydından türetilir: projectSelect'in aldığı alanlar kadarı.
 export const projectsFixture: ProjectSummary[] = projectDetailsFixture.map(
   ({ id, slug, title, description, githubUrl, coverPhoto }) => ({
     id,
@@ -162,6 +135,24 @@ export const projectsFixture: ProjectSummary[] = projectDetailsFixture.map(
     coverPhoto,
   }),
 );
+
+export const landingFixture: LandingPageData = {
+  content: {
+    welcomeText:
+      "Merhaba, ben Yağız. Arayüz tarafında çalışıyorum; işin görünen yüzünü kurmayı, yavaş ve okunur şeyler yapmayı seviyorum. Burada ne yaptığımı, nasıl öğrendiğimi ve nerelerde çalıştığımı bulacaksın.",
+    photo: null,
+  },
+  techStack: [
+    { id: 1, name: "TypeScript", icon: "/images/tech/typescript.svg" },
+    { id: 2, name: "Python", icon: "/images/tech/python.svg" },
+    { id: 3, name: "React", icon: "/images/tech/react.svg" },
+    { id: 4, name: "Next.js", icon: "/images/tech/nextjs.svg" },
+    { id: 5, name: "Tailwind CSS", icon: "/images/tech/tailwind.svg" },
+    { id: 6, name: "PostgreSQL", icon: "/images/tech/postgresql.svg" },
+    { id: 7, name: "Prisma", icon: "/images/tech/prisma.svg" },
+  ],
+  projectCount: projectDetailsFixture.length,
+};
 
 export const aboutFixture: AboutPageData = {
   sections: [

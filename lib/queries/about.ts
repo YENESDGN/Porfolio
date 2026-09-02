@@ -8,7 +8,7 @@ export const aboutSectionSelect = {
   photo: { select: { url: true, altText: true } },
 } satisfies Prisma.AboutSectionSelect;
 
-export type AboutSectionEntry = Prisma.AboutSectionGetPayload<{
+type AboutSectionEntry = Prisma.AboutSectionGetPayload<{
   select: typeof aboutSectionSelect;
 }>;
 

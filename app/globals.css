@@ -1,17 +1,11 @@
-/* source(none): otomatik tarama kapalı, kaynaklar tek tek sayılır. Tailwind
-   varsayılanda tüm projeyi tarıyor; docs/ ve .claude/ içindeki markdown'da
-   geçen sınıf adları (kural metinleri, changelog) bundle'a ölü utility olarak
-   sızıyordu. Yeni bir kod klasörü açılırsa buraya eklenmeli. */
+/* source(none): otomatik tarama kapalı; docs/ ve .claude/ içindeki markdown'da geçen sınıf adları
+   bundle'a sızıyordu. Sınıf adı taşıyan yeni bir kod klasörü açılırsa @source olarak eklenmeli. */
 @import "tailwindcss" source(none);
 
 @source "../app";
 @source "../components";
-@source "../config";
-@source "../lib";
 
 @theme {
-  /* Namespace sıfırlaması: Tailwind'in bold/semibold ağırlıkları tamamen silinir,
-     böylece font-bold gibi bir sınıf yazılsa bile hiç üretilmez. */
   --font-weight-*: initial;
   --font-weight-thin: 100;
   --font-weight-light: 300;
@@ -28,20 +22,15 @@
   --color-ink: #edf4f7;
   --color-ink-secondary: #c2d4dc;
   --color-ink-muted: #93aab5;
-  --color-ink-inverse: #14222a;
 
   --color-line: #37525e;
-  --color-line-strong: #52737f;
+  --color-line-strong: #6a8f9c;
 
-  --color-raspberry-50: #fbeaec;
   --color-raspberry-400: #f88a98;
   --color-raspberry-500: #de3c4b;
   --color-raspberry-600: #c0303f;
   --color-raspberry-700: #a82836;
 
-  /* Ölçek tam ekran bölümler için büyütüldü: display artık kompozisyonun odak
-     sözcüğü. Gövde ölçüsü okunurluk için yerinde bırakıldı.
-     display/h1/h2 clamp ile tanımlı; mobilde ayrıca md: yazmaya gerek yok. */
   --text-caption: 0.8125rem;
   --text-caption--line-height: 1.5;
 
@@ -68,31 +57,18 @@
   --text-display--line-height: 1;
   --text-display--letter-spacing: -0.03em;
 
-  /* Sistemdeki tek gölge: üstteki kâğıdın cam levhayı kestiği temas noktası.
-     Yalnızca OverlapPair içerik bloğunda, yalnızca md ve üstünde kullanılır. */
   --shadow-contact: 0 2px 10px rgba(0, 0, 0, 0.45);
 
-  /* Cam levhanın oranları token olarak durur: arbitrary değer yalnızca
-     OverlapPair hesabına ayrılmış. */
   --aspect-portrait: 3 / 4;
   --aspect-plate: 4 / 3;
-  /* Proje levhası: aynı genişlikte plate'ten %25 kısa. */
   --aspect-plate-wide: 16 / 9;
 
-  /* Navbar yüksekliği: py-3.75 (2 × 0.9375rem) + en uzun çocuk olan 50px'lik
-     text-lead bağlantısı. Bölüm yüksekliği bunu düşer, böylece ilk ekran
-     taşmadan tam viewport kadar olur.
-     vh değil svh: mobil tarayıcı çubuğu bölümü kırpmasın. */
   --spacing-nav: 5rem;
   --spacing-viewport: calc(100svh - var(--spacing-nav));
 
-  /* Yüzde: kayma payı bitişik sütunun genişliğine bağlanır, bu yüzden ayrı bir
-     lg adımı gerekmez — levha her genişlikte görselin aynı oranına girer. */
   --spacing-overlap: 25%;
   --spacing-section: clamp(4rem, 2rem + 7vw, 7rem);
 
-  /* max-w-prose --container-* değil --max-width-* namespace'inden okur;
-     yerleşik değer 65ch, kuralın istediği 62ch. */
   --max-width-prose: 62ch;
 }
 
@@ -104,8 +80,6 @@
   }
 }
 
-/* Motion, initial={{ opacity: 0 }} değerini SSR HTML'ine yazar; JS gelmezse
-   içerik görünmez kalır. JS kapalıyken animasyonlu bloklar tam açılır. */
 @media (scripting: none) {
   [data-animated] {
     opacity: 1 !important;
@@ -113,8 +87,6 @@
   }
 }
 
-/* Hero'nun sol kenarındaki dikey ray. Arbitrary property yerine tek utility:
-   arbitrary değerler OverlapPair hesabına ayrılmış durumda. */
 @utility text-vertical {
   writing-mode: vertical-rl;
   text-orientation: mixed;

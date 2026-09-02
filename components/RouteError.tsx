@@ -3,7 +3,7 @@
 import { Container } from "./Container";
 
 // Error boundary Client Component olmak zorunda; her route'un error.tsx'i bunu yeniden dışa aktarır.
-export default function RouteError({ reset }: { reset: () => void }) {
+export function RouteError({ reset }: { reset: () => void }) {
   return (
     <main className="py-section">
       <Container>
@@ -14,7 +14,7 @@ export default function RouteError({ reset }: { reset: () => void }) {
         <button
           type="button"
           onClick={reset}
-          className="mt-8 bg-raspberry-700 px-5 py-3 text-body text-ink-inverse transition-colors hover:bg-raspberry-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-700"
+          className="mt-8 bg-raspberry-700 px-5 py-3 text-body text-ink transition-colors hover:bg-raspberry-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raspberry-400"
         >
           Yeniden dene
         </button>

@@ -6,18 +6,28 @@ type TextLinkProps = {
   children: React.ReactNode;
   external?: boolean;
   className?: string;
+  "aria-current"?: "page";
+  onClick?: () => void;
 };
 
-// Sitedeki iç vurgu bağlantısı. Hareket NavLink'in altı çizgisiyle aynı:
-// üçüncü bir işaretçi durumu icat etmemek için kural aynen tekrarlanır.
+// Sitedeki tek işaretçi durumu: sözcük kalkar, çizgi soldan açılıp sağa toplanır.
+// NavLink de bunu giyer; çizgi iç sarmalayıcıya bağlı ki dış padding onu kaydırmasın.
 export function TextLink({
   href,
   children,
   external = false,
   className,
+  "aria-current": ariaCurrent,
+  onClick,
 }: TextLinkProps) {
+  const classes = cn(
+    "group relative inline-block text-body text-raspberry-400",
+    "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-raspberry-400",
+    className,
+  );
+
   const content = (
-    <>
+    <span className="relative inline-block">
       <span
         className={cn(
           "inline-block transition-transform duration-300 ease-out",
@@ -27,8 +37,6 @@ export function TextLink({
       >
         {children}
       </span>
-
-      {/* Çizgi soldan açılır, çıkışta sağa toplanır: NavLink ile aynı yön. */}
       <span
         aria-hidden="true"
         className={cn(
@@ -42,14 +50,7 @@ export function TextLink({
       {external ? (
         <span className="sr-only"> (yeni sekmede açılır)</span>
       ) : null}
-    </>
-  );
-
-  // raspberry-400 koyu zeminde metin taşır: 700 orada 3.4:1 ile AA altında.
-  const classes = cn(
-    "group relative inline-block text-body text-raspberry-400",
-    "focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-raspberry-400",
-    className,
+    </span>
   );
 
   if (external) {
@@ -66,7 +67,12 @@ export function TextLink({
   }
 
   return (
-    <Link href={href} className={classes}>
+    <Link
+      href={href}
+      aria-current={ariaCurrent}
+      onClick={onClick}
+      className={classes}
+    >
       {content}
     </Link>
   );

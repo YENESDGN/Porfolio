@@ -1,7 +1,6 @@
 "use client";
 
 import { LazyMotion, domAnimation, m, useReducedMotion } from "motion/react";
-import { cn } from "@/lib/cn";
 
 type RevealDirection = "up" | "left" | "right";
 
@@ -28,14 +27,14 @@ export function Reveal({
   const reduced = useReducedMotion();
 
   if (reduced) {
-    return <div className={cn(className)}>{children}</div>;
+    return <div className={className}>{children}</div>;
   }
 
   return (
     <LazyMotion features={domAnimation} strict>
       <m.div
         data-animated
-        className={cn(className)}
+        className={className}
         initial={{ opacity: 0, ...offsets[direction] }}
         whileInView={{ opacity: 1, x: 0, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}

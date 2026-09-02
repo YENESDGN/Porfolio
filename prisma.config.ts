@@ -1,11 +1,9 @@
+import { existsSync } from "node:fs";
 import { defineConfig } from "prisma/config";
 
-// Prisma 7 .env'i kendiliğinden okumaz; Node'un yerleşik yükleyicisi dotenv bağımlılığını gereksiz kılar.
-try {
-  process.loadEnvFile();
-} catch {
-  // .env yoksa değişkenler ortamdan gelir — üretimde durum budur.
-}
+// Prisma 7 .env'i kendiliğinden okumaz; Node'un yerleşik yükleyicisi dotenv'i gereksiz kılar.
+// Üretimde .env yok, değişkenler ortamdan gelir.
+if (existsSync(".env")) process.loadEnvFile();
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

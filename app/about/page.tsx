@@ -27,7 +27,6 @@ export default async function AboutPage() {
 
   return (
     <main>
-      {/* Her overlap çifti kendi ekranını doldurur; kayma payı token'dan gelir. */}
       {pairs.map((section, index) => (
         <Section key={section.id}>
           <Container>

@@ -13,8 +13,6 @@ import {
 } from "@/components";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/queries";
 
-// Adres kümesi derlemede sabitlenir: bilinmeyen slug istek anında
-// üretilmez, doğrudan 404 olur. Route böylece tamamen statik kalır.
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
@@ -38,10 +36,8 @@ export default async function ProjectDetailPage({
   const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
-  // Gövde boş satırdan bölünür: veri düz metin taşır, biçimlendirme burada.
   const paragraphs = project.body.split(/\n\s*\n/).filter(Boolean);
   const techStack = project.techStack.map((entry) => entry.tech);
-  // Anlatı ilk kareyi alır, galeri kalanları çizer: aynı görsel iki kez durmaz.
   const [leadImage, ...restImages] = project.images;
 
   return (
@@ -64,8 +60,6 @@ export default async function ProjectDetailPage({
         </Container>
       </Section>
 
-      {/* Künyenin aynası: aynı overlap, ters yön. Zemin derinleşir, çünkü üst
-          üste binen tam ekran bölümler ancak böyle geçiş olarak okunuyor. */}
       <Section className="bg-page-deep">
         <Container>
           <Reveal direction="right">
@@ -101,8 +95,9 @@ export default async function ProjectDetailPage({
         <Section>
           <Container>
             <Reveal>
-              <h2 className="mb-8 text-h2 text-ink">Kullanılan teknolojiler</h2>
-              <TechStack items={techStack} />
+              <Card variant="bare" title="Kullanılan teknolojiler">
+                <TechStack items={techStack} />
+              </Card>
             </Reveal>
           </Container>
         </Section>

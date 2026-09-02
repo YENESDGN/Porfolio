@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { cn } from "@/lib/cn";
 
-type MediaPlanePhoto = {
+export type MediaPlanePhoto = {
   url: string;
   altText: string | null;
 };
@@ -13,8 +13,6 @@ type MediaPlaneProps = {
   className?: string;
 };
 
-// Cam levha. Fotoğraf henüz yoksa da levha durur: boş kutu bırakılmaz.
-// Sitedeki tek görsel yüzeyi bu; ProfileImage ve ProjectCard bunu kullanır.
 export function MediaPlane({
   photo,
   sizes,

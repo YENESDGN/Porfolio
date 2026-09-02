@@ -5,9 +5,8 @@ import { GitHubLink } from "./GitHubLink";
 import { MediaPlane } from "./MediaPlane";
 import { TextLink } from "./TextLink";
 
-// Overlap değil: 5 sütunluk grid, görsel 3 / metin 2. Kart bir bölümün
-// tamamını doldurur ve kabuksuz durur. Kartın kendisi bağlantı değil:
-// detaya açık bir link götürür, tıklanır yüzey yalnızca link kalır.
+// Overlap değil: 5 sütunluk grid, görsel 3 / metin 2, kabuksuz durur.
+// Kartın kendisi bağlantı değil — tıklanır yüzey yalnızca link kalır.
 export function ProjectCard({
   project,
   className,
