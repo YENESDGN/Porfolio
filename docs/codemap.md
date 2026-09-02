@@ -24,7 +24,7 @@ NO `src/`, everything is in the root. `@/*` alias points to the root.
 
 ```
 app/         routes, layout, template.tsx, globals.css (theme tokens inside @theme)
-components/  UI components (20 + index.ts)
+components/  UI components (21 + index.ts)
 lib/         pure helpers; cn.ts, formatDate.ts, prisma.ts, queries/
 config/      static config; site.ts, nav.ts, social.ts (+ index.ts)
 prisma/      schema.prisma, seed.ts, migrations/
@@ -51,6 +51,8 @@ Module public API is exposed via `index.ts`. `lib/` is not a module, but a folde
 **Navbar pass, after Phase 3.** The band was scaled up in steps (`--spacing-nav` 3.75rem → 5rem), nav links moved from `text-body` to `text-lead`, and `NavLink` gained a CSS hover underline. Details and the two pitfalls it surfaced — token-driven bar height, and Tailwind's silent drop of invalid spacing multipliers — are in `docs/codemap/ui.md`. A scroll-snap plus section-crossing curtain transition was built on `/` during this pass and then **reverted in full** at the user's request; no trace remains in the tree.
 
 **Section transition, attempted a second time and reverted again.** A later session rebuilt it from the reference image the user supplied — a full-screen curtain crossing the two `/` sections, no text, raspberry ground. Four architectures were tried in sequence (scrubbed + mandatory snap → spring-smoothed scrub → timed tween fired on crossing → scrub with a JS settle and no snap) before the user rewound the whole thing. The tree is back to 22 components and `app/page.tsx`, `app/globals.css`, `components/index.ts` and `.claude/rules/ui.md` are byte-identical to their pre-request state. **Why each attempt failed is now recorded in `docs/codemap/ui.md`** — that section, not this line, is what a third attempt should read first.
+
+**Surface pass after Phase 3 — navbar, then `/projects`.** `Container` lost its `default`/`wide`/`full` widths and became full-bleed (`w-full px-16`): it owns the gutter, `max-w-prose` owns the measure. `Card` gained a `bare` variant, `GitHubLink` became a raspberry pill, `TechStack` became a 3×3 vitrine, and the accent split by job (`raspberry-700` fills, `raspberry-400` carries text). `/projects` was then reworked into a full-bleed composition: no `Container`, a bare shell, a 5-column grid at media 3 / text 2, the new `aspect-plate-wide` (16/9) token, and `text-h2` / `text-body`. Details in `docs/codemap/ui.md` and `docs/codemap/routes.md`.
 
 **Phase 2.6 is blocked, not skipped.** The Docker daemon is not running and there is no `psql`, so PostgreSQL is unreachable. Marked `(Sonra bakılacak)` in `PLAN.md` per the stuck rule. Pages currently read fixtures; 2.6 swaps four function bodies and touches no page code.
 

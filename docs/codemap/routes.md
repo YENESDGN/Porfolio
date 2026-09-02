@@ -43,12 +43,12 @@ Each page fetches its own data in its Server Component via `lib/queries/`, then 
 
 ## Page composition (Phase 3, scroll rework)
 
-Every page is a stack of `Section`s, each at least one viewport tall. `Section` sets the height, `Container width="wide"` sets the measure.
+Every page is a stack of `Section`s, each at least one viewport tall. `Section` sets the height, `Container` sets the gutter; a block that should bleed to the page edge takes no `Container` at all.
 
 - `/` — **hero**: no Container, so the portrait bleeds to the right page edge. Left column carries the vertical `site.role` rail (`md` and up), a bare `StatCard`, `WelcomeSection` and the scroll cue, spread with `justify-between`. Reveals run left / up / right — the Partial FadeIn-Left&Right&Up pattern. `WelcomeSection` owns the page's only `text-display`, so the name leads rather than the project count. **Second section**: the welcome text as a `TextCard` beside `TechStack`.
 - `/about` — a title section, then one `OverlapPair` per section with alternating `reverse`, then the education `RoadMap` beside a text card on a 5-column grid (3 / 2).
 - `/experience` — a title section, then the work `RoadMap` as a rail on the left (2 of 5 columns) with the `TextCard`s stacked on the right (3 of 5). The rail and its texts stay in one section; they read together.
-- `/projects` — a title section carrying the count or the empty state, then **one project per section**. An empty list is **not** `notFound()`; only a missing page record is.
+- `/projects` — **one project per section**, no title section and no `Container`: the plate runs to the left page edge and the text column to the right. `py-section` on each `Section` keeps consecutive plates apart — a 3/5-width plate at `aspect-plate` is taller than `min-h-viewport`, which made them butt together with no ground between; `aspect-plate-wide` plus that padding fixes it. An empty list is **not** `notFound()`; only a missing page record is.
 
 Inner page titles use `text-h1`, not `text-display`: display is reserved for the landing hero.
 

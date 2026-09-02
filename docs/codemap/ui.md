@@ -6,13 +6,13 @@ Overview → `docs/codemap.md`. Rules → `.claude/rules/ui.md`.
 
 Tailwind v4: theme is in the `@theme` block, NO `tailwind.config.ts`.
 
-- **Color:** `page`, `surface` / `surface-media`, `ink` / `-secondary` / `-muted` / `-inverse`, `line` / `-strong`, `raspberry-50/500/600/700`
+- **Color:** `page` / `page-deep`, `surface` / `surface-media`, `ink` / `-secondary` / `-muted` / `-inverse`, `line` / `-strong`, `raspberry-50/400/500/600/700`. Raspberry is split by job: `700` is a fill only (3.4:1 as text on the dark ground, under AA), `400` carries text, links and underlines (4.7:1 on `surface`).
 - **Font:** `--font-serif` → `--font-plex-serif` (next/font, IBM Plex Serif). `latin-ext` subset is mandatory; otherwise ş/ğ/ı/İ fall back to a fallback font.
 - **Weight:** only `thin 100`, `light 300`, `normal 400`. `--font-weight-*: initial` namespace reset completely removes `font-bold` / `font-semibold` classes from production.
 - **Size:** `caption · small · body · lead · h3 · h2 · h1 · display` (the last three are clamp, they shrink automatically on mobile).
-- **Spacing:** `overlap`, `overlap-lg`, `section` (clamp), `nav` (fixed navbar height), `viewport` (`calc(100svh - nav)` — the height every `Section` claims).
+- **Spacing:** `overlap` (percentage — 25% of the grid column), `section` (clamp), `nav` (fixed navbar height), `viewport` (`calc(100svh - nav)` — the height every `Section` claims).
 - **Shadow:** `contact` — the only shadow in the system. Used solely on `OverlapPair`'s upper block, `md` and up.
-- **Aspect:** `portrait` (3/4), `plate` (4/3). Tokens exist so `MediaPlane` callers never need an arbitrary value.
+- **Aspect:** `portrait` (3/4), `plate` (4/3), `plate-wide` (16/9 — the same width as `plate` at 25% less height; only `ProjectCard` uses it, `plate` stays 4/3 for `/about`). Tokens exist so `MediaPlane` callers never need an arbitrary value.
 - **Utility:** `text-vertical` (`writing-mode: vertical-rl`) — an `@utility` block, not a token. Tailwind has no writing-mode utility and arbitrary properties are reserved for `OverlapPair`. Used only by the landing hero rail.
 
 ### Pitfall: prose leaks utilities into the bundle
@@ -37,7 +37,7 @@ All exist and are exported from `components/index.ts`. Only four are Client Comp
 
 **Route plumbing:** `RouteLoading` (Server) · `RouteError` (Client) — see `docs/codemap/routes.md`. Both import `./Container` directly rather than the barrel, to avoid a cycle through `index.ts`.
 
-**Layout:** `Container` — the single definition of the page measure, three widths: `default` (max-w-5xl), `wide` (max-w-7xl, what full-screen sections use), `full` (gutter only). Nothing else declares a `max-width`. `Section` — the single scroll unit: `min-h-viewport` plus vertical `align` (`start`/`center`/`end`). Section owns height, Container owns measure; a block that bleeds to the page edge takes no Container.
+**Layout:** `Container` — full-bleed, `w-full px-16`. It owns the gutter, not the measure: no `max-width`, no centering margin, and line length is held by `max-w-prose` on the text block itself. The `default`/`wide`/`full` width props are gone. `Section` — the single scroll unit: `min-h-viewport` plus vertical `align` (`start`/`center`/`end`). Section owns height, Container owns measure; a block that bleeds to the page edge takes no Container.
 
 **Navbar:** `Navbar` (Server; a full-bleed `bg-surface` paper bar, `sticky top-0` with a fixed `h-nav` height) · `NavLink` (**Client** — `usePathname` and `aria-current`, the only part of the navbar that has to be; also owns the hover rule below) · `SocialLinks` (Server) · `MobileMenu` (**Client**, Radix Dialog).
 
@@ -45,9 +45,9 @@ The band may grow, but only through `--spacing-nav`: `--spacing-viewport` subtra
 
 Both flanks now carry the same geometry: a 48px box holding a 36px mark, so the `MobileMenu` trigger matches the `SocialLinks` circles. The negative margins in `Navbar` (`-ml-1.5`, `-mr-1.5`) are **not** scale values: each cancels the 6px padding inside its icon box so the mark lands flush with the `Container` edge. They change only when a child's box or mark size changes, and scaling them alongside everything else breaks the alignment.
 
-**Common UI:** `Card` (shell, optional `title`) · `OverlapPair` (`media`, `content`, `reverse`; **single** overlap implementation) · `Reveal` (**Client**; `whileInView` + `once`; takes `children` so Server Components inside it stay on the server) · `PageTransition` (**Client**, inside `template.tsx`).
+**Common UI:** `Card` (shell, optional `title`; `variant` is `surface` (default, `bg-surface p-6 md:p-8`) or `bare`, which drops shell and padding so the caller supplies both — a variant, not a second component) · `OverlapPair` (`media`, `content`, `reverse`; **single** overlap implementation) · `Reveal` (**Client**; `whileInView` + `once`; takes `children` so Server Components inside it stay on the server) · `PageTransition` (**Client**, inside `template.tsx`).
 
-**Content (all Server):** `RoadMap` · `TextCard` · `ProjectCard` (2-col grid + optional `GitHubLink`) · `GitHubLink` (renders nothing when the url is null) · `TechStack` · `StatCard` · `WelcomeSection` · `ProfileImage` · `MediaPlane` · `BrandIcons`.
+**Content (all Server):** `RoadMap` · `TextCard` · `ProjectCard` (5-col grid, media 3 / text 2 + optional `GitHubLink`) · `GitHubLink` (renders nothing when the url is null; otherwise a `raspberry-700` pill whose label slides left as an `ArrowUpRight` fades in from the right, plus an `sr-only` "yeni sekmede açılır") · `TechStack` (3×3 vitrine: a `bg-surface` plate fades up under each mark on hover and the baseline hairline turns `raspberry-400`) · `StatCard` · `WelcomeSection` · `ProfileImage` · `MediaPlane` · `BrandIcons`.
 
 Two were added beyond the planned list:
 
@@ -96,7 +96,7 @@ The only combination that satisfies both "smooth" and "during the crossing" is: 
 
 ### Decisions locked in `PLAN.md`
 
-- **`ProjectCard` is not an overlap.** 2-column / 1-row grid: media left, title + description + `GitHubLink` right; single column below `md`. It now fills a whole `Section`, so the measures are large (`md:p-12`, title at `text-h1`) and the title is an `h2` under the page `h1`. `OverlapPair` stays reserved for `/about`.
+- **`ProjectCard` is not an overlap.** 5-column grid, media 3 / text 2 (the rail ratio `/about` and `/experience` already use); single column below `md`. It fills a whole `Section` and takes no `Container`, so the plate bleeds to the page edge. Shell is `variant="bare"`, the plate is `aspect-plate-wide`, type sits at `text-h2` / `text-body`, and the title is an `h2` under the page `h1`. `OverlapPair` stays reserved for `/about`.
 - **Links are the only clickable surfaces on the site** — GitHub, LinkedIn, Mail. Cards, photos and text blocks are never anchors.
 - **`next/image`: `preload`, not `priority`.** Next 16 deprecated `priority`; `.claude/rules/ui.md` was corrected accordingly.
 - **The `<noscript>` rule shipped with `Reveal` in Phase 2.1** and now lives in `globals.css`; see "The `<noscript>` rule" above. Any future animated element must stamp `data-animated` (or carry its own fallback) before it ships.
