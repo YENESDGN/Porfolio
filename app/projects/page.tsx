@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Container, ProjectCard, Reveal, Section } from "@/components";
+import { ProjectCard, Reveal, Section } from "@/components";
 import { getPublishedProjects } from "@/lib/queries";
 
 export const metadata: Metadata = {
@@ -12,14 +12,13 @@ export default async function ProjectsPage() {
 
   return (
     <main>
-      {/* Her proje bir ekran: liste değil, sırayla gelen bloklar. */}
+      {/* Her proje bir ekran: liste değil, sırayla gelen bloklar.
+          Container yok — görsel sayfa kenarına kadar akar. */}
       {projects.map((project) => (
-        <Section key={project.id}>
-          <Container>
-            <Reveal>
-              <ProjectCard project={project} />
-            </Reveal>
-          </Container>
+        <Section key={project.id} className="py-section">
+          <Reveal>
+            <ProjectCard project={project} />
+          </Reveal>
         </Section>
       ))}
     </main>

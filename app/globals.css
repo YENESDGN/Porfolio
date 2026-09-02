@@ -76,6 +76,8 @@
      OverlapPair hesabına ayrılmış. */
   --aspect-portrait: 3 / 4;
   --aspect-plate: 4 / 3;
+  /* Proje levhası: aynı genişlikte plate'ten %25 kısa. */
+  --aspect-plate-wide: 16 / 9;
 
   /* Navbar yüksekliği: py-3.75 (2 × 0.9375rem) + en uzun çocuk olan 50px'lik
      text-lead bağlantısı. Bölüm yüksekliği bunu düşer, böylece ilk ekran
