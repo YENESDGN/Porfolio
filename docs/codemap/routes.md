@@ -10,6 +10,7 @@ Overview → `docs/codemap.md`.
 - `app/projects/[slug]/` — the project detail page. The tree's only dynamic segment.
 - `app/not-found.tsx` — page not found + return to home, Navbar is preserved.
 - `loading.tsx` and `error.tsx` in every route.
+- `/` exports no `metadata` on purpose: it takes the layout's `title.default` and `description`. A route-level title would run through the `%s — name` template and double the name.
 
 ## loading / error pattern
 

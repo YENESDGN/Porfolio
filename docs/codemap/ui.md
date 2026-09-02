@@ -6,7 +6,7 @@ Overview → `docs/codemap.md`. Rules → `.claude/rules/ui.md`.
 
 Tailwind v4: theme is in the `@theme` block, NO `tailwind.config.ts`.
 
-- **Color:** `page` / `page-deep`, `surface` / `surface-media`, `ink` / `-secondary` / `-muted` / `-inverse`, `line` / `-strong`, `raspberry-50/400/500/600/700`. Raspberry is split by job: `700` is a fill only (3.4:1 as text on the dark ground, under AA), `400` carries text, links and underlines (4.7:1 on `surface`).
+- **Color:** `page` / `page-deep`, `surface` / `surface-media`, `ink` / `-secondary` / `-muted`, `line` / `-strong` (`#6a8f9c`, so the `RoadMap` rail clears 3:1 on both grounds), `raspberry-400/500/600/700`. Raspberry is split by job: `700` is a fill only (3.4:1 as text on the dark ground, under AA), `400` carries text, links and underlines (4.7:1 on `surface`).
 - **Font:** `--font-serif` → `--font-plex-serif` (next/font, IBM Plex Serif). `latin-ext` subset is mandatory; otherwise ş/ğ/ı/İ fall back to a fallback font.
 - **Weight:** only `thin 100`, `light 300`, `normal 400`. `--font-weight-*: initial` namespace reset completely removes `font-bold` / `font-semibold` classes from production.
 - **Size:** `caption · small · body · lead · h3 · h2 · h1 · display` (the last three are clamp, they shrink automatically on mobile).
@@ -19,7 +19,7 @@ Tailwind v4: theme is in the `@theme` block, NO `tailwind.config.ts`.
 
 Tailwind scans the whole project by default, and a class name written in prose is indistinguishable from one written in JSX. Rule files and changelog entries quoting `-ml-3` or `-mr-3.25` had those utilities emitted into production CSS even though no component used them.
 
-`globals.css` therefore opens with `@import "tailwindcss" source(none)` and names its four roots explicitly: `../app`, `../components`, `../config`, `../lib`. That cut the stylesheet from 27,116 to 23,630 bytes (−12.9%) and also removed `docs/`, `Obsidian/` and the vendored `.claude/rules/skills/` from the scan. **A new code directory must be added to that list, or its classes silently produce no CSS.**
+`globals.css` therefore opens with `@import "tailwindcss" source(none)` and names its two roots explicitly: `../app` and `../components` — `config/` and `lib/` carry no class names, so they are not scanned. At the time that cut the stylesheet from 27,116 to 23,630 bytes (−12.9%) and also removed `docs/`, `Obsidian/` and the vendored `.claude/rules/skills/` from the scan. **A new code directory must be added to that list, or its classes silently produce no CSS.**
 
 ### Pitfall: `max-w-prose`
 
@@ -33,13 +33,13 @@ Motion writes `initial={{ opacity: 0 }}` into the SSR HTML, so a JS failure woul
 
 ## Components
 
-All exist and are exported from `components/index.ts`. Only four are Client Components.
+The barrel exports only what `app/` consumes; navbar internals (`NavLink`, `MobileMenu`, `SocialLinks`, `GithubIcon`) stay private to the module. Five are Client Components: `NavLink`, `MobileMenu`, `Reveal`, `PageTransition`, `RouteError`.
 
 **Route plumbing:** `RouteLoading` (Server) · `RouteError` (Client) — see `docs/codemap/routes.md`. Both import `./Container` directly rather than the barrel, to avoid a cycle through `index.ts`.
 
-**Layout:** `Container` — full-bleed, `w-full px-16`. It owns the gutter, not the measure: no `max-width`, no centering margin, and line length is held by `max-w-prose` on the text block itself. The `default`/`wide`/`full` width props are gone. `Section` — the single scroll unit: `min-h-viewport` plus vertical `align` (`start`/`center`/`end`). Section owns height, Container owns measure; a block that bleeds to the page edge takes no Container.
+**Layout:** `Container` — full-bleed, `w-full px-16`. It owns the gutter, not the measure: no `max-width`, no centering margin, and line length is held by `max-w-prose` on the text block itself. The `default`/`wide`/`full` width props are gone. `Section` — the single scroll unit: `min-h-viewport` plus vertical `align` (`start`/`center`). Section owns height, Container owns measure; a block that bleeds to the page edge takes no Container.
 
-**Navbar:** `Navbar` (Server; a full-bleed `bg-surface` paper bar, `sticky top-0` with a fixed `h-nav` height) · `NavLink` (**Client** — `usePathname` and `aria-current`, the only part of the navbar that has to be; also owns the hover rule below) · `SocialLinks` (Server) · `MobileMenu` (**Client**, Radix Dialog).
+**Navbar:** `Navbar` (Server; a full-bleed `bg-surface` paper bar, `sticky top-0` with a fixed `h-nav` height) · `NavLink` (**Client** — `usePathname` and `aria-current`, the only part of the navbar that has to be; also owns the hover rule below) · `SocialLinks` (Server) · `MobileMenu` (**Client**, Radix Dialog; the scrim is `bg-page-deep/60` — `ink` is the light token here and would brighten the page).
 
 The band may grow, but only through `--spacing-nav`: `--spacing-viewport` subtracts that token, so every `Section` follows automatically. Give the header a taller height any other way and the first screen overflows the viewport. The token equals the header's vertical padding plus its tallest child — currently `py-3.75` (2 × 15px) plus the 50px `text-lead` links, so `5rem`. The links, not the 48px social circles, set the floor on desktop.
 
@@ -47,9 +47,11 @@ Both flanks now carry the same geometry: a 48px box holding a 36px mark, so the 
 
 **Common UI:** `Card` (shell, optional `title`; `variant` is `surface` (default, `bg-surface p-6 md:p-8`) or `bare`, which drops shell and padding so the caller supplies both — a variant, not a second component) · `OverlapPair` (`media`, `content`, `reverse`; **single** overlap implementation) · `Reveal` (**Client**; `whileInView` + `once`; takes `children` so Server Components inside it stay on the server) · `PageTransition` (**Client**, inside `template.tsx`).
 
-**Content (all Server):** `RoadMap` · `TextCard` · `ProjectCard` (5-col grid, media 3 / text 2 + optional `GitHubLink`) · `GitHubLink` (renders nothing when the url is null; otherwise a `raspberry-700` pill whose label slides left as an `ArrowUpRight` fades in from the right, plus an `sr-only` "yeni sekmede açılır") · `TechStack` (3×3 vitrine: a `bg-surface` plate fades up under each mark on hover and the baseline hairline turns `raspberry-400`) · `StatCard` · `WelcomeSection` · `ProfileImage` · `MediaPlane` · `BrandIcons`.
+**Content (all Server):** `RoadMap` · `TextCard` · `ProjectCard` (5-col grid, media 3 / text 2 + optional `GitHubLink`) · `GitHubLink` (renders nothing when the url is null; otherwise a `raspberry-700` pill whose label slides left as an `ArrowUpRight` fades in from the right, plus an `sr-only` "yeni sekmede açılır") · `TechStack` (3×3 vitrine: a `bg-surface` plate fades up under each mark on hover and the baseline hairline turns `raspberry-400`) · `StatCard` (bare only; the unused `card` variant was removed) · `WelcomeSection` · `ProfileImage` · `MediaPlane` · `BrandIcons`.
 
-Phase 4 added three more, all Server: **`TextLink`** — the site's internal accent link; repeats `NavLink`'s underline exactly rather than inventing a third pointer state, and an `external` prop gives it `GitHubLink`'s `target`/`rel`/`sr-only` treatment for an outbound URL. **`ProjectHeader`** — the detail page's künye block; role and date range are joined into one meta line and the whole line, like the links row, is skipped when both fields are null, so no empty row is drawn. **`ProjectGallery`** — image grid that returns `null` on an empty list, matching `RoadMap`, `TechStack` and `GitHubLink`.
+Phase 4 added three more, all Server: **`TextLink`** — the site's internal accent link and the single underline implementation; `NavLink` renders a `TextLink` with `py-2 text-lead`, the active colour and `aria-current`. An `external` prop gives it `GitHubLink`'s `target`/`rel`/`sr-only` treatment for an outbound URL. **`ProjectHeader`** — the detail page's künye block; role and date range are joined into one meta line and the whole line, like the links row, is skipped when both fields are null, so no empty row is drawn. **`ProjectGallery`** — image grid that returns `null` on an empty list, matching `RoadMap`, `TechStack` and `GitHubLink`.
+
+Every titled block — `TextCard`, `RoadMap`, `ProjectGallery` and the detail page's tech section — draws its `h2` through `Card`'s `title` prop (`variant="bare"` where there is no shell), so the title-over-block gap (`mb-6`) exists once.
 
 Two were added beyond the planned list:
 
@@ -58,7 +60,7 @@ Two were added beyond the planned list:
 
 ### Navbar hover: CSS, not Motion
 
-`NavLink` draws a `raspberry-700` hairline that scales in from the left and collects to the right (`origin-right` at rest → `group-hover:origin-left` with `scale-x-0/100`), while the label lifts 2px. `SocialLinks` uses the same idiom for its rising fill. Both are plain CSS transitions rather than Motion: a pointer state should not cost a re-render, and the four Motion patterns cover entrances only. `TextLink` is the third user of the same underline and deliberately adds nothing to it — the rule is one pointer idiom, reused, not a new one per component.
+`TextLink` draws a `raspberry-400` hairline that scales in from the left and collects to the right (`origin-right` at rest → `group-hover:origin-left` with `scale-x-0/100`), while the label lifts 2px; the two spans sit in an inner `relative` wrapper so a caller's padding (`NavLink`'s `py-2`) does not move the line. `NavLink` _is_ a `TextLink`; `SocialLinks` uses the same idiom for its rising fill. Both are plain CSS transitions rather than Motion: a pointer state should not cost a re-render, and the four Motion patterns cover entrances only.
 
 - Tailwind compiles `hover:` inside `@media (hover:hover)`, so touch devices never get a stuck hover state; `group-focus-visible:` stays outside it, so keyboard users get the same affordance everywhere.
 - Under `motion-reduce` the lift is dropped and the transition removed, but the underline still appears — the state change stays legible instead of being deleted.
@@ -108,47 +110,16 @@ The only combination that satisfies both "smooth" and "during the crossing" is: 
 
 `site.ts` (name, role, title, description, url — `role` labels the landing hero rail) · `nav.ts` (4 routes, TR label / EN href) · `social.ts` (GitHub, LinkedIn, Email; the `external` flag ensures mailto opens in the same tab). Public API `config/index.ts`.
 
-The icon component is not kept in the config — `SocialLinks` matches via the `key`, so the config remains independent of React.
+The config holds icon _paths_, not components, so it stays independent of React; `key` is only the list key.
 
 **(To be checked later)** The name, domain, and profile URLs in `site.ts` and `social.ts` are placeholders. Favicon is still the Next.js default.
 
-### Pitfall — `cn()` siler type sizes silently
+### Resolved — `cn()` and the four contrast pairs
 
-`tailwind-merge` does not know this project's `@theme` names. `text-lead` is not a
-t-shirt size to it, so every unknown `text-*` lands in the **colour** group and the
-last one wins:
+Both pitfalls recorded here earlier are fixed in the paradigm pass of 2 Sep 2026.
 
-```
-cn("text-lead", "text-ink")        -> "text-ink"          // size gone
-cn("text-body", "text-raspberry-400") -> "text-raspberry-400"
-```
-
-It only bites when both reach `cn()`; a plain literal `className="text-h1 text-ink"`
-is untouched because tailwind-merge never sees it. Currently affected: `NavLink`
-renders without `text-lead`, `GitHubLink` and `TextLink` without `text-body`.
-
-Measured with the installed tailwind-merge 3.6.0. The fix is one place —
-`extendTailwindMerge` in `lib/cn.ts` registering the eight `--text-*` names under
-`font-size` — and it was verified to work without breaking real merges
-(`cn("px-2","px-4")`, colour-vs-colour and size-vs-size all still collapse
-correctly). **Not applied:** it was written during the reverted palette pass and
-went back with it. A new `--text-*` token would need adding to that list too.
-
-### Pitfall — four contrast pairs fail in the shipped palette
-
-Computed over the current tokens, not observed:
-
-| pair                             | ratio  | needs | where                                       |
-| -------------------------------- | ------ | ----- | ------------------------------------------- |
-| `raspberry-700` on `page`        | 2.00:1 | 4.5   | `app/not-found.tsx:19` return link          |
-| `ink-inverse` on `raspberry-700` | 2.34:1 | 4.5   | `components/RouteError.tsx:17` button label |
-| `ink-inverse` on `raspberry-600` | 2.89:1 | 4.5   | same button, hover                          |
-| `line-strong` on `page`          | 2.72:1 | 3     | `RoadMap` rail                              |
-
-The first three are the same root cause: `raspberry-700` is documented fill-only and
-`ink-inverse` is the _dark_ token on this dark ground, so putting one on the other
-is two dark values. The accent split by job holds everywhere else; these two files
-predate it.
+- `lib/cn.ts` now builds its merger with `extendTailwindMerge`, registering the eight `--text-*` names under `font-size`, so `cn("text-lead", "text-ink")` keeps both. **A new `--text-*` token must be added to that list.**
+- `app/not-found.tsx` uses `TextLink` (`raspberry-400`, 6.0:1 on `page`); `RouteError`'s button is `text-ink` on `raspberry-700` (6.25:1); every focus outline is `raspberry-400`; `--color-line-strong` moved to `#6a8f9c` (3.98:1 on `page`, 4.66:1 on `page-deep`). The `ink-inverse` and `raspberry-50` tokens had no valid pairing left and were removed.
 
 ### Project detail page (Phase 4)
 

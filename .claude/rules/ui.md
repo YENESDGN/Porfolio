@@ -19,10 +19,10 @@ globs: ["components/**", "app/**", "config/**"]
 The palette is defined as tokens inside `@theme`. Do not write bare hex values.
 
 - Background `bg-page`, card `bg-surface`, image block `bg-surface-media`. Overlap is perceived through the difference of these three tones; do not add borders.
-- **The ground is dark.** `bg-page-deep` is a second, deeper ground: stacked full-screen sections alternate with it so scrolling reads as a transition. Ink tokens are light; `text-ink-inverse` is dark and belongs on light or accent fills.
+- **The ground is dark.** `bg-page-deep` is a second, deeper ground: stacked full-screen sections alternate with it so scrolling reads as a transition. Ink tokens are light; there is no dark ink token — `text-ink` is 6.3:1 on a `raspberry-700` fill and labels accent fills too.
 - Text hierarchy is established with color: heading `text-ink`, body `text-ink-secondary`, date and note `text-ink-muted`.
 - `text-ink-muted` is 4.5:1 on `bg-surface` — the tightest pair in the system. Do not lighten the surfaces further without darkening it.
-- **Raspberry is split by job.** `raspberry-700` is a fill only — as text on the dark ground it is 3.4:1, below AA. `raspberry-400` carries text, links and underlines (4.7:1 on `bg-surface`). `text-ink` on a `raspberry-700` fill is 6.3:1.
+- **Raspberry is split by job.** `raspberry-700` is a fill only — as text on the dark ground it is 3.4:1, below AA. `raspberry-400` carries text, links and underlines (4.7:1 on `bg-surface`). `text-ink` on a `raspberry-700` fill is 6.3:1. Focus outlines are `raspberry-400` as well: `700` and `600` outlines sit under 2.5:1 on both grounds.
 - There is only one accent color on the site. Ask before adding a second vibrant color.
 
 ## Typography
@@ -71,7 +71,7 @@ Motion (formerly Framer Motion) + IntersectionObserver. Package name is `motion`
 
 Do not deviate from the four defined patterns; if a new animation is needed, ask. Door FadeIn-Left&Right → content transitions. Door FadeIn-Up&Down → navbar page transitions. Partial FadeIn-Left&Right&Up → LandingPage. Scroll reveal → content sections appear as they enter the viewport.
 
-**The four patterns describe entrances only.** Pointer and focus states are not among them and are not Motion: they are plain CSS transitions, because a hover should not cost a re-render. Two exist — the `SocialLinks` fill rising from below, and the `NavLink` underline that wipes in from the left and collects to the right. A new one conforms to those two rather than reaching for Motion. **`TextLink` is the underline, reused verbatim** — it is the site's internal accent link and the only one; write `TextLink` instead of restyling an anchor, and do not add a third idiom. Every such state carries `motion-reduce:` handling that drops the movement but **keeps** the state change visible; removing the feedback entirely is not reduced motion.
+**The four patterns describe entrances only.** Pointer and focus states are not among them and are not Motion: they are plain CSS transitions, because a hover should not cost a re-render. Two exist — the `SocialLinks` fill rising from below, and the `NavLink` underline that wipes in from the left and collects to the right. A new one conforms to those two rather than reaching for Motion. **`TextLink` is the underline, implemented once** — it is the site's internal accent link and the only one; `NavLink` renders a `TextLink` rather than copying its spans. Write `TextLink` instead of restyling an anchor, and do not add a third idiom. Every such state carries `motion-reduce:` handling that drops the movement but **keeps** the state change visible; removing the feedback entirely is not reduced motion.
 
 ### Delegation
 

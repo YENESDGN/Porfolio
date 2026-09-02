@@ -15,7 +15,7 @@ npx prisma db seed        # içerik
 npm run dev               # http://localhost:3000
 ```
 
-PostgreSQL henüz kurulmadıysa `npm run dev` çalışır; veri çeken sayfalar Faz 2'de geldiğinde DB gerekir.
+PostgreSQL henüz yoksa `npm run dev` çalışır: sayfalar `lib/queries/fixtures.ts` içindeki yer tutucu içeriği okur; DB Faz 2.6'da bağlanır.
 
 ## Komutlar
 

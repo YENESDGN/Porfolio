@@ -56,7 +56,7 @@ All Prisma calls are written as named functions inside `lib/queries/` and expose
 
 Files: `landing.ts`, `projects.ts`, `about.ts`, `experience.ts`, plus `roadmap.ts` and `fixtures.ts`.
 
-`projects.ts` carries two selects against the same model: `projectSelect` for the card and `projectDetailSelect` for the detail page, with `orderBy` on both relations so ordering comes from the data. `getProjectSlugs()` exists purely to feed `generateStaticParams`; it returns `{ slug }` and nothing else. In the fixtures, `projectDetailsFixture` is the single source and `projectsFixture` is destructured out of it, so no project content is written twice.
+`projects.ts` carries two selects against the same model: `projectSelect` for the card and `projectDetailSelect` for the detail page, with `orderBy` on both relations so ordering comes from the data. `getProjectSlugs()` exists purely to feed `generateStaticParams`; it returns `{ slug }` and nothing else. In the fixtures, `projectDetailsFixture` is the single source; `projectsFixture` is destructured out of it and `landingFixture.projectCount` reads its length, so no project fact is written twice.
 
 **`roadmap.ts` is a fifth file beyond the plan.** `RoadmapItem` is read identically by `/about` (EDUCATION) and `/experience` (WORK), so the `select` and its derived `RoadmapEntry` type live in one place rather than being duplicated or imported sideways between the two page modules.
 

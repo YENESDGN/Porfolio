@@ -58,14 +58,15 @@ Module public API is exposed via `index.ts`. `lib/` is not a module, but a folde
 
 **Phase 2.6 is blocked, not skipped.** The Docker daemon is not running and there is no `psql`, so PostgreSQL is unreachable. Marked `(Sonra bakılacak)` in `PLAN.md` per the stuck rule. Pages currently read fixtures; 2.6 swaps four function bodies and touches no page code.
 
+**Paradigm pass, 2 Sep 2026.** A repo-wide audit against the CLAUDE.md code paradigms. `cn()` fixed (`extendTailwindMerge`), the four failing contrast pairs fixed, `NavLink` now composes `TextLink`, every titled block goes through `Card.title`, dead exports removed (`getPublishedProjectCount`, `site.locale`, `SocialKey`/`SocialLink`, `StatCard`'s `card` variant, `Section`'s `end`, the `raspberry-50` and `ink-inverse` tokens, two empty `@source` roots), `components/index.ts` trimmed to what `app/` consumes, `RouteError`/`RouteLoading` became named exports, every source file holds at most one comment, `.prettierignore` covers `.claude`/`.obsidian`/`.impeccable`, and `.prettierrc` sets `endOfLine: auto` (the 8 files that failed `format:check` were CRLF in the working tree under `core.autocrlf=true`, byte-identical otherwise). `build` / `lint` / `typecheck` / `format:check` clean, route table unchanged.
+
 ### Loose ends
 
 - **(To be checked later)** No PostgreSQL → migration and seed have not been run. Details: `docs/codemap/data.md`.
 - **Nothing has been verified visually.** No browser tooling was available, so the checks in `PLAN.md` — overlap at both breakpoints, reveal timing, reduced-motion, JS disabled, 375px, tab focus — are outstanding. Contrast figures throughout the docs are computed, not observed.
-- **(To be checked later)** `cn()` silently drops type sizes, and four contrast pairs fail — both measured, neither fixed. Details and the one-place fix: `docs/codemap/ui.md` → the two "Pitfall" sections.
 - `config/site.ts` and `config/social.ts` are placeholders; favicon is the Next.js default.
 - `next dev` appends the agent-rules block to the end of `CLAUDE.md`. Since it is rewritten on every run, it is not deleted, it is committed.
-- `.claude/rules/skills/` (vendored impeccable, 123 files / 2.9 MB) is untracked and undecided. It is excluded from eslint, and no longer reaches Tailwind: `globals.css` now uses `source(none)` plus four explicit `@source` roots, which cut the stylesheet 27,116 → 23,630 bytes (−12.9%).
+- `.claude/rules/skills/` (vendored impeccable, 123 files / 2.9 MB) is untracked and undecided. It is excluded from eslint, and no longer reaches Tailwind: `globals.css` uses `source(none)` plus two explicit `@source` roots (`app`, `components`), which cut the stylesheet 27,116 → 23,630 bytes (−12.9%).
 - `PRODUCT.md` and `DESIGN.md` are written in Turkish while the rest of the docs are English.
 
 ### Next up — Phase 2.6
