@@ -3,9 +3,11 @@ import { cn } from "@/lib/cn";
 import { Card } from "./Card";
 import { GitHubLink } from "./GitHubLink";
 import { MediaPlane } from "./MediaPlane";
+import { TextLink } from "./TextLink";
 
 // Overlap değil: 5 sütunluk grid, görsel 3 / metin 2. Kart bir bölümün
-// tamamını doldurur ve kabuksuz durur; tek tıklanır yüzey GitHub linki.
+// tamamını doldurur ve kabuksuz durur. Kartın kendisi bağlantı değil:
+// detaya açık bir link götürür, tıklanır yüzey yalnızca link kalır.
 export function ProjectCard({
   project,
   className,
@@ -17,7 +19,7 @@ export function ProjectCard({
     <Card
       variant="bare"
       className={cn(
-        "bg-surface grid gap-8 md:grid-cols-5 md:items-center md:gap-12",
+        "grid gap-8 bg-surface md:grid-cols-5 md:items-center md:gap-12",
         className,
       )}
     >
@@ -31,7 +33,10 @@ export function ProjectCard({
         <p className="mt-4 max-w-prose text-body text-ink-secondary">
           {project.description}
         </p>
-        <GitHubLink url={project.githubUrl} className="mt-6" />
+        <div className="mt-6 flex flex-wrap items-center gap-6">
+          <TextLink href={`/projects/${project.slug}`}>Projeyi incele</TextLink>
+          <GitHubLink url={project.githubUrl} />
+        </div>
       </div>
     </Card>
   );

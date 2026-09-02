@@ -149,3 +149,43 @@ analysis is worth more than the code was.
   `scroll-snap`, `snap-sections`, `data-curtain` and `scroll-padding` across
   `app/`, `components/`, `lib/`, `config/` and `.claude/rules/` returns nothing.
   `lint` / `typecheck` / `build` clean, all 5 routes still static.
+
+## 02-09-2026 — Büyük Faz 4: proje detay sayfası
+
+- `/projects/[slug]` açıldı: ağaçtaki ilk dinamik segment ve `generateStaticParams`,
+  `generateMetadata`, `dynamicParams` üçünün de ilk kullanımı. Üç bölüm — `OverlapPair`
+  künye, aynı overlap'in `reverse` ile aynası (anlatı), ve koşullu galeri.
+- `ProjectCard` "Projeyi incele" `TextLink`'i aldı. **"Tıklanır tek yüzey linktir"
+  kararı bozulmadı:** kart anchor'a çevrilmedi, açık bir link eklendi.
+- Yeni bileşenler: `TextLink` (iç vurgu bağlantısı, `NavLink`'in altı çizgisini
+  aynen tekrarlar — üçüncü bir işaretçi kalıbı icat edilmedi), `ProjectHeader`,
+  `ProjectGallery` (boş listede `null`).
+- Şema büyüdü: `Project` + `slug`/`body`/`role`/`startDate`/`endDate`/`liveUrl`,
+  yeni `ProjectImage` ve `ProjectTech` modelleri.
+- `PRODUCT.md` kapsamı genişletildi: dört sayfa + detay route'u.
+
+### Veritabanı yok
+
+- **Hiçbir veritabanı komutu çalıştırılmadı.** Şema düzenlendi ve `prisma generate`
+  çevrimdışı koştu, böylece tipler Prisma'dan gelmeye devam ediyor; `migrate` ve
+  `seed` 2.6 ile birlikte bloke kalıyor ve yeni iki tablo aynı ilk migration'a girecek.
+- İçerik `lib/queries/fixtures.ts` üzerinden. `projectDetailsFixture` tek kaynak,
+  kart özeti ondan türetiliyor — aynı içerik iki kez yazılmıyor.
+
+### Ölçülen, düzeltilmeyen iki sorun
+
+- **`cn()` type size'ları sessizce siliyor.** `tailwind-merge` projenin `@theme`
+  adlarını bilmiyor; `cn("text-lead","text-ink")` yalnızca rengi döndürüyor. Şu an
+  `NavLink` `text-lead`siz, `GitHubLink`/`TextLink` `text-body`siz render ediliyor.
+- **Dört kontrast çifti AA altında.** `not-found` dönüş linki 2.00:1, `RouteError`
+  buton etiketi 2.34:1 (hover 2.89:1), `RoadMap` rayı 2.72:1 (eşik 3).
+- İkisi de `docs/codemap/ui.md` içindeki iki "Pitfall" bölümünde, tek noktalı
+  çözümüyle birlikte duruyor.
+
+### Geri alınan
+
+- Oturum içinde istenen aydınlık/karşıt renk paleti altı tur denendi (kayısı zemin,
+  mandalina cam, ateş kırmızısı vurgu, koyu navbar) ve **istek üzerine tümüyle geri
+  alındı**. `app/globals.css`, `Navbar`, `NavLink`, `MobileMenu`, `SocialLinks`,
+  `GitHubLink`, `OverlapPair`, `lib/cn.ts` sekizi de `git checkout` ile HEAD'e döndü;
+  palet karanlık kimliğiyle olduğu gibi duruyor. Faz 4 işi bundan etkilenmedi.

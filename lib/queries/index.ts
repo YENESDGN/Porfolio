@@ -19,6 +19,9 @@ export {
 export {
   getPublishedProjects,
   getPublishedProjectCount,
+  getProjectBySlug,
+  getProjectSlugs,
   type ProjectSummary,
+  type ProjectDetail,
 } from "./projects";
 export { type RoadmapEntry } from "./roadmap";

@@ -8,14 +8,15 @@ Kişisel portfolyo sitesi. Ziyaretçiye kim olduğumu, ne yaptığımı ve nası
 
 ## Kapsam
 
-Dört sayfa. Route'lar İngilizce, arayüz metinleri Türkçe.
+Dört sayfa, artı projelerin detay route'u. Route'lar İngilizce, arayüz metinleri Türkçe.
 
-| Route         | Sayfa       | İçerik                                                              |
-| ------------- | ----------- | ------------------------------------------------------------------- |
-| `/`           | LandingPage | Hoşgeldin yazısı, fotoğraf, "Projeler + (sayısı)" bloğu, tech stack |
-| `/projects`   | Projeler    | Proje kartları: fotoğraf + açıklama, varsa GitHub linki             |
-| `/about`      | Hakkımda    | Fotoğraf + metin çiftleri, öğrenim roadmap'i                        |
-| `/experience` | Tecrübe     | İş hayatı roadmap'i, metin blokları                                 |
+| Route              | Sayfa        | İçerik                                                               |
+| ------------------ | ------------ | -------------------------------------------------------------------- |
+| `/`                | LandingPage  | Hoşgeldin yazısı, fotoğraf, "Projeler + (sayısı)" bloğu, tech stack  |
+| `/projects`        | Projeler     | Proje kartları: fotoğraf + açıklama, detaya link, varsa GitHub linki |
+| `/about`           | Hakkımda     | Fotoğraf + metin çiftleri, öğrenim roadmap'i                         |
+| `/experience`      | Tecrübe      | İş hayatı roadmap'i, metin blokları                                  |
+| `/projects/[slug]` | Proje detayı | Künye (rol, tarih, linkler), anlatı, projenin tech stack'i, galeri   |
 
 Ek olarak `not-found`: geçersiz adres → sayfa bulunamadı mesajı + ana sayfaya dönüş. Navbar korunur.
 
@@ -25,8 +26,9 @@ Tek kullanıcı tipi var: ziyaretçi. Sequence diyagramından türetilen akış:
 
 1. Siteyi açar → ana sayfa görünür (navbar, hoşgeldin yazısı, tech stack, fotoğraf).
 2. Her gezinmede: navbar'dan sayfa seçer → sayfa geçiş animasyonuyla üst kısım görünür → aşağı kaydırdıkça bölümler scroll reveal ile belirir (fotoğraf, metin, roadmap, GitHub linki).
-3. İletişim: sağ üstteki ikonlar. GitHub/LinkedIn yeni sekmede profil açar; Mail `mailto:` ile aynı sekmede istemciyi açar.
-4. Geçersiz adres: not-found görünür, navbar korunur, ana sayfaya dönülür.
+3. Proje detayı: `/projects` üzerindeki bir kartta "Projeyi incele" linkine basar → o projenin detay sayfası açılır (künye, anlatı, teknolojiler, varsa galeri) → "← Projeler" ile listeye döner. Kartın kendisi bağlantı değildir; tıklanır yüzey linktir.
+4. İletişim: sağ üstteki ikonlar. GitHub/LinkedIn yeni sekmede profil açar; Mail `mailto:` ile aynı sekmede istemciyi açar.
+5. Geçersiz adres: not-found görünür, navbar korunur, ana sayfaya dönülür.
 
 ## Sınırlar — bilinçli olarak yok
 
@@ -34,7 +36,7 @@ Tek kullanıcı tipi var: ziyaretçi. Sequence diyagramından türetilen akış:
 - **Form yok.** İletişim ikon linkleriyle; iletişim formu, newsletter, yorum yok.
 - **Kullanıcı hesabı, oturum, analitik yok.**
 - **Tek dil.** i18n şimdilik kapsam dışı.
-- **Blog yok.** İçerik dört sayfayla sınırlı.
+- **Blog yok.** İçerik dört sayfa ve projelerin detay sayfasıyla sınırlı; proje dışında bir yazı akışı yok.
 
 ## İçerik ritmi
 

@@ -49,6 +49,8 @@ Both flanks now carry the same geometry: a 48px box holding a 36px mark, so the 
 
 **Content (all Server):** `RoadMap` · `TextCard` · `ProjectCard` (5-col grid, media 3 / text 2 + optional `GitHubLink`) · `GitHubLink` (renders nothing when the url is null; otherwise a `raspberry-700` pill whose label slides left as an `ArrowUpRight` fades in from the right, plus an `sr-only` "yeni sekmede açılır") · `TechStack` (3×3 vitrine: a `bg-surface` plate fades up under each mark on hover and the baseline hairline turns `raspberry-400`) · `StatCard` · `WelcomeSection` · `ProfileImage` · `MediaPlane` · `BrandIcons`.
 
+Phase 4 added three more, all Server: **`TextLink`** — the site's internal accent link; repeats `NavLink`'s underline exactly rather than inventing a third pointer state, and an `external` prop gives it `GitHubLink`'s `target`/`rel`/`sr-only` treatment for an outbound URL. **`ProjectHeader`** — the detail page's künye block; role and date range are joined into one meta line and the whole line, like the links row, is skipped when both fields are null, so no empty row is drawn. **`ProjectGallery`** — image grid that returns `null` on an empty list, matching `RoadMap`, `TechStack` and `GitHubLink`.
+
 Two were added beyond the planned list:
 
 - **`MediaPlane`** — the single glass-plane implementation. `ProfileImage` and `ProjectCard` both use it, so the "photo missing → the plane still stands, no empty box" behaviour exists once. With no photo it draws a labelled placeholder in `ink-secondary` (`ink-muted` is 4.02:1 on `surface-media`, under AA).
@@ -56,7 +58,7 @@ Two were added beyond the planned list:
 
 ### Navbar hover: CSS, not Motion
 
-`NavLink` draws a `raspberry-700` hairline that scales in from the left and collects to the right (`origin-right` at rest → `group-hover:origin-left` with `scale-x-0/100`), while the label lifts 2px. `SocialLinks` uses the same idiom for its rising fill. Both are plain CSS transitions rather than Motion: a pointer state should not cost a re-render, and the four Motion patterns cover entrances only.
+`NavLink` draws a `raspberry-700` hairline that scales in from the left and collects to the right (`origin-right` at rest → `group-hover:origin-left` with `scale-x-0/100`), while the label lifts 2px. `SocialLinks` uses the same idiom for its rising fill. Both are plain CSS transitions rather than Motion: a pointer state should not cost a re-render, and the four Motion patterns cover entrances only. `TextLink` is the third user of the same underline and deliberately adds nothing to it — the rule is one pointer idiom, reused, not a new one per component.
 
 - Tailwind compiles `hover:` inside `@media (hover:hover)`, so touch devices never get a stuck hover state; `group-focus-visible:` stays outside it, so keyboard users get the same affordance everywhere.
 - Under `motion-reduce` the lift is dropped and the transition removed, but the underline still appears — the state change stays legible instead of being deleted.
@@ -97,7 +99,7 @@ The only combination that satisfies both "smooth" and "during the crossing" is: 
 ### Decisions locked in `PLAN.md`
 
 - **`ProjectCard` is not an overlap.** 5-column grid, media 3 / text 2 (the rail ratio `/about` and `/experience` already use); single column below `md`. It fills a whole `Section` and takes no `Container`, so the plate bleeds to the page edge. Shell is `variant="bare"`, the plate is `aspect-plate-wide`, type sits at `text-h2` / `text-body`, and the title is an `h2` under the page `h1`. `OverlapPair` stays reserved for `/about`.
-- **Links are the only clickable surfaces on the site** — GitHub, LinkedIn, Mail. Cards, photos and text blocks are never anchors.
+- **Links are the only clickable surfaces on the site** — GitHub, LinkedIn, Mail. Cards, photos and text blocks are never anchors. **Phase 4 kept this, it did not reverse it.** Reaching `/projects/[slug]` could have been done by wrapping the card in a `Link`; instead `ProjectCard` carries an explicit "Projeyi incele" `TextLink` beside the GitHub pill. The card stays content and the plate stays inert. A card-as-anchor would also have forced the GitHub pill out of the card, since anchors cannot nest.
 - **`next/image`: `preload`, not `priority`.** Next 16 deprecated `priority`; `.claude/rules/ui.md` was corrected accordingly.
 - **The `<noscript>` rule shipped with `Reveal` in Phase 2.1** and now lives in `globals.css`; see "The `<noscript>` rule" above. Any future animated element must stamp `data-animated` (or carry its own fallback) before it ships.
 - **`LazyMotion features={domAnimation}` is enough for `whileInView`.** The `inView` feature ships inside the `domAnimation` bundle; `domMax` is not needed.
@@ -109,3 +111,51 @@ The only combination that satisfies both "smooth" and "during the crossing" is: 
 The icon component is not kept in the config — `SocialLinks` matches via the `key`, so the config remains independent of React.
 
 **(To be checked later)** The name, domain, and profile URLs in `site.ts` and `social.ts` are placeholders. Favicon is still the Next.js default.
+
+### Pitfall — `cn()` siler type sizes silently
+
+`tailwind-merge` does not know this project's `@theme` names. `text-lead` is not a
+t-shirt size to it, so every unknown `text-*` lands in the **colour** group and the
+last one wins:
+
+```
+cn("text-lead", "text-ink")        -> "text-ink"          // size gone
+cn("text-body", "text-raspberry-400") -> "text-raspberry-400"
+```
+
+It only bites when both reach `cn()`; a plain literal `className="text-h1 text-ink"`
+is untouched because tailwind-merge never sees it. Currently affected: `NavLink`
+renders without `text-lead`, `GitHubLink` and `TextLink` without `text-body`.
+
+Measured with the installed tailwind-merge 3.6.0. The fix is one place —
+`extendTailwindMerge` in `lib/cn.ts` registering the eight `--text-*` names under
+`font-size` — and it was verified to work without breaking real merges
+(`cn("px-2","px-4")`, colour-vs-colour and size-vs-size all still collapse
+correctly). **Not applied:** it was written during the reverted palette pass and
+went back with it. A new `--text-*` token would need adding to that list too.
+
+### Pitfall — four contrast pairs fail in the shipped palette
+
+Computed over the current tokens, not observed:
+
+| pair                             | ratio  | needs | where                                       |
+| -------------------------------- | ------ | ----- | ------------------------------------------- |
+| `raspberry-700` on `page`        | 2.00:1 | 4.5   | `app/not-found.tsx:19` return link          |
+| `ink-inverse` on `raspberry-700` | 2.34:1 | 4.5   | `components/RouteError.tsx:17` button label |
+| `ink-inverse` on `raspberry-600` | 2.89:1 | 4.5   | same button, hover                          |
+| `line-strong` on `page`          | 2.72:1 | 3     | `RoadMap` rail                              |
+
+The first three are the same root cause: `raspberry-700` is documented fill-only and
+`ink-inverse` is the _dark_ token on this dark ground, so putting one on the other
+is two dark values. The accent split by job holds everywhere else; these two files
+predate it.
+
+### Project detail page (Phase 4)
+
+`/projects/[slug]` is assembled entirely from existing primitives — no new token, no new shadow, no new animation pattern, no rounded corner, and `globals.css` was not touched. `OverlapPair` carries **both** the künye and the narrative below it, the second with `reverse` so the two read as mirrored halves the way `/about`'s pairs do. The note above that it "stays reserved for `/about`" now means _reserved against a second implementation_, not against a second caller.
+
+The body is one plain-text column in the DB. The page splits it on blank lines into paragraphs, so the formatting decision lives in code and the data stays free of markup. `TextCard` was not used for it: that component renders a single paragraph, and widening it would have changed a component `/about` and `/experience` already depend on.
+
+**The narrative consumes the first gallery image and the gallery renders `images.slice(1)`.** Feeding both from the same array would otherwise print one frame twice — with a single image there is no gallery section at all.
+
+`ProjectGallery` has an empty list in every fixture, because `public/images/` still holds no photography and pointing a fixture at a missing file would ship a broken image. The branch was verified twice by temporarily injecting image rows — once for the grid, the `next/image` fill, the caption-only-when-present rule and the `data-animated` / `opacity:0` balance, and again with three rows to confirm the narrative takes the first frame and the gallery draws only the rest — then reverted. Same standing check as `MediaPlane`'s image branch: it needs real content in 2.6.

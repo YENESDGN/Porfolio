@@ -1,119 +1,139 @@
-# Big Phase 2 — Plan
+# Big Phase 4 — Plan
 
 ## Context
 
-Phase 1 delivered a skeleton: theme tokens, Prisma schema, and five statically rendered routes whose pages are placeholder paragraphs. Nothing on screen is real yet — no navbar, no card, no overlap, no animation, no data.
+`/projects` renders one full-viewport block per project: cover plate, title, one-paragraph description, and a GitHub pill. That is the whole depth the site has on a project — there is nowhere to say what was built, why, or with what. The list is the terminus.
 
-Phase 2 turns the skeleton into the actual site: the components the design canvas calls for, the four pages assembled from them, and the data layer behind them. It ends when all four routes render real content from PostgreSQL, statically, with the four animation patterns in place.
+Phase 4 adds the missing floor: a per-project detail page at `/projects/[slug]`, reached from the list. It ends when a visitor can press a project on `/projects`, land on a case-study page carrying a long narrative, the project's own tech stack, its images and its links, and get back with one press — statically rendered, on fixtures, with the build green.
 
-PostgreSQL is not available yet, so the order is **UI first, data last**. To keep that from meaning a rewrite, pages call `lib/queries/` functions from the very first commit; those functions return fixture data now and run Prisma later. The page code never changes.
+PostgreSQL is still unavailable, so this phase does **no database work**. `prisma/schema.prisma` is edited and `prisma generate` is run — both work offline — so types keep flowing from Prisma. `migrate` and `seed` roll into the still-blocked Phase 2.6.
+
+## Status
+
+**Phases 4.0–4.4 complete.** `lint` / `typecheck` / `build` clean; the five fixed routes report `○` and `/projects/[slug]` prerenders its three slugs as `●`. The only work left in this phase's scope is the migration and seed, which stay blocked with 2.6 — see "Carried over" below.
 
 ## Decisions locked
 
-- **Fixtures are a seam, not content.** They live only in `lib/queries/fixtures.ts` and are deleted in 2.6. Pages and components never contain content — they map what a query function returns. This is a deliberate, temporary deviation from "content is not hardcoded", scoped to one file.
-- **`ProjectCard` is a 2-column / 1-row grid with `gap-4`** — left column thumbnail, right column brief description. It is **not** `OverlapPair`. `docs/codemap/ui.md` currently says otherwise and gets corrected.
-- **Refresh is on-demand only.** No `export const revalidate`. Pages prerender at build; a secret-guarded endpoint calls `revalidatePath` after a content edit.
-- **Links are the only clickable surfaces on the site** — GitHub, LinkedIn, Mail. Cards, photos, and text blocks are never anchors, so `ProjectCard` stays plain content with `GitHubLink` inside it.
+- **`description` is the card summary; `body` is the new column.** `description` already is a short summary, so no separate `summary` field is added. One concept, one column.
+- **The click surface stays a link.** `docs/codemap/ui.md` and `DESIGN.md` lock "cards, photos and text blocks are never anchors". That rule is **kept**: `ProjectCard` gains an explicit "Projeyi incele" text link. The card does not become an anchor and no doc rule is reversed.
+- **The project↔tech relation is an explicit join model (`ProjectTech`), not implicit.** An implicit relation table would be `_ProjectToTechStackItem`, which cannot carry `order` and breaks the snake_case `@@map` convention every other table follows.
+- **Slugs are written to the data, not derived.** Same reasoning as `order`: the value lives in the row, so no Turkish-transliteration helper is needed and a title can change without breaking a URL.
+- **The detail route is fully static.** `generateStaticParams` plus `dynamicParams = false`: the path set is fixed at build, an unknown slug 404s without an on-demand render. Still no `export const revalidate` — refresh stays on-demand.
+- **No new visual vocabulary.** No new token, no new shadow, no new animation pattern, no rounded corner. The page is assembled from `Section`, `Container`, `OverlapPair`, `MediaPlane`, `TechStack`, `GitHubLink`, `Reveal`.
 
-## Version facts verified against `node_modules/next` and `node_modules/framer-motion`
+## Version facts verified against `node_modules/next/dist/docs`
 
-- `export const revalidate` / `revalidatePath` remain valid — they are removed only when `cacheComponents` is enabled, which `next.config.ts` does not enable.
-- **`next/image` `priority` is deprecated in Next 16; `preload` replaces it.** `.claude/rules/ui.md` still says `priority` and must be corrected.
-- `LazyMotion features={domAnimation}` is enough for `whileInView` — the `inView` feature ships in the `domAnimation` bundle (`framer-motion/dist/es/motion/features/gestures.mjs`). No `domMax`.
-- The generated client exports the `Prisma` namespace, so `Prisma.XGetPayload<{ select: typeof xSelect }>` types work offline, before any DB exists.
+- `params` is a **Promise** in Next 16 and must be awaited — `01-app/03-api-reference/03-file-conventions/dynamic-routes.md`.
+- `generateStaticParams` typing and build-time behaviour — `01-app/03-api-reference/04-functions/generate-static-params.md`. It runs before the page is generated; during `next dev` it is called on navigation.
+- `generateMetadata({ params }, parent)` takes the same Promise `params`; the docs point at the `PageProps<'/route'>` helper for typing, which is the idiom `app/layout.tsx` already uses as `LayoutProps<"/">` — `01-app/03-api-reference/04-functions/generate-metadata.md`.
+- `dynamicParams` is a route-segment config option and remains available because `next.config.ts` does not enable `cacheComponents`.
+
+## The design
+
+Three stacked `Section`s in the site's existing grammar: `Section` owns height, `Container` owns gutter, full-viewport blocks alternate `bg-page` / `bg-page-deep` so the scroll reads as a transition. Paper over glass; one accent; hierarchy by size, never weight.
+
+**1 — Künye (hero).** `bg-page`, inside `Container`, built with the existing `OverlapPair` — `media` is the cover `MediaPlane` at `aspect-plate-wide`, `content` is the paper block. The site's signature, its single overlap implementation. The paper block carries, in order:
+
+```
+← Projeler                     TextLink, text-small, breadcrumb
+Proje Adı                      h1, text-h1 text-ink
+açıklama paragrafı…            text-lead text-ink-secondary, max-w-prose
+Rol · Ocak 2024 — Mart 2024    text-caption text-ink-muted (formatDateRange)
+[ GitHub'da gör ]  Canlı site  GitHubLink pill + TextLink, both conditional
+```
+
+**2 — Anlatı.** `bg-page-deep`, `Container`, the künye's mirror: the same `OverlapPair` with `reverse`, media from the project's first gallery image, content a `Card` of body paragraphs split on blank lines. Two mirrored overlaps, the alternation `/about` already uses.
+
+**3 — Teknolojiler.** `bg-page`, the project's own `TechStack` under an `h2`; skipped when the project has none.
+
+**4 — Galeri.** `Container`, `ProjectGallery` over `images.slice(1)` — the narrative already spent the first frame, so no image appears twice. `md:grid-cols-2` of `MediaPlane`s at `aspect-plate`, each with an optional caption beneath. Skipped when nothing is left.
+
+Every section is wrapped in `Reveal` with alternating `direction`, matching `/about`.
+
+---
+
+## Phase 4.0 — Write the plan
+
+- Write this plan to `PLAN.md`, replacing the Big Phase 2 body. PLAN.md is the _active_ phase plan; Phase 3 and the surface passes were never written into it and are not retro-written now — they live in `docs/codemap/`.
+
+**Report:** done — active plan on disk.
+
+## Phase 4.1 — Schema and types (no DB)
+
+`prisma/schema.prisma` — extend `Project` with `slug` (unique), `body`, `role`, `startDate`, `endDate`, `liveUrl`, plus `images` and `techStack` relations. Add `ProjectImage` (`project_images`) and `ProjectTech` (`project_tech`), and the two back-relations: `projectImages` on `Media`, `projects` on `TechStackItem`.
+
+`npm run db:generate` — offline, no connection needed. **No `migrate`, no `seed`.**
+
+`lib/queries/projects.ts` — `projectSelect` gains `slug` (the card needs the href). Beside it: `projectDetailSelect` with ordered `images` and `techStack`, the derived `ProjectDetail` type, `getProjectBySlug(slug)` and `getProjectSlugs()`. Both new functions return fixtures today; in 2.6 only their bodies change, against the same `select` objects — the established seam.
+
+`lib/queries/fixtures.ts` — `projectDetailsFixture` becomes the single source for the three projects; `projectsFixture` is **derived from it by a map**, so no content is written twice. Photo fields stay `null` per the existing fixture policy, which keeps `ProjectGallery`'s empty branch on the live path.
+
+`lib/queries/index.ts` — export the two functions and the type.
+
+**Report:** done — schema validated, client generated offline, `getProjectBySlug` / `getProjectSlugs` live behind `lib/queries/index.ts`. No database command was run.
+
+## Phase 4.2 — Components
+
+New, all Server:
+
+- `components/TextLink.tsx` — internal accent link. Reuses the already-approved `NavLink` underline motion verbatim: `raspberry-400` hairline, `origin-right scale-x-0` at rest → `group-hover:origin-left scale-x-100`, label lifts 2px, `motion-reduce:` drops the movement but **keeps** the underline. Plain CSS, not Motion — a pointer state must not cost a re-render. A component rather than repeated classes because it appears in three places (card → detail, detail → back, live-site link). An `external` prop covers `liveUrl` with the same `target`/`rel`/`sr-only` treatment `GitHubLink` uses.
+- `components/ProjectHeader.tsx` — the hero paper block: breadcrumb, `h1`, lead, meta line via the existing `formatDateRange`, and the two action links. Each conditional part renders only when its field is non-null — no empty rows.
+- `components/ProjectGallery.tsx` — image grid; **returns `null` on an empty list**, matching `RoadMap`, `TechStack` and `GitHubLink`.
+
+Modified: `ProjectCard` gains the "Projeyi incele" `TextLink` above its `GitHubLink`; `components/index.ts` exports the three.
+
+`app/globals.css` is **not** touched — every token the page needs already exists, and no new source root is added, so the `source(none)` + four-`@source` list stays correct.
+
+**Report:** done — `TextLink`, `ProjectHeader`, `ProjectGallery` added and exported; `ProjectCard` carries "Projeyi incele" beside the GitHub pill and is still not an anchor.
+
+## Phase 4.3 — The route
+
+`app/projects/[slug]/` — three files: `page.tsx`, plus the one-line `loading.tsx` and `error.tsx` re-exports every other route uses.
+
+`page.tsx` is a Server Component with `dynamicParams = false`, `generateStaticParams()` from `getProjectSlugs()`, `generateMetadata()` returning the project's title and description (the root layout's `template: "%s — …"` supplies the suffix), and a default async function that awaits `params`, calls `getProjectBySlug`, `notFound()`s on a miss, and renders the three sections.
+
+No route-local `not-found.tsx`: the root `app/not-found.tsx` already renders inside the layout, so the navbar survives. `NavLink` matches with `pathname.startsWith(href)`, so "Projeler" stays `aria-current="page"` on the detail route with no change.
+
+`generateMetadata` and `generateStaticParams` are both **firsts in this repo** — recorded so the next reader does not mistake them for drift.
+
+**Report:** done — all three slugs return 200 with the right title, h1, meta line and links; an unknown slug returns 404; every detail page balances `data-animated` against `opacity:0`.
+
+## Phase 4.4 — Docs
+
+- `docs/codemap.md` — status for Big Phase 4; "Next up" keeps 2.6 and gains the deferred migration.
+- `docs/codemap/routes.md` — the new segment, its page→data row, the three first-of-kind APIs, and that the dynamic route reports `●` not `○`.
+- `docs/codemap/ui.md` — the three new components, the detail-page composition, and an explicit note that "only links are clickable" was **kept**, not reversed.
+- `docs/codemap/data.md` — the two new models, the `description`-as-summary decision, the explicit-vs-implicit m-n rationale, and that migration and seed stay blocked.
+- `PRODUCT.md` — **scope amendment.** The Kapsam table gains the detail page and Sınırlar's "İçerik dört sayfayla sınırlı" is corrected to four pages plus one detail route. This is the one place the phase widens the product's stated scope.
+- `.claude/rules/ui.md` — the internal accent-link pattern recorded next to the two existing CSS pointer states, so a third is not invented later.
+
+`DESIGN.md` is deliberately left untouched: its frontmatter already describes the retired light palette and reconciling it is its own task.
+
+**Report:** done — codemap (index, routes, ui, data), `PRODUCT.md` scope, and the `TextLink` rule in `.claude/rules/ui.md`.
 
 ---
 
-## Phase 2.0 — Clean tree
+## Carried over — still blocked
 
-- **First action: write this plan to `PLAN.md` at repo root.**
-- Commit the eight pending doc/rule edits so Phase 2 lands on a clean base.
-
-## Phase 2.1 — Common UI
-
-- `components/Card.tsx` — Server. Shell for every box: `bg-surface`, padding, optional `title`. No border; separation is by tone.
-- `components/OverlapPair.tsx` — Server. Props `media`, `content`, `reverse`. **The only overlap implementation.** DOM order is always media → content; `reverse` flips desktop placement via grid/`order` only. Overlap shift uses the `-mt-overlap` / `overlap-lg` tokens, `md:` and up only; below `md` blocks stack and `gap` carries the rhythm. Arbitrary values are permitted here and nowhere else.
-- `components/Reveal.tsx` — Client. `LazyMotion features={domAnimation}` + `m.div`, `whileInView`, `viewport={{ once: true }}`, `useReducedMotion` → renders plain when reduced. Takes `children`, so Server Components placed inside it stay on the server.
-- `components/PageTransition.tsx` — Client, Door FadeIn-Up&Down + `app/template.tsx` that wraps `children` in it. Template, not layout — layout does not remount on navigation.
-- `app/globals.css` — add the `<noscript>` rule that forces animated elements visible. `.claude/rules/ui.md` mandates it and it is currently missing; without it a JS failure leaves the page blank.
-- `components/index.ts` — public API.
-
-**Report:** four primitives, template wired, noscript fallback in place.
-
-## Phase 2.2 — Navbar
-
-- `Navbar` (Server) — page links left, `SocialLinks` top right, `MobileMenu` trigger below `md`.
-- `NavLink` (Client) — `usePathname`, `aria-current` on the active route. The only client part of the navbar.
-- `SocialLinks` (Server) — reads `config/social.ts`, maps `key` → lucide icon so config stays React-free. `aria-label` on every icon, 44×44 touch target, `target="_blank" rel="noopener noreferrer"` on GitHub/LinkedIn, **nothing** on `mailto:`.
-- `MobileMenu` (Client) — Radix Dialog. Icons stay visible on mobile; page links move into the menu.
-- Mount in `app/layout.tsx` above `{children}` so `not-found` keeps it.
-
-**Report:** navbar on all five routes, keyboard navigable, mobile menu working.
-
-## Phase 2.3 — Query layer (the seam)
-
-`lib/queries/{landing,projects,about,experience}.ts`, re-exported from `lib/queries/index.ts`. Each file holds:
-
-1. a `select` object,
-2. a type derived from it via `Prisma.XGetPayload<{ select: typeof xSelect }>`,
-3. a named async function whose body returns fixtures from `lib/queries/fixtures.ts`.
-
-Functions per the page→data mapping in `docs/codemap/routes.md`: project count + welcome text + photo + tech stack; published projects by `order`; about sections + `EDUCATION` roadmap; experience sections + `WORK` roadmap.
-
-**Report:** pages have a typed data gate; only these four bodies change in 2.6.
-
-## Phase 2.4 — Content components
-
-All Server, all consuming query types: `RoadMap` · `TextCard` · `ProjectCard` · `GitHubLink` · `TechStack` · `StatCard` · `WelcomeSection` · `ProfileImage`.
-
-- `GitHubLink` returns `null` when `githubUrl` is null — no empty box.
-- `ProjectCard` — `Card` + `grid grid-cols-2 grid-rows-1 gap-4` on `md` and up, single column below. Thumbnail left, description + `GitHubLink` right.
-- `ProfileImage` — `next/image` with `preload` (not `priority`), real `sizes`.
-- Dates via `Intl.DateTimeFormat` in a pure `lib/` helper. No date package.
-
-**Report:** every content block renders from fixture data in isolation.
-
-## Phase 2.5 — Pages assembled from the canvas
-
-Layouts read off `Obsidian/Diagrams & Notes/Basic-Flow.canvas`:
-
-- `/` — left column `StatCard` ("Projeler + sayısı") over `WelcomeSection` + `TechStack`; right column tall `ProfileImage`. Partial FadeIn-Left&Right&Up.
-- `/about` — two `OverlapPair`s with alternating `reverse`, then education `RoadMap` with text beside it.
-- `/experience` — tall work `RoadMap` rail left, four `TextCard`s stacked right.
-- `/projects` — `ProjectCard` list.
-
-Sections wrap in `Reveal`. Every page ships desktop **and** mobile; single-breakpoint work is not done. `notFound()` where a page's record is missing.
-
-**Report:** four pages match the canvas at both breakpoints, still static.
-
-## Phase 2.6 — Data (last, gated on PostgreSQL)
-
-- Bring up Postgres (Docker), fill `.env` from `.env.example`.
-- `npm run db:migrate` — the first migration. Never `db push`.
-- Fill `prisma/seed.ts` with real content, `upsert` only, idempotent. Optimized images into `public/images/`; DB stores paths.
-- Replace the four query bodies with Prisma calls matching the existing `select` objects. Delete `lib/queries/fixtures.ts`.
-- `app/api/revalidate/route.ts` — POST, compares a `REVALIDATE_SECRET` env var, calls `revalidatePath`. Add the key to `.env.example`, never to code. This is the one write-side endpoint; the "no API routes" rule covers reading.
-- Correct `.claude/rules/ui.md` (`priority` → `preload`) and `docs/codemap/ui.md` (`ProjectCard` is a grid, not `OverlapPair`).
-
-**(Sonra bakılacak) — 2.6 bloke.** Docker daemon çalışmıyor ve `psql` yok; PostgreSQL erişilebilir değil. Faz 2.5 sonunda durduruldu: sayfalar fixture üzerinde, build yeşil, beş route statik. Docker Desktop açıldığında 2.6 olduğu gibi çalıştırılabilir — sayfa kodu değişmeyecek, yalnızca dört sorgu gövdesi Prisma çağrısına dönecek.
-
-**If Postgres still is not available:** stop after 2.5, mark 2.6 `(Sonra bakılacak)` per the stuck rule. Pages stay on fixtures and the build stays green.
-
----
+**(Sonra bakılacak) — Faz 2.6 bloke.** Docker daemon çalışmıyor ve `psql` yok; PostgreSQL erişilebilir değil. Faz 4 şema değişikliğini yazar ve `prisma generate` çalıştırır, ama migration ve seed çalıştırmaz. Postgres açıldığında 2.6 olduğu gibi işletilir ve bu fazın eklediği `slug` / `body` / `role` / `startDate` / `endDate` / `liveUrl` alanları ile `project_images` ve `project_tech` tabloları aynı ilk migration'a girer. Sayfa kodu değişmeyecek; yalnızca `lib/queries/` gövdeleri Prisma çağrısına dönecek ve `lib/queries/fixtures.ts` silinecek.
 
 ## Verification
 
 - `npm run lint`, `npm run typecheck`, `npm run build` clean after every phase.
-- Build output shows all five routes as `○` (static). If any flips to `ƒ`, a dynamic API leaked in — fix before moving on.
-- `npm run dev`: navigate all four routes and check the Door transition fires each time; scroll each page and check reveals trigger once, not on scroll-up.
-- OS reduced-motion on → animations render as plain state.
-- Disable JavaScript → all content visible (the noscript rule).
-- Narrow to 375px → overlaps unstack, nothing scrolls horizontally, icon targets stay 44px.
-- Tab through the navbar → focus visible, `aria-current` on the active link.
-- After 2.6: edit a row in `npm run db:studio`, POST to `/api/revalidate` with the secret, confirm the page shows the new value; POST without the secret → rejected.
+- Build output: the four static routes plus `/projects/[slug]`. The dynamic segment shows **`●` (SSG, 3 paths prerendered)** — that is the pass condition, not `○`. If it shows `ƒ`, a dynamic API leaked in; fix before continuing.
+- `npm run dev`: `/projects` → press "Projeyi incele" on each of the three cards → correct detail page, Door transition fires, "Projeler" stays active in the navbar. Press "← Projeler" → back on the list.
+- `/projects/yok-boyle-bir-proje` → not-found page with the navbar intact.
+- Scroll the detail page: each section reveals once, not again on scroll-up.
+- OS reduced-motion on → sections render in plain state; the `TextLink` underline still appears, only the lift is gone.
+- JavaScript disabled → every section fully visible (the `@media (scripting: none)` rule; confirm each new `Reveal` stamps `data-animated`).
+- 375px → overlap unstacks, gallery goes single-column, nothing scrolls horizontally.
+- Tab through the detail page → focus visible on breadcrumb, both action links and the back link.
+- Contrast spot-check: `text-ink-muted` meta on `bg-page`, `text-raspberry-400` links on `bg-surface`.
 
 ## Critical files
 
-`app/layout.tsx` · `app/template.tsx` (new) · `app/globals.css` · `app/{,projects/,about/,experience/}page.tsx` · `components/{Card,OverlapPair,Reveal,PageTransition,Navbar,NavLink,SocialLinks,MobileMenu,RoadMap,TextCard,ProjectCard,GitHubLink,TechStack,StatCard,WelcomeSection,ProfileImage}.tsx` · `lib/queries/*` · `prisma/seed.ts` · `app/api/revalidate/route.ts` (new)
+`prisma/schema.prisma` · `lib/queries/{projects,fixtures,index}.ts` · `components/{TextLink,ProjectHeader,ProjectGallery}.tsx` (new) · `components/{ProjectCard,index}.tsx` · `app/projects/[slug]/{page,loading,error}.tsx` (new) · `PRODUCT.md` · `docs/codemap.md` · `docs/codemap/{routes,ui,data}.md` · `.claude/rules/ui.md`
 
-Reused as-is: `lib/cn.ts`, `lib/prisma.ts`, `config/` (`site`, `nav`, `social` via `config/index.ts`), `components/RouteLoading.tsx`, `components/RouteError.tsx`.
+Reused as-is: `components/{OverlapPair,MediaPlane,TechStack,GitHubLink,Card,Section,Container,Reveal,RouteLoading,RouteError}.tsx` · `lib/formatDate.ts` (`formatDateRange`) · `lib/cn.ts` · `app/globals.css` (no new token, no new `@source`) · `config/`.
+
+Not touched: `DESIGN.md` · `next.config.ts` · any database command.

@@ -71,7 +71,7 @@ Motion (formerly Framer Motion) + IntersectionObserver. Package name is `motion`
 
 Do not deviate from the four defined patterns; if a new animation is needed, ask. Door FadeIn-Left&Right → content transitions. Door FadeIn-Up&Down → navbar page transitions. Partial FadeIn-Left&Right&Up → LandingPage. Scroll reveal → content sections appear as they enter the viewport.
 
-**The four patterns describe entrances only.** Pointer and focus states are not among them and are not Motion: they are plain CSS transitions, because a hover should not cost a re-render. Two exist — the `SocialLinks` fill rising from below, and the `NavLink` underline that wipes in from the left and collects to the right. A new one conforms to those two rather than reaching for Motion. Every such state carries `motion-reduce:` handling that drops the movement but **keeps** the state change visible; removing the feedback entirely is not reduced motion.
+**The four patterns describe entrances only.** Pointer and focus states are not among them and are not Motion: they are plain CSS transitions, because a hover should not cost a re-render. Two exist — the `SocialLinks` fill rising from below, and the `NavLink` underline that wipes in from the left and collects to the right. A new one conforms to those two rather than reaching for Motion. **`TextLink` is the underline, reused verbatim** — it is the site's internal accent link and the only one; write `TextLink` instead of restyling an anchor, and do not add a third idiom. Every such state carries `motion-reduce:` handling that drops the movement but **keeps** the state change visible; removing the feedback entirely is not reduced motion.
 
 ### Delegation
 

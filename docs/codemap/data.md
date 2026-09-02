@@ -28,17 +28,25 @@ The remaining 3 high npm audit warnings are from the prisma CLI's `deepmerge-ts`
 
 Models are PascalCase, tables are snake_case (`@@map`). Sorting is written to the data (`order`); arrays are not reordered in code.
 
-| Model               | Table               | Note                                                                          |
-| ------------------- | ------------------- | ----------------------------------------------------------------------------- |
-| `Media`             | media               | Feeds all photo blocks                                                        |
-| `LandingPage`       | landing_page        | Single row; project count is via COUNT, no column for it                      |
-| `TechStackItem`     | tech_stack_items    | LandingPage tech stack                                                        |
-| `AboutSection`      | about_sections      | Photo+text pairs, ordered by `order`                                          |
-| `ExperienceSection` | experience_sections | /experience text blocks                                                       |
-| `RoadmapItem`       | roadmap_items       | Education and work roadmaps are in the same table via `kind` (EDUCATION/WORK) |
-| `Project`           | projects            | `githubUrl` nullable, `isPublished`, `order`                                  |
+| Model               | Table               | Note                                                                                     |
+| ------------------- | ------------------- | ---------------------------------------------------------------------------------------- |
+| `Media`             | media               | Feeds all photo blocks                                                                   |
+| `LandingPage`       | landing_page        | Single row; project count is via COUNT, no column for it                                 |
+| `TechStackItem`     | tech_stack_items    | LandingPage tech stack                                                                   |
+| `AboutSection`      | about_sections      | Photo+text pairs, ordered by `order`                                                     |
+| `ExperienceSection` | experience_sections | /experience text blocks                                                                  |
+| `RoadmapItem`       | roadmap_items       | Education and work roadmaps are in the same table via `kind` (EDUCATION/WORK)            |
+| `Project`           | projects            | `slug` unique; `githubUrl` / `liveUrl` / `role` / dates nullable, `isPublished`, `order` |
+| `ProjectImage`      | project_images      | Detail-page gallery; `Media` 1-N so one visual can serve several projects                |
+| `ProjectTech`       | project_tech        | Project ↔ tech stack, explicit join with its own `order`                                 |
 
 The three tables required by the page-data mapping (`TechStackItem`, `ExperienceSection`, `RoadmapItem`) were added to the 4 tables from the schema notes.
+
+**Phase 4 additions to `Project`:** `slug` (unique), `body`, `role`, `startDate`, `endDate`, `liveUrl`, plus the `images` and `techStack` relations. Three decisions worth keeping:
+
+- **`description` stays the card summary; `body` is the detail narrative.** No separate `summary` column was added — `description` already was one, and two fields for one concept would drift apart.
+- **`slug` is written to the data, not derived from the title.** Same reasoning as `order`: the value lives in the row, so no Turkish-transliteration helper is needed and retitling a project does not break its URL.
+- **`ProjectTech` is an explicit join model, not an implicit N-N.** Prisma would have named the implicit table `_ProjectToTechStackItem`, which cannot carry `order` and breaks the snake_case `@@map` convention every other table follows.
 
 **Deliberate deviation from the diagram:** `media` relations were drawn as one-to-one (`-`) in dbdiagram, but are one-to-many in the schema. This allows the same visual to be used in multiple blocks without causing an unnecessary unique constraint.
 
@@ -47,6 +55,8 @@ The three tables required by the page-data mapping (`TechStackItem`, `Experience
 All Prisma calls are written as named functions inside `lib/queries/` and exposed externally via `lib/queries/index.ts`. The layer exists and every page consumes it; only the function bodies are still fixtures.
 
 Files: `landing.ts`, `projects.ts`, `about.ts`, `experience.ts`, plus `roadmap.ts` and `fixtures.ts`.
+
+`projects.ts` carries two selects against the same model: `projectSelect` for the card and `projectDetailSelect` for the detail page, with `orderBy` on both relations so ordering comes from the data. `getProjectSlugs()` exists purely to feed `generateStaticParams`; it returns `{ slug }` and nothing else. In the fixtures, `projectDetailsFixture` is the single source and `projectsFixture` is destructured out of it, so no project content is written twice.
 
 **`roadmap.ts` is a fifth file beyond the plan.** `RoadmapItem` is read identically by `/about` (EDUCATION) and `/experience` (WORK), so the `select` and its derived `RoadmapEntry` type live in one place rather than being duplicated or imported sideways between the two page modules.
 
@@ -71,4 +81,4 @@ Two things the fixtures deliberately do **not** fake:
 
 ## Status
 
-**(To be checked later)** — No PostgreSQL: `prisma migrate` and seed have not been run, `prisma/migrations/` is empty. The schema passes `prisma validate`, the client is generated, the seed pipeline works end-to-end (`npm run db:seed` reads the env and runs tsx) — we just haven't connected to a DB. The first migration will be generated once the DB is up; `db push` will not be used.
+**(To be checked later)** — No PostgreSQL: `prisma migrate` and seed have not been run, `prisma/migrations/` is empty. Phase 4 edited the schema and ran `prisma generate` (both work offline, no connection needed) but ran no database command, so its columns and its two new tables land in the same first migration as everything else. The schema passes `prisma validate`, the client is generated, the seed pipeline works end-to-end (`npm run db:seed` reads the env and runs tsx) — we just haven't connected to a DB. The first migration will be generated once the DB is up; `db push` will not be used.

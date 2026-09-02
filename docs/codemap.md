@@ -24,7 +24,7 @@ NO `src/`, everything is in the root. `@/*` alias points to the root.
 
 ```
 app/         routes, layout, template.tsx, globals.css (theme tokens inside @theme)
-components/  UI components (21 + index.ts)
+components/  UI components (24 + index.ts)
 lib/         pure helpers; cn.ts, formatDate.ts, prisma.ts, queries/
 config/      static config; site.ts, nav.ts, social.ts (+ index.ts)
 prisma/      schema.prisma, seed.ts, migrations/
@@ -54,12 +54,15 @@ Module public API is exposed via `index.ts`. `lib/` is not a module, but a folde
 
 **Surface pass after Phase 3 — navbar, then `/projects`.** `Container` lost its `default`/`wide`/`full` widths and became full-bleed (`w-full px-16`): it owns the gutter, `max-w-prose` owns the measure. `Card` gained a `bare` variant, `GitHubLink` became a raspberry pill, `TechStack` became a 3×3 vitrine, and the accent split by job (`raspberry-700` fills, `raspberry-400` carries text). `/projects` was then reworked into a full-bleed composition: no `Container`, a bare shell, a 5-column grid at media 3 / text 2, the new `aspect-plate-wide` (16/9) token, and `text-h2` / `text-body`. Details in `docs/codemap/ui.md` and `docs/codemap/routes.md`.
 
+**Big Phase 4 — project detail page, done.** `/projects/[slug]` is the first dynamic segment in the tree and the first use of `generateStaticParams`, `generateMetadata` and `dynamicParams`. Three sections: an `OverlapPair` künye, a 5-column narrative rail with the project's own `TechStack`, and a conditional gallery. `Project` gained `slug` / `body` / `role` / `startDate` / `endDate` / `liveUrl`, plus the `ProjectImage` and `ProjectTech` models. **No database work:** the schema was edited and `prisma generate` run offline; migration and seed roll into 2.6. The locked "only links are clickable" decision was **kept** — `ProjectCard` gained a "Projeyi incele" `TextLink` rather than becoming an anchor. Build shows the three slugs as `●` and the other five routes as `○`.
+
 **Phase 2.6 is blocked, not skipped.** The Docker daemon is not running and there is no `psql`, so PostgreSQL is unreachable. Marked `(Sonra bakılacak)` in `PLAN.md` per the stuck rule. Pages currently read fixtures; 2.6 swaps four function bodies and touches no page code.
 
 ### Loose ends
 
 - **(To be checked later)** No PostgreSQL → migration and seed have not been run. Details: `docs/codemap/data.md`.
 - **Nothing has been verified visually.** No browser tooling was available, so the checks in `PLAN.md` — overlap at both breakpoints, reveal timing, reduced-motion, JS disabled, 375px, tab focus — are outstanding. Contrast figures throughout the docs are computed, not observed.
+- **(To be checked later)** `cn()` silently drops type sizes, and four contrast pairs fail — both measured, neither fixed. Details and the one-place fix: `docs/codemap/ui.md` → the two "Pitfall" sections.
 - `config/site.ts` and `config/social.ts` are placeholders; favicon is the Next.js default.
 - `next dev` appends the agent-rules block to the end of `CLAUDE.md`. Since it is rewritten on every run, it is not deleted, it is committed.
 - `.claude/rules/skills/` (vendored impeccable, 123 files / 2.9 MB) is untracked and undecided. It is excluded from eslint, and no longer reaches Tailwind: `globals.css` now uses `source(none)` plus four explicit `@source` roots, which cut the stylesheet 27,116 → 23,630 bytes (−12.9%).
@@ -67,4 +70,4 @@ Module public API is exposed via `index.ts`. `lib/` is not a module, but a folde
 
 ### Next up — Phase 2.6
 
-Bring up Postgres (Docker) → `npm run db:migrate` (never `db push`) → fill `prisma/seed.ts` with real content via `upsert` → replace the four query bodies with Prisma calls against the existing `select` objects → delete `lib/queries/fixtures.ts` → add `app/api/revalidate/route.ts` (POST, `REVALIDATE_SECRET`). Optimized images into `public/images/`; the DB stores paths only.
+Bring up Postgres (Docker) → `npm run db:migrate` (never `db push`; the first migration now also carries Phase 4's project columns, `project_images` and `project_tech`) → fill `prisma/seed.ts` with real content via `upsert` → replace the four query bodies with Prisma calls against the existing `select` objects → delete `lib/queries/fixtures.ts` → add `app/api/revalidate/route.ts` (POST, `REVALIDATE_SECRET`). Optimized images into `public/images/`; the DB stores paths only.

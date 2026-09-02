@@ -25,6 +25,7 @@ model Media {
   landingPages  LandingPage[]
   aboutSections AboutSection[]
   projects      Project[]
+  projectImages ProjectImage[]
 
   @@map("media")
 }
@@ -48,6 +49,8 @@ model TechStackItem {
   name  String @db.VarChar(60)
   icon  String @db.VarChar(60)
   order Int    @default(0)
+
+  projects ProjectTech[]
 
   @@map("tech_stack_items")
 }
@@ -100,18 +103,59 @@ enum RoadmapKind {
 
 // ---------- Projeler ----------
 
+// slug veriye yazılır, başlıktan türetilmez: başlık değişince adres kırılmasın
+// ve Türkçe harf çeviren bir yardımcıya ihtiyaç doğmasın.
+// description kart özeti, body detay sayfasının anlatısı — ikisi ayrı iş.
 model Project {
-  id            Int      @id @default(autoincrement())
-  title         String   @db.VarChar(150)
-  description   String
-  coverPhotoId  Int?     @map("cover_photo_id")
-  githubUrl     String?  @map("github_url") @db.VarChar(300)
-  isPublished   Boolean  @default(true) @map("is_published")
-  order         Int      @default(0)
-  createdAt     DateTime @default(now()) @map("created_at")
+  id           Int       @id @default(autoincrement())
+  slug         String    @unique @db.VarChar(160)
+  title        String    @db.VarChar(150)
+  description  String
+  body         String
+  role         String?   @db.VarChar(120)
+  startDate    DateTime? @map("start_date") @db.Date
+  endDate      DateTime? @map("end_date") @db.Date
+  coverPhotoId Int?      @map("cover_photo_id")
+  githubUrl    String?   @map("github_url") @db.VarChar(300)
+  liveUrl      String?   @map("live_url") @db.VarChar(300)
+  isPublished  Boolean   @default(true) @map("is_published")
+  order        Int       @default(0)
+  createdAt    DateTime  @default(now()) @map("created_at")
 
-  coverPhoto Media? @relation(fields: [coverPhotoId], references: [id], onDelete: SetNull)
+  coverPhoto Media?         @relation(fields: [coverPhotoId], references: [id], onDelete: SetNull)
+  images     ProjectImage[]
+  techStack  ProjectTech[]
 
   @@index([isPublished, order])
   @@map("projects")
+}
+
+// Detay sayfasının galerisi. Media 1-N: aynı görsel birden çok projede durabilir.
+model ProjectImage {
+  id        Int     @id @default(autoincrement())
+  projectId Int     @map("project_id")
+  mediaId   Int     @map("media_id")
+  caption   String? @db.VarChar(200)
+  order     Int     @default(0)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  media   Media   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, order])
+  @@map("project_images")
+}
+
+// Örtük N-N yerine açık model: örtük tablo _ProjectToTechStackItem adını alır,
+// order taşıyamaz ve tabloların snake_case düzenini bozar.
+model ProjectTech {
+  projectId Int @map("project_id")
+  techId    Int @map("tech_id")
+  order     Int @default(0)
+
+  project Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tech    TechStackItem @relation(fields: [techId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, techId])
+  @@index([projectId, order])
+  @@map("project_tech")
 }
