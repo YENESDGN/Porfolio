@@ -18,6 +18,8 @@ Hepsi resmi marka işareti, kendi marka renkleriyle.
 | `tailwind.svg`   | Tailwind CSS | `0 -51 256 256` |
 | `postgresql.svg` | PostgreSQL   | `-4 0 264 264`  |
 | `prisma.svg`     | Prisma       | `0 0 32 32`     |
+| `fastapi.svg`    | FastAPI      | `0 0 24 24`     |
+| `docker.svg`     | Docker       | `0 0 24 24`     |
 
 viewBox'lar birbirinden farklı; sorun değil, `preserveAspectRatio` varsayılanı
 her işareti 28×28 kutuya ortalayarak sığdırıyor.
