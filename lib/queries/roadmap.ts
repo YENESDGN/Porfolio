@@ -1,4 +1,5 @@
-import type { Prisma } from "@/generated/prisma/client";
+import type { Prisma, RoadmapKind } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
 
 // Öğrenim ve iş hayatı roadmap'i aynı tabloda, aynı şekilde okunuyor:
 // select tek yerde durur, ayıran alan yalnızca `kind`.
@@ -13,3 +14,11 @@ export const roadmapItemSelect = {
 export type RoadmapEntry = Prisma.RoadmapItemGetPayload<{
   select: typeof roadmapItemSelect;
 }>;
+
+export async function getRoadmap(kind: RoadmapKind): Promise<RoadmapEntry[]> {
+  return prisma.roadmapItem.findMany({
+    where: { kind },
+    orderBy: { order: "asc" },
+    select: roadmapItemSelect,
+  });
+}

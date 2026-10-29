@@ -1,5 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client";
-import { landingFixture } from "./fixtures";
+import { prisma } from "@/lib/prisma";
 
 export const landingSelect = {
   welcomeText: true,
@@ -28,5 +28,15 @@ export type LandingPageData = {
 };
 
 export async function getLandingPage(): Promise<LandingPageData | null> {
-  return landingFixture;
+  const [content, techStack, projectCount] = await Promise.all([
+    prisma.landingPage.findFirst({ select: landingSelect }),
+    prisma.techStackItem.findMany({
+      orderBy: { order: "asc" },
+      select: techStackSelect,
+    }),
+    prisma.project.count({ where: { isPublished: true } }),
+  ]);
+  if (!content) return null;
+
+  return { content, techStack, projectCount };
 }

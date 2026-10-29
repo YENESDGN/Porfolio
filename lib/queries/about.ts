@@ -1,6 +1,6 @@
 import type { Prisma } from "@/generated/prisma/client";
-import { aboutFixture } from "./fixtures";
-import type { RoadmapEntry } from "./roadmap";
+import { prisma } from "@/lib/prisma";
+import { getRoadmap, type RoadmapEntry } from "./roadmap";
 
 export const aboutSectionSelect = {
   id: true,
@@ -19,5 +19,14 @@ export type AboutPageData = {
 };
 
 export async function getAboutPage(): Promise<AboutPageData | null> {
-  return aboutFixture;
+  const [sections, roadmap] = await Promise.all([
+    prisma.aboutSection.findMany({
+      orderBy: { order: "asc" },
+      select: aboutSectionSelect,
+    }),
+    getRoadmap("EDUCATION"),
+  ]);
+  if (sections.length === 0) return null;
+
+  return { sections, roadmap };
 }

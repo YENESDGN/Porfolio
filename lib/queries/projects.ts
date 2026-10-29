@@ -1,5 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client";
-import { projectDetailsFixture, projectsFixture } from "./fixtures";
+import { prisma } from "@/lib/prisma";
 
 export const projectSelect = {
   id: true,
@@ -46,17 +46,28 @@ export type ProjectDetail = Prisma.ProjectGetPayload<{
 }>;
 
 export async function getPublishedProjects(): Promise<ProjectSummary[]> {
-  return projectsFixture;
+  return prisma.project.findMany({
+    where: { isPublished: true },
+    orderBy: { order: "asc" },
+    select: projectSelect,
+  });
 }
 
 export async function getProjectBySlug(
   slug: string,
 ): Promise<ProjectDetail | null> {
-  return projectDetailsFixture.find((project) => project.slug === slug) ?? null;
+  return prisma.project.findFirst({
+    where: { slug, isPublished: true },
+    select: projectDetailSelect,
+  });
 }
 
 export async function getProjectSlugs(): Promise<
   Pick<ProjectDetail, "slug">[]
 > {
-  return projectDetailsFixture.map(({ slug }) => ({ slug }));
+  return prisma.project.findMany({
+    where: { isPublished: true },
+    orderBy: { order: "asc" },
+    select: { slug: true },
+  });
 }

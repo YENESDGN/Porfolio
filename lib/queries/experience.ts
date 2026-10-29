@@ -1,6 +1,6 @@
 import type { Prisma } from "@/generated/prisma/client";
-import { experienceFixture } from "./fixtures";
-import type { RoadmapEntry } from "./roadmap";
+import { prisma } from "@/lib/prisma";
+import { getRoadmap, type RoadmapEntry } from "./roadmap";
 
 export const experienceSectionSelect = {
   id: true,
@@ -18,5 +18,14 @@ export type ExperiencePageData = {
 };
 
 export async function getExperiencePage(): Promise<ExperiencePageData | null> {
-  return experienceFixture;
+  const [sections, roadmap] = await Promise.all([
+    prisma.experienceSection.findMany({
+      orderBy: { order: "asc" },
+      select: experienceSectionSelect,
+    }),
+    getRoadmap("WORK"),
+  ]);
+  if (sections.length === 0) return null;
+
+  return { sections, roadmap };
 }
