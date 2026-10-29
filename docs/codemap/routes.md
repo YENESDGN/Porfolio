@@ -38,7 +38,7 @@ The five fixed routes are statically prerendered (`○`). `/projects/[slug]` is 
 
 Those types are generated into `.next/types` by a build. A fresh clone that runs `typecheck` before `build` will fail on `PageProps` with "does not satisfy the constraint `AppRoutes`" — run `npm run build` once first.
 
-**Refresh is on-demand only — no `export const revalidate`.** Pages are prerendered at build and stay frozen until `revalidatePath` is called. Phase 2.6 adds `app/api/revalidate/route.ts` (POST, guarded by a `REVALIDATE_SECRET` env var) as the one write-side endpoint; the "no API routes" rule covers reading only.
+**Refresh is on-demand only — no `export const revalidate`.** Pages are prerendered at build and stay frozen until `revalidatePath` is called. `app/api/revalidate/route.ts` (Phase 2.6) is the one write-side endpoint: `POST` with `Authorization: Bearer <REVALIDATE_SECRET>`, compared with `timingSafeEqual`, calls `revalidatePath("/", "layout")` — every page at once, since content changes monthly and the tree is small. 401 on a wrong secret, 500 if the env var is missing. The "no API routes" rule covers reading only. **New slugs still need a rebuild:** `dynamicParams = false` means revalidation refreshes existing project pages but cannot add one.
 
 `export const revalidate` and `revalidatePath` remain valid in Next 16 because `cacheComponents` is not enabled in `next.config.ts`. Enabling it would remove the route-segment config options.
 

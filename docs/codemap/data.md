@@ -52,17 +52,17 @@ The three tables required by the page-data mapping (`TechStackItem`, `Experience
 
 ## Queries
 
-All Prisma calls are written as named functions inside `lib/queries/` and exposed externally via `lib/queries/index.ts`. The layer exists and every page consumes it; only the function bodies are still fixtures.
+All Prisma calls are written as named functions inside `lib/queries/` and exposed externally via `lib/queries/index.ts`. Every body is a Prisma call against the module's `select`; published projects are filtered with `isPublished: true` and every list is `orderBy: { order: "asc" }`.
 
-Files: `landing.ts`, `projects.ts`, `about.ts`, `experience.ts`, plus `roadmap.ts` and `fixtures.ts`.
+Files: `landing.ts`, `projects.ts`, `about.ts`, `experience.ts`, plus `roadmap.ts`. `fixtures.ts` was deleted in Phase 2.6.
 
-`projects.ts` carries two selects against the same model: `projectSelect` for the card and `projectDetailSelect` for the detail page, with `orderBy` on both relations so ordering comes from the data. `getProjectSlugs()` exists purely to feed `generateStaticParams`; it returns `{ slug }` and nothing else. In the fixtures, `projectDetailsFixture` is the single source; `projectsFixture` is destructured out of it and `landingFixture.projectCount` reads its length, so no project fact is written twice.
+`projects.ts` carries two selects against the same model: `projectSelect` for the card and `projectDetailSelect` for the detail page, with `orderBy` on both relations so ordering comes from the data. `getProjectSlugs()` exists purely to feed `generateStaticParams`; it returns `{ slug }` and nothing else. `getProjectBySlug` filters on `isPublished` too, so an unpublished project 404s instead of rendering.
 
-**`roadmap.ts` is a fifth file beyond the plan.** `RoadmapItem` is read identically by `/about` (EDUCATION) and `/experience` (WORK), so the `select` and its derived `RoadmapEntry` type live in one place rather than being duplicated or imported sideways between the two page modules.
+**`roadmap.ts` is a fifth file beyond the plan.** `RoadmapItem` is read identically by `/about` (EDUCATION) and `/experience` (WORK), so the `select`, its derived `RoadmapEntry` type and `getRoadmap(kind)` live in one place rather than being duplicated or imported sideways between the two page modules. `getRoadmap` is internal — not exported from `index.ts`.
 
 Date formatting is a pure helper at `lib/formatDate.ts` using `Intl.DateTimeFormat("tr-TR")` — one module-level formatter, no date package.
 
-### The fixture seam (Phase 2)
+### The fixture seam (Phase 2, closed in 2.6)
 
 PostgreSQL arrives last in Phase 2, so `lib/queries/` is written **before** there is a database. Each of `landing.ts`, `projects.ts`, `about.ts`, `experience.ts` holds three things:
 
@@ -81,4 +81,12 @@ Two things the fixtures deliberately do **not** fake:
 
 ## Status
 
-**(To be checked later)** — No PostgreSQL: `prisma migrate` and seed have not been run, `prisma/migrations/` is empty. Phase 4 edited the schema and ran `prisma generate` (both work offline, no connection needed) but ran no database command, so its columns and its two new tables land in the same first migration as everything else. The schema passes `prisma validate`, the client is generated, the seed pipeline works end-to-end (`npm run db:seed` reads the env and runs tsx) — we just haven't connected to a DB. The first migration will be generated once the DB is up; `db push` will not be used.
+**Phase 2.6 done.** `prisma/migrations/20261029134652_init/` holds the first migration; it creates every table in the schema, Phase 4's columns included. It was applied to a local PostgreSQL 16 and re-applied to an empty database without error.
+
+**Seed — `prisma/seed.ts`.** Real content: landing text and portrait, 9 tech items (the 3×3 vitrine), 3 about and 4 experience sections, 3 roadmap rows, 7 projects with 3 screenshots each and their tech. Every row is an `upsert` on a fixed id (projects on `slug`), so two runs leave identical counts; a closing `setval` moves each sequence past the seeded ids so rows added later from Studio do not collide. `ProjectTech` rows dropped from the seed are deleted per project.
+
+**Project tech is limited to the nine vitrine items.** `ProjectTech` points at `TechStackItem`, and the landing page draws every `TechStackItem`. Adding Supabase, Flask or Django to a project would add them to the landing vitrine too; separating the two needs a schema field and is an open decision.
+
+**Image order on the detail page:** screenshot 1 is `coverPhoto` (künye and `/projects` card); `images` are ordered 2, 1, 3 so the narrative plate shows screenshot 2 and the gallery fills both columns.
+
+**Pitfall — Prisma engines behind a closed network.** `migrate`, `db seed` and even `generate` try to download the schema-engine binary from `binaries.prisma.sh`. Where that host is blocked: `PRISMA_SCHEMA_ENGINE_BINARY=/bin/true npx prisma generate` works (generate never runs the engine), and the seed runs directly with `npx tsx --env-file=.env prisma/seed.ts`. The first migration was produced by the same-version WASM schema engine (`@prisma/schema-engine-wasm`, run outside the repo); on a normal network `npx prisma migrate deploy` applies it.

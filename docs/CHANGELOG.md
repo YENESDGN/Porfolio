@@ -189,3 +189,16 @@ analysis is worth more than the code was.
   alındı**. `app/globals.css`, `Navbar`, `NavLink`, `MobileMenu`, `SocialLinks`,
   `GitHubLink`, `OverlapPair`, `lib/cn.ts` sekizi de `git checkout` ile HEAD'e döndü;
   palet karanlık kimliğiyle olduğu gibi duruyor. Faz 4 işi bundan etkilenmedi.
+
+## 29-10-2026 — Faz 2.6: gerçek veri
+
+- İlk migration `20261029134652_init`; yerel PostgreSQL 16'da sıfırdan uygulandı.
+- `prisma/seed.ts` gerçek içerikle: 7 proje (HandPocket, StockMaster, Kişisel
+  Portfolyo, CineFlow, EduAI, Safety 4.0, VisData), her biri 3 ekran görüntüsü;
+  portre, 9 teknoloji, hakkımda/tecrübe metinleri, roadmap. İki kez çalıştırıldı,
+  satır sayıları değişmedi.
+- Ekran görüntüleri projeler yerelde çalıştırılarak alındı (`public/images/projects/`).
+- FastAPI ve Docker işaretleri eklendi; vitrin 3×3 doldu.
+- Dört sorgu gövdesi Prisma çağrısı, `lib/queries/fixtures.ts` silindi.
+- `POST /api/revalidate` (`REVALIDATE_SECRET`), `.env.example` güncellendi.
+- `config/site.ts` ve `config/social.ts` gerçek ad, alan adı ve profillerle.

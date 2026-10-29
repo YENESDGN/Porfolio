@@ -113,9 +113,11 @@ No route-local `not-found.tsx`: the root `app/not-found.tsx` already renders ins
 
 ---
 
-## Carried over — still blocked
+## Carried over — closed
 
-**(Sonra bakılacak) — Faz 2.6 bloke.** Docker daemon çalışmıyor ve `psql` yok; PostgreSQL erişilebilir değil. Faz 4 şema değişikliğini yazar ve `prisma generate` çalıştırır, ama migration ve seed çalıştırmaz. Postgres açıldığında 2.6 olduğu gibi işletilir ve bu fazın eklediği `slug` / `body` / `role` / `startDate` / `endDate` / `liveUrl` alanları ile `project_images` ve `project_tech` tabloları aynı ilk migration'a girer. Sayfa kodu değişmeyecek; yalnızca `lib/queries/` gövdeleri Prisma çağrısına dönecek ve `lib/queries/fixtures.ts` silinecek.
+**Faz 2.6 tamamlandı (29-10-2026).** İlk migration (`20261029134652_init`) yerel PostgreSQL 16'ya uygulandı, seed gerçek içerikle iki kez çalıştırıldı ve ikizlenme olmadı; sorgular Prisma'ya döndü, `fixtures.ts` silindi, `/api/revalidate` eklendi. Aşağıdaki not tarihçe olarak duruyor.
+
+~~Faz 2.6 bloke.~~ Docker daemon çalışmıyor ve `psql` yok; PostgreSQL erişilebilir değil. Faz 4 şema değişikliğini yazar ve `prisma generate` çalıştırır, ama migration ve seed çalıştırmaz. Postgres açıldığında 2.6 olduğu gibi işletilir ve bu fazın eklediği `slug` / `body` / `role` / `startDate` / `endDate` / `liveUrl` alanları ile `project_images` ve `project_tech` tabloları aynı ilk migration'a girer. Sayfa kodu değişmeyecek; yalnızca `lib/queries/` gövdeleri Prisma çağrısına dönecek ve `lib/queries/fixtures.ts` silinecek.
 
 ## Verification
 

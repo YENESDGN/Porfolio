@@ -29,7 +29,7 @@ lib/         pure helpers; cn.ts, formatDate.ts, prisma.ts, queries/
 config/      static config; site.ts, nav.ts, social.ts (+ index.ts)
 prisma/      schema.prisma, seed.ts, migrations/
 generated/   Prisma client — generated, in gitignore
-public/      images/tech/ (7 marks), images/social/ (3 marks), each with a README
+public/      images/{profile,projects}/ (WebP), images/tech/ (9 marks), images/social/ (3 marks)
 docs/        codemap (+ codemap/), CHANGELOG, sessions
 Obsidian/    design source: canvas, diagrams, raw notes
 .impeccable/ design.json sidecar — gitignored, feeds impeccable tooling
@@ -56,19 +56,19 @@ Module public API is exposed via `index.ts`. `lib/` is not a module, but a folde
 
 **Big Phase 4 — project detail page, done.** `/projects/[slug]` is the first dynamic segment in the tree and the first use of `generateStaticParams`, `generateMetadata` and `dynamicParams`. Three sections: an `OverlapPair` künye, a 5-column narrative rail with the project's own `TechStack`, and a conditional gallery. `Project` gained `slug` / `body` / `role` / `startDate` / `endDate` / `liveUrl`, plus the `ProjectImage` and `ProjectTech` models. **No database work:** the schema was edited and `prisma generate` run offline; migration and seed roll into 2.6. The locked "only links are clickable" decision was **kept** — `ProjectCard` gained a "Projeyi incele" `TextLink` rather than becoming an anchor. Build shows the three slugs as `●` and the other five routes as `○`.
 
-**Phase 2.6 is blocked, not skipped.** The Docker daemon is not running and there is no `psql`, so PostgreSQL is unreachable. Marked `(Sonra bakılacak)` in `PLAN.md` per the stuck rule. Pages currently read fixtures; 2.6 swaps four function bodies and touches no page code.
+**Phase 2.6 done, 29 Oct 2026.** First migration in `prisma/migrations/`, real content in `prisma/seed.ts` (7 projects, 21 screenshots, portrait, 9 tech items incl. new FastAPI/Docker marks), the four query bodies are Prisma calls, `fixtures.ts` is gone, `POST /api/revalidate` refreshes the whole tree. `config/site.ts` and `config/social.ts` carry the real name, domain and profiles. Build: five routes `○`, seven slugs `●`, `/api/revalidate` `ƒ`. Details and the engine-download pitfall: `docs/codemap/data.md`.
 
 **Paradigm pass, 2 Sep 2026.** A repo-wide audit against the CLAUDE.md code paradigms. `cn()` fixed (`extendTailwindMerge`), the four failing contrast pairs fixed, `NavLink` now composes `TextLink`, every titled block goes through `Card.title`, dead exports removed (`getPublishedProjectCount`, `site.locale`, `SocialKey`/`SocialLink`, `StatCard`'s `card` variant, `Section`'s `end`, the `raspberry-50` and `ink-inverse` tokens, two empty `@source` roots), `components/index.ts` trimmed to what `app/` consumes, `RouteError`/`RouteLoading` became named exports, every source file holds at most one comment, `.prettierignore` covers `.claude`/`.obsidian`/`.impeccable`, and `.prettierrc` sets `endOfLine: auto` (the 8 files that failed `format:check` were CRLF in the working tree under `core.autocrlf=true`, byte-identical otherwise). `build` / `lint` / `typecheck` / `format:check` clean, route table unchanged.
 
 ### Loose ends
 
-- **(To be checked later)** No PostgreSQL → migration and seed have not been run. Details: `docs/codemap/data.md`.
 - **Nothing has been verified visually.** No browser tooling was available, so the checks in `PLAN.md` — overlap at both breakpoints, reveal timing, reduced-motion, JS disabled, 375px, tab focus — are outstanding. Contrast figures throughout the docs are computed, not observed.
-- `config/site.ts` and `config/social.ts` are placeholders; favicon is the Next.js default.
+- Favicon is the Next.js default. The mail link carries the CV address with the Gmail mark.
+- Project tech is capped at the nine landing items (`ProjectTech` → `TechStackItem`); see `docs/codemap/data.md`.
 - `next dev` appends the agent-rules block to the end of `CLAUDE.md`. Since it is rewritten on every run, it is not deleted, it is committed.
 - `.claude/rules/skills/` (vendored impeccable, 123 files / 2.9 MB) is untracked and undecided. It is excluded from eslint, and no longer reaches Tailwind: `globals.css` uses `source(none)` plus two explicit `@source` roots (`app`, `components`), which cut the stylesheet 27,116 → 23,630 bytes (−12.9%).
 - `PRODUCT.md` and `DESIGN.md` are written in Turkish while the rest of the docs are English.
 
-### Next up — Phase 2.6
+### Next up
 
-Bring up Postgres (Docker) → `npm run db:migrate` (never `db push`; the first migration now also carries Phase 4's project columns, `project_images` and `project_tech`) → fill `prisma/seed.ts` with real content via `upsert` → replace the four query bodies with Prisma calls against the existing `select` objects → delete `lib/queries/fixtures.ts` → add `app/api/revalidate/route.ts` (POST, `REVALIDATE_SECRET`). Optimized images into `public/images/`; the DB stores paths only.
+Deploy: on the DigitalOcean host, `npx prisma migrate deploy` → seed → build. `REVALIDATE_SECRET` goes into the production env. Then the visual checks in `PLAN.md` against real photos.
